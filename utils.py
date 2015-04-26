@@ -1,5 +1,6 @@
 __author__ = 'Vincent'
 
+import psutil
 from mysql.connector import (connection)
 
 MYSQL_LOGIN = 'root'
@@ -10,6 +11,7 @@ MYSQL_DATABASE = 'plowshare'
 
 def database_connect():
     return connection.MySQLConnection(user=MYSQL_LOGIN, password=MYSQL_PASS, host=MYSQL_HOST, database=MYSQL_DATABASE)
+
 
 def hms_to_seconds(t):
     h, m, s = [int(i) for i in t.split(':')]
@@ -26,3 +28,11 @@ def compute_size(s):
         size_number *= 1000
 
     return size_number
+
+
+def kill_proc_tree(pid, including_parent=True):
+    parent = psutil.Process(pid)
+    for child in parent.children(recursive=True):
+        child.kill()
+    if including_parent:
+        parent.kill()
