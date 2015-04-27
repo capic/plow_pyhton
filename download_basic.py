@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 __author__ = 'Vincent'
 
 import os
@@ -70,17 +72,17 @@ class ManageDownloads:
     def update_download_pid(self, pid_plowdown, pid_python, download_id, status):
         cursor = self.cnx.cursor()
 
-        sql = 'UPDATE download SET pid_plowdown = %s, pid_python = %s status = %s WHERE id = %s'
+        sql = 'UPDATE download SET pid_plowdown = %s, pid_python = %s, status = %s WHERE id = %s'
         data = (pid_plowdown, pid_python, status, download_id)
         logging.debug('query : %s | data : (%s, %s, %s, %s)' % (
             sql, str(pid_plowdown), pid_python, str(status), str(download_id)))
         cursor.execute(sql, data)
-
         cursor.close()
 
     def stop_download(self, download):
         logging.debug('--- stop_download ---')
         logging.debug('pid python: ' + str(download.pid_python))
+
         self.update_download_pid(0, 0, download.id, Download.STATUS_WAITING)
         utils.kill_proc_tree(download.pid_python)
 
@@ -161,7 +163,6 @@ def main(argv):
                 print(COMMAND_USAGE)
 
         manage_download.disconnect()
-
 
 if __name__ == "__main__":
     main(sys.argv[1:])
