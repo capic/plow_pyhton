@@ -15,17 +15,20 @@ def database_connect():
 
 def hms_to_seconds(t):
     h, m, s = [int(i) for i in t.split(':')]
-    return 3600*h + 60*m + s
+    return int(3600*h + 60*m + s)
 
 
 def compute_size(s):
-    size_letter = s[-1:].lower()
-    size_number = s[:-1]
+    if len(s) > 1:
+        size_letter = s[-1:].lower()
+        size_number = float(s[:-1])
 
-    if size_letter == 'k':
-        size_number *= 100
-    elif size_letter == 'm':
-        size_number *= 1000
+        if size_letter == 'k':
+            size_number *= 1000
+        elif size_letter == 'm':
+            size_number *= 10000
+    else:
+        size_number = int(s)
 
     return size_number
 
@@ -36,3 +39,7 @@ def kill_proc_tree(pid, including_parent=True):
         child.kill()
     if including_parent:
         parent.kill()
+
+
+def check_pid(pid):
+    return psutil.pid_exists(pid)
