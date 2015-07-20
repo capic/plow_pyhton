@@ -1,6 +1,7 @@
 __author__ = 'Vincent'
 
 import psutil
+import re
 from mysql.connector import (connection)
 
 MYSQL_LOGIN = 'root'
@@ -46,3 +47,22 @@ def kill_proc_tree(pid, including_parent=True):
 
 def check_pid(pid):
     return psutil.pid_exists(pid)
+
+
+def clean_plowdown_line(line):
+    idxs = [m.start() for m in re.finditer('\[0', line)]
+
+    n = 0
+    if len(idxs) > 0:
+        for idx in idxs:
+            if idx == 1:
+                if line[2] == ';':
+                    n = 9
+                    line = line[n:]
+                else:
+                    n = 7
+                    line = line[n:]
+            else:
+                line = line[:idx - n]
+
+    return line

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __builtin__ import list
 
 __author__ = 'Vincent'
 
@@ -15,7 +16,7 @@ import utils
 # from autobahn.twisted.websocket import WebSocketServerFactory
 # from autobahn.twisted.websocket import WebSocketClientProtocol, \
 # WebSocketClientFactory
-# import time
+import time
 
 
 # class NotificationServer(WebSocketServerProtocol):
@@ -26,8 +27,8 @@ import utils
 # def onOpen(self):
 # print("WebSocket connection open.")
 #
-#     def onMessage(self, payload, isBinary):
-#         if isBinary:
+# def onMessage(self, payload, isBinary):
+# if isBinary:
 #             logging.debug("Binary message received: {} bytes".format(len(payload)))
 #             print("Binary message received: {} bytes".format(len(payload)))
 #         else:
@@ -57,7 +58,7 @@ class ManageDownloads:
     DIRECTORY_DOWNLOAD_DESTINATION_TEMP = "/mnt/HD/HD_a2/telechargement/temp_plowdown/"
     DIRECTORY_DOWNLOAD_DESTINATION = "/mnt/HD/HD_a2/telechargement/"
     COMMAND_DOWNLOAD = "plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
-    COMMAND_DOWNLOAD_INFOS = "plowprobe --printf '# {\"name\":\"%f\",\"size\":\"%s\"}' "
+    COMMAND_DOWNLOAD_INFOS = "plowprobe --printf '\"%f\"|\"%s\"' %s"
 
     def __init__(self):
         self.cnx = utils.database_connect()
@@ -75,13 +76,14 @@ class ManageDownloads:
 
             if file_path is not None:
                 sql += ' AND file_path = %s'
+                logging.debug('query : %s | data : (%s, %s)' % (sql, str(Download.STATUS_WAITING), file_path))
                 data = (Download.STATUS_WAITING, file_path)
             else:
                 data = (Download.STATUS_WAITING, )
+                logging.debug('query : %s | data : (%s)' % (sql, str(Download.STATUS_WAITING)))
 
             sql += ' HAVING MIN(id)'
 
-            logging.debug('query : %s | data : (%s)' % (sql, str(Download.STATUS_WAITING)))
         else:
             sql = 'SELECT * FROM download WHERE id = %s'
             data = (download_id, )
@@ -200,11 +202,32 @@ class ManageDownloads:
         if not self.download_already_exists(link):
             logging.debug('download %s doesn''t exist' % link)
 
+            cmd = (
+                self.COMMAND_DOWNLOAD_INFOS % (download.link))
+            logging.debug('command : %s' % cmd)
+            p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
+
+            name = ''
+            size = 0
+            line = ''
+            while True:
+                out = p.stderr.read(1)
+                if out == '' and p.poll() is not None:
+                    break
+                if out != '':
+                    if out != '\n' and out != '\r':
+                        line += out
+                    else:
+                        logging.debug('plowprobe line : %s' % line)
+                        name = line.split('|')[0]
+                        size = line.split('|')[1]
+
             cursor = self.cnx.cursor()
 
-            sql = 'INSERT INTO download (link, status, file_path) values (%s, %s, %s)'
-            data = (link, Download.STATUS_WAITING, file_path)
-            logging.debug('query: %s | data: (%s, %s, %s)' % (sql, link, Download.STATUS_WAITING, file_path))
+            sql = 'INSERT INTO download (name, link, size, status, file_path) values (%s, %s, %s, %s, %s)'
+            data = (link, name, Download.STATUS_WAITING, size, file_path)
+            logging.debug(
+                'query: %s | data: (%s, %s, %s, %s, %s)' % (sql, name, link, size, Download.STATUS_WAITING, file_path))
 
             cursor.execute(sql, data)
 
@@ -261,6 +284,7 @@ class ManageDownloads:
                 if out != '\n' and out != '\r':
                     line += out
                 else:
+                    line = utils.clean_plowdown_line(line)
                     logging.debug('plowdown line : %s' % line)
                     download = self.get_download_values(line, download)
                     line = ''
@@ -327,7 +351,7 @@ class ManageDownloads:
                 tab_name = values_line.split('Filename:')
                 download.name = tab_name[len(tab_name) - 1]
 
-            download.infos_plowdown += values_line + '\r\n'
+            download.infos_plowdown += time.strftime('%d/%m/%y %H:%M:%S', time.localtime()) + ': ' + values_line + '\r\n'
             self.update_download(download)
 
         return download
@@ -341,6 +365,8 @@ class ManageDownloads:
             download.pid_plowdown = 0
             download.pid_python = 0
             download.status = Download.STATUS_WAITING
+            download.time_left = 0
+            download.average_speed = 0
 
             self.update_download(download)
 
@@ -355,7 +381,7 @@ COMMAND_USAGE = 'usage: script start|stop (download_id)'
 
 def main(argv):
     logging.basicConfig(filename='/var/www/log.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
-                        datefmt='%m/%d/%Y %I:%M:%S %p')
+                        datefmt='%d/%m/%Y %H:%M:%S')
     # log.startLogging(sys.stdout)
 
     logging.debug('Start application')
@@ -428,7 +454,6 @@ def main(argv):
             if len(args) > 1:
                 download_id = args[1]
                 download_to_check = manage_download.get_downloads_in_progress(download_id)
-                logging.debug('download_id %s' % download_to_check.id)
                 manage_download.check_download_alive(download_to_check)
             else:
                 downloads = manage_download.get_downloads_in_progress(None)
