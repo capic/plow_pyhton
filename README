@@ -7,5 +7,11 @@ Taches planifiés:
 */2 * * * * python /var/www/download_basic.py check_download_alive >> log_cron.txt
 
 TODO:
+- Par moment le statut est waiting lorsque le téléchargement est en cours => pas normal
+- cas où le statut reste à 2 alors qu'il devrait passer à 1
+- fin du nom des downloads foireux
+- ajouter date heure dans les logs plowdown
+- utiliser le plowprobe pour avoir les informations du lien
+- remettre à 0 les valeurs vitesse et temps restant si un téléchargement passe de in progress a waiting
 - faire un installer pour toute la solution plowdown
 - vérifier que la taille d'origine n'est pas modifiée lorsque l'on reprend un téléchargement qui avait déjà commencé

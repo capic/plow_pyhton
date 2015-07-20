@@ -56,7 +56,7 @@ import utils
 class ManageDownloads:
     DIRECTORY_DOWNLOAD_DESTINATION_TEMP = "/mnt/HD/HD_a2/telechargement/temp_plowdown/"
     DIRECTORY_DOWNLOAD_DESTINATION = "/mnt/HD/HD_a2/telechargement/"
-    COMMAND_DOWNLOAD = "plowdown -r 10 -x -m --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
+    COMMAND_DOWNLOAD = "plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "plowprobe --printf '# {\"name\":\"%f\",\"size\":\"%s\"}' "
 
     def __init__(self):
