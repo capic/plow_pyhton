@@ -8,3 +8,4 @@ TODO:
 - fin du nom des downloads foireux
 - ajouter date heure dans les logs plowdown
 - utiliser le plowprobe pour avoir les informations du lien
+- remettre à 0 les valeurs vitesse et temps restant si un téléchargement passe de in progress a waiting
