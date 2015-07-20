@@ -7,3 +7,4 @@ TODO:
 - cas où le statut reste à 2 alors qu'il devrait passer à 1
 - fin du nom des downloads foireux
 - ajouter date heure dans les logs plowdown
+- utiliser le plowprobe pour avoir les informations du lien
