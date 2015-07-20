@@ -4,5 +4,5 @@ pip install psutil
 
 TODO:
 - Par moment le statut est waiting lorsque le téléchargement est en cours => pas normal
-- Ajouter une colonne dans la table des téléchargement pour y stocker les informations renvoyé par plowdown
 - cas où le statut reste à 2 alors qu'il devrait passer à 1
+- fin du nom des downloads foireux
