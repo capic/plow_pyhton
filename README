@@ -6,3 +6,4 @@ TODO:
 - Par moment le statut est waiting lorsque le téléchargement est en cours => pas normal
 - cas où le statut reste à 2 alors qu'il devrait passer à 1
 - fin du nom des downloads foireux
+- ajouter date heure dans les logs plowdown
