@@ -2,7 +2,10 @@ framework à installer
 pip install autobahn[twisted,accelerate,compress,serialization]
 pip install psutil
 
+Taches planifiés:
+0 * * * * sh /mnt/HD/HD_a2/start_download.sh >> log_cron.txt
+*/2 * * * * python /var/www/download_basic.py check_download_alive >> log_cron.txt
+
 TODO:
-- Par moment le statut est waiting lorsque le téléchargement est en cours => pas normal
-- Ajouter une colonne dans la table des téléchargement pour y stocker les informations renvoyé par plowdown
-- cas où le statut reste à 2 alors qu'il devrait passer à 1
+- faire un installer pour toute la solution plowdown
+- vérifier que la taille d'origine n'est pas modifiée lorsque l'on reprend un téléchargement qui avait déjà commencé

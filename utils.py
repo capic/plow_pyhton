@@ -34,11 +34,14 @@ def compute_size(s):
 
 
 def kill_proc_tree(pid, including_parent=True):
-    parent = psutil.Process(pid)
-    for child in parent.children(recursive=True):
-        child.kill()
-    if including_parent:
-        parent.kill()
+    try:
+        parent = psutil.Process(pid)
+        for child in parent.children(recursive=True):
+            child.kill()
+        if including_parent:
+            parent.kill()
+    except psutil.NoSuchProcess:
+        pass
 
 
 def check_pid(pid):

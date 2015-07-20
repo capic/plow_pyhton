@@ -24,7 +24,7 @@ import utils
 # print("Client connecting: {}".format(request.peer))
 #
 # def onOpen(self):
-#         print("WebSocket connection open.")
+# print("WebSocket connection open.")
 #
 #     def onMessage(self, payload, isBinary):
 #         if isBinary:
@@ -63,7 +63,7 @@ class ManageDownloads:
         self.cnx = utils.database_connect()
         self.stop_loop_file_treatment = False
 
-    def get_download_to_start(self, download_id):
+    def get_download_to_start(self, download_id, file_path=None):
         logging.debug('*** get_download_to_start ***')
         logging.debug('download_id: %s' % str(download_id))
         download = None
@@ -71,8 +71,16 @@ class ManageDownloads:
         cursor = self.cnx.cursor()
 
         if download_id is None:
-            sql = 'SELECT * FROM download WHERE status = %s HAVING MIN(id)'
-            data = (Download.STATUS_WAITING, )
+            sql = 'SELECT * FROM download WHERE status = %s'
+
+            if file_path is not None:
+                sql += ' AND file_path = %s'
+                data = (Download.STATUS_WAITING, file_path)
+            else:
+                data = (Download.STATUS_WAITING, )
+
+            sql += ' HAVING MIN(id)'
+
             logging.debug('query : %s | data : (%s)' % (sql, str(Download.STATUS_WAITING)))
         else:
             sql = 'SELECT * FROM download WHERE id = %s'
@@ -83,7 +91,7 @@ class ManageDownloads:
 
         if cursor is not None:
             for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
-                 pid_plowdown, pid_curl, pid_python, file_path) in cursor:
+                 pid_plowdown, pid_curl, pid_python, file_path, infos_plowdown) in cursor:
                 download = Download()
                 download.id = database_download_id
                 download.name = name
@@ -97,6 +105,7 @@ class ManageDownloads:
                 download.pid_plowdown = pid_plowdown
                 download.pid_python = pid_python
                 download.file_path = file_path
+                download.infos_plowdown = infos_plowdown
 
                 logging.debug('download : %s' % download.to_string())
 
@@ -125,7 +134,7 @@ class ManageDownloads:
 
         if cursor is not None:
             for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
-                 pid_plowdown, pid_curl, pid_python, file_path) in cursor:
+                 pid_plowdown, pid_curl, pid_python, file_path, infos_plowdown) in cursor:
                 download = Download()
                 download.id = database_download_id
                 download.name = name
@@ -139,6 +148,7 @@ class ManageDownloads:
                 download.pid_plowdown = pid_plowdown
                 download.pid_python = pid_python
                 download.file_path = file_path
+                download.infos_plowdown = infos_plowdown
 
                 logging.debug('download : %s' % download.to_string())
 
@@ -177,7 +187,7 @@ class ManageDownloads:
         file_data = f.read()
         f.close()
 
-        replace_string = "# " + download.name + "\r\n# " + download.link
+        replace_string = "# " + download.name + "\r\n# OK " + download.link
         new_data = file_data.replace(download.link, replace_string)
 
         f = open(download.file_path, 'w')
@@ -200,43 +210,34 @@ class ManageDownloads:
 
             cursor.close()
 
-    def update_download_values(self, download):
-        logging.debug('*** update_download_values ***')
+    def update_download(self, download):
+        logging.debug('*** update_download ***')
 
         cursor = self.cnx.cursor()
 
-        sql = 'UPDATE download SET name = %s, origin_size = %s, size = %s, progress = %s, average_speed = %s, time_left = %s ' \
-              + 'WHERE id = %s'
-        data = (download.name,
-                download.origin_size, download.size, download.progress, download.average_speed, download.time_left,
-                download.id)
-        logging.debug('query : %s | data : (%s, %s, %s, %s, %s, %s, %s)' % (
-            sql, download.name, str(download.origin_size), str(download.size), str(download.progress),
-            str(download.average_speed),
-            str(download.time_left),
+        sql = 'UPDATE download SET name = %s, link = %s, origin_size = %s, size = %s, status = %s, progress = %s, average_speed = %s, time_left = %s ' \
+              + ', pid_plowdown = %s, pid_python = %s, file_path = %s, infos_plowdown = %s WHERE id = %s'
+        data = (download.name, download.link, download.origin_size, download.size, download.status, download.progress,
+                download.average_speed, download.time_left,
+                download.pid_plowdown, download.pid_python, download.file_path, download.infos_plowdown, download.id)
+        logging.debug('query : %s | data : (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
+            sql, download.name, download.link, str(download.origin_size), str(download.size), str(download.status),
+            str(download.progress), str(download.average_speed), str(download.time_left),
+            str(download.pid_plowdown), str(download.pid_python), download.file_path, download.infos_plowdown,
             str(download.id)))
         cursor.execute(sql, data)
 
         cursor.close()
 
-    def update_download_pid(self, pid_plowdown, pid_python, download_id, status):
-        logging.debug('*** update_download_pid ***')
-
-        cursor = self.cnx.cursor()
-
-        sql = 'UPDATE download SET pid_plowdown = %s, pid_python = %s, status = %s WHERE id = %s'
-        data = (pid_plowdown, pid_python, status, download_id)
-        logging.debug('query : %s | data : (%s, %s, %s, %s)' % (
-            sql, str(pid_plowdown), pid_python, str(status), str(download_id)))
-        cursor.execute(sql, data)
-        cursor.close()
-
     def stop_download(self, download):
         logging.debug('*** stop_download ***')
         logging.debug('pid python: ' + str(download.pid_python))
-
-        self.update_download_pid(0, 0, download.id, Download.STATUS_WAITING)
         utils.kill_proc_tree(download.pid_python)
+
+        download.pid_python = 0
+        download.pid_plowdown = 0
+        download.status = Download.STATUS_WAITING
+        self.update_download(download)
 
     def start_download(self, download):
         logging.debug('*** start_download ***')
@@ -246,7 +247,10 @@ class ManageDownloads:
                 self.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, self.DIRECTORY_DOWNLOAD_DESTINATION, download.link))
         logging.debug('command : %s' % cmd)
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
-        self.update_download_pid(p.pid, os.getpid(), download.id, Download.STATUS_IN_PROGRESS)
+        download.pid_plowdown = p.pid
+        download.pid_python = os.getpid()
+        download.status = Download.STATUS_IN_PROGRESS
+        self.update_download(download)
 
         line = ''
         while True:
@@ -275,7 +279,7 @@ class ManageDownloads:
                 self.insert_download(line, file_path)
         file.close()
 
-        download = self.get_download_to_start(None)
+        download = self.get_download_to_start(None, file_path)
         while not self.stop_loop_file_treatment and download is not None:
             download = self.start_download(download)
             # mark link with # in file
@@ -283,7 +287,7 @@ class ManageDownloads:
                 self.mark_link_finished_in_file(download)
 
             # next download
-            download = self.get_download_to_start(None)
+            download = self.get_download_to_start(None, file_path)
 
     def stop_file_treatment(self, file_path):
         logging.debug('*** stop_file_treatment ***')
@@ -294,6 +298,7 @@ class ManageDownloads:
     def get_download_values(self, values_line, download):
         logging.debug('*** get_download_values ***')
 
+        print(values_line)
         values = values_line.split()
 
         if len(values) > 0:
@@ -318,10 +323,12 @@ class ManageDownloads:
                     logging.debug('download marked as finisher')
                     download.status = Download.STATUS_FINISHED
 
-                self.update_download_values(download)
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
                 download.name = tab_name[len(tab_name) - 1]
+
+            download.infos_plowdown += values_line + '\r\n'
+            self.update_download(download)
 
         return download
 
@@ -330,7 +337,12 @@ class ManageDownloads:
 
         if not utils.check_pid(download.pid_plowdown):
             utils.kill_proc_tree(download.pid_python)
-            self.update_download_pid(0, 0, download.id, Download.STATUS_WAITING)
+
+            download.pid_plowdown = 0
+            download.pid_python = 0
+            download.status = Download.STATUS_WAITING
+
+            self.update_download(download)
 
     def disconnect(self):
         logging.debug('*** disconnect ***')
