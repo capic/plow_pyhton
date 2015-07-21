@@ -270,7 +270,7 @@ class ManageDownloads:
             cursor.execute(sql, data)
 
             cursor.close()
-         else:
+        else:
             logging.debug('download %s exists -> update' % link)
             download = self.get_download_by_link_file_path(link, file_path)
                 
