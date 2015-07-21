@@ -338,7 +338,7 @@ class ManageDownloads:
             elif line.startswith('#OK http'):
                 logging.debug('line start with http -> update to finished')
                 link = line.replace('#OK ', '')
-                download = self.get_download_by_link_file_path(link, filepath)
+                download = self.get_download_by_link_file_path(link, file_path)
                 
                 if download is not None:
                     download.status = Download.STATUS_FINISHED
