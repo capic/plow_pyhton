@@ -232,34 +232,36 @@ class ManageDownloads:
         f.write(new_data)
         f.close()
 
-    def insert_download(self, link, file_path):
-        logging.debug('*** insert_download ***')
+    def insert_update_download(self, link, file_path):
+        logging.debug('*** insert_update_download ***')
+        
+        if link.startwith('#OK'):
+            link = link.replace('#OK ', '')
+               
+        cmd = (self.COMMAND_DOWNLOAD_INFOS % (download.link))
+        logging.debug('command : %s' % cmd)
+        p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
+
+        name = ''
+        size = 0
+        line = ''
+        while True:
+            out = p.stderr.read(1)
+            if out == '' and p.poll() is not None:
+                break
+            if out != '':
+                if out != '\n' and out != '\r':
+                    line += out
+                else:
+                    logging.debug('plowprobe line : %s' % line)
+                    name = line.split('|')[0]
+                    size = line.split('|')[1]
 
         if not self.download_already_exists(link):
-            logging.debug('download %s doesn''t exist' % link)
-
-            cmd = (
-                self.COMMAND_DOWNLOAD_INFOS % (download.link))
-            logging.debug('command : %s' % cmd)
-            p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
-
-            name = ''
-            size = 0
-            line = ''
-            while True:
-                out = p.stderr.read(1)
-                if out == '' and p.poll() is not None:
-                    break
-                if out != '':
-                    if out != '\n' and out != '\r':
-                        line += out
-                    else:
-                        logging.debug('plowprobe line : %s' % line)
-                        name = line.split('|')[0]
-                        size = line.split('|')[1]
+            logging.debug('download %s doesn''t exist -> insert' % link)
 
             cursor = self.cnx.cursor()
-
+        
             sql = 'INSERT INTO download (name, link, size, status, file_path) values (%s, %s, %s, %s, %s)'
             data = (link, name, Download.STATUS_WAITING, size, file_path)
             logging.debug(
@@ -268,6 +270,15 @@ class ManageDownloads:
             cursor.execute(sql, data)
 
             cursor.close()
+         else:
+            logging.debug('download %s exists -> update' % link)
+            download = self.get_download_by_link_file_path(link, file_path)
+                
+            if download is not None:
+                download.name = name
+                download.size = size
+                download.status = Download.STATUS_FINISHED
+                self.update_download(download)  
 
     def update_download(self, download):
         logging.debug('*** update_download ***')
@@ -334,17 +345,9 @@ class ManageDownloads:
         file = open(file_path, 'r')
         logging.debug('file %s opened' % file_path)
         for line in file:
-            if line.startswith('http'):
-                logging.debug('line start with http -> insert')
-                self.insert_download(line, file_path)
-            elif line.startswith('#OK http'):
-                logging.debug('line start with http -> update to finished')
-                link = line.replace('#OK ', '')
-                download = self.get_download_by_link_file_path(link, file_path)
-                
-                if download is not None:
-                    download.status = Download.STATUS_FINISHED
-                    self.update_download(download)  
+            if 'http' in line:
+                logging.debug('line contains http')
+                self.insert_update_download(line, file_path)
         file.close()
 
         download = self.get_download_to_start(None, file_path)
