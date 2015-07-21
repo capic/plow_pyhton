@@ -58,7 +58,7 @@ class ManageDownloads:
     DIRECTORY_DOWNLOAD_DESTINATION_TEMP = "/mnt/HD/HD_a2/telechargement/temp_plowdown/"
     DIRECTORY_DOWNLOAD_DESTINATION = "/mnt/HD/HD_a2/telechargement/"
     COMMAND_DOWNLOAD = "plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
-    COMMAND_DOWNLOAD_INFOS = "plowprobe --printf '\"%f\"|\"%s\"' %s"
+    COMMAND_DOWNLOAD_INFOS = "plowprobe --printf '\"%%f\"|\"%%s\"' %s"
 
     def __init__(self):
         self.cnx = utils.database_connect()
@@ -235,50 +235,51 @@ class ManageDownloads:
     def insert_update_download(self, link, file_path):
         logging.debug('*** insert_update_download ***')
         
-        if link.startwith('#OK'):
-            link = link.replace('#OK ', '')
-               
-        cmd = (self.COMMAND_DOWNLOAD_INFOS % (download.link))
-        logging.debug('command : %s' % cmd)
-        p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
-
-        name = ''
-        size = 0
-        line = ''
-        while True:
-            out = p.stderr.read(1)
-            if out == '' and p.poll() is not None:
-                break
-            if out != '':
-                if out != '\n' and out != '\r':
-                    line += out
-                else:
-                    logging.debug('plowprobe line : %s' % line)
-                    name = line.split('|')[0]
-                    size = line.split('|')[1]
-
-        if not self.download_already_exists(link):
-            logging.debug('download %s doesn''t exist -> insert' % link)
-
-            cursor = self.cnx.cursor()
-        
-            sql = 'INSERT INTO download (name, link, size, status, file_path) values (%s, %s, %s, %s, %s)'
-            data = (link, name, Download.STATUS_WAITING, size, file_path)
-            logging.debug(
-                'query: %s | data: (%s, %s, %s, %s, %s)' % (sql, name, link, size, Download.STATUS_WAITING, file_path))
-
-            cursor.execute(sql, data)
-
-            cursor.close()
-        else:
-            logging.debug('download %s exists -> update' % link)
-            download = self.get_download_by_link_file_path(link, file_path)
-                
-            if download is not None:
-                download.name = name
-                download.size = size
-                download.status = Download.STATUS_FINISHED
-                self.update_download(download)  
+        if not link.startswith('# '):
+            if link.startswith('#OK'):
+                link = link.replace('#OK ', '')
+                   
+            cmd = (self.COMMAND_DOWNLOAD_INFOS % (link))
+            logging.debug('command : %s' % cmd)
+            p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
+    
+            name = ''
+            size = 0
+            line = ''
+            while True:
+                out = p.stderr.read(1)
+                if out == '' and p.poll() is not None:
+                    break
+                if out != '':
+                    if out != '\n' and out != '\r':
+                        line += out
+                    else:
+                        logging.debug('plowprobe line : %s' % line)
+                        name = line.split('|')[0]
+                        size = line.split('|')[1]
+    
+            if not self.download_already_exists(link):
+                logging.debug('download %s doesn''t exist -> insert' % link)
+    
+                cursor = self.cnx.cursor()
+            
+                sql = 'INSERT INTO download (name, link, size, status, file_path) values (%s, %s, %s, %s, %s)'
+                data = (link, name, Download.STATUS_WAITING, size, file_path)
+                logging.debug(
+                    'query: %s | data: (%s, %s, %s, %s, %s)' % (sql, name, link, size, Download.STATUS_WAITING, file_path))
+    
+                cursor.execute(sql, data)
+    
+                cursor.close()
+            else:
+                logging.debug('download %s exists -> update' % link)
+                download = self.get_download_by_link_file_path(link, file_path)
+                    
+                if download is not None:
+                    download.name = name
+                    download.size = size
+                    download.status = Download.STATUS_FINISHED
+                    self.update_download(download)  
 
     def update_download(self, download):
         logging.debug('*** update_download ***')
