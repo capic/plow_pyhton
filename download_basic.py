@@ -63,6 +63,40 @@ class ManageDownloads:
     def __init__(self):
         self.cnx = utils.database_connect()
         self.stop_loop_file_treatment = False
+        
+    def get_download_by_link_file_path(self, link, file_path):
+        logging.debug('*** get_download_by_link_file_path ***')
+        logging.debug('link: %s, file_path: %s' % (link, file_path))
+        
+        download = None
+        
+        cursor = self.cnx.cursor()
+        sql = 'SELECT * FROM download WHERE link = %s and file_path = %s'
+        data = (link, file_path)
+        
+        if cursor is not None:
+            for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
+                 pid_plowdown, pid_curl, pid_python, file_path, infos_plowdown) in cursor:
+                download = Download()
+                download.id = database_download_id
+                download.name = name
+                download.link = link
+                download.origin_size = origin_size
+                download.size = size
+                download.status = status
+                download.progress = progress
+                download.average_speed = average_speed
+                download.time_left = time_left
+                download.pid_plowdown = pid_plowdown
+                download.pid_python = pid_python
+                download.file_path = file_path
+                download.infos_plowdown = infos_plowdown
+
+                logging.debug('download : %s' % download.to_string())
+
+            cursor.close()
+
+        return download
 
     def get_download_to_start(self, download_id, file_path=None):
         logging.debug('*** get_download_to_start ***')
@@ -299,8 +333,16 @@ class ManageDownloads:
         logging.debug('file %s opened' % file_path)
         for line in file:
             if line.startswith('http'):
-                logging.debug('line start with http')
+                logging.debug('line start with http -> insert')
                 self.insert_download(line, file_path)
+            elif line.startswith('#OK http'):
+                logging.debug('line start with http -> update to finished')
+                link = line.replace('#OK ', '')
+                download = self.get_download_by_link_file_path(link, filepath)
+                
+                if download is not None:
+                    download.status = Download.STATUS_FINISHED
+                    self.update_download(download)  
         file.close()
 
         download = self.get_download_to_start(None, file_path)
