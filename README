@@ -14,4 +14,4 @@ TODO:
 - mettre au statut waiting seulement si en in progress et que le processus est absent
 - apparemment le téléchargement s'arrête au bout de 2 minutes
 - lorsque l'on a vidé les infos log pendant que le download est en cours il faut penser à vider ce qu'il y avait dans l'objet
-- lors de l'insertion en base des liens, si le lien est marqué comme OK dans le fichier et qu'il existe en bdd => le marquer comme terminé
+- lors de l'insertion en base des liens, si le lien est marqué comme OK dans le fichier et qu'il existe en bdd => le marquer comme terminé => FAIT mais il serait bien de mettre à jour le nom en utilisant plowprobe
