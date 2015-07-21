@@ -74,6 +74,9 @@ class ManageDownloads:
         sql = 'SELECT * FROM download WHERE link = %s and file_path = %s'
         data = (link, file_path)
         
+        logging.debug('query : %s | data : (%s, %s)' % (sql, link, file_path))
+        cursor.execute(sql, data)
+        
         if cursor is not None:
             for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
                  pid_plowdown, pid_curl, pid_python, file_path, infos_plowdown) in cursor:
