@@ -13,3 +13,4 @@ TODO:
 - vérifier que la taille d'origine n'est pas modifiée lorsque l'on reprend un téléchargement qui avait déjà commencé
 - mettre au statut waiting seulement si en in progress et que le processus est absent
 - apparemment le téléchargement s'arrête au bout de 2 minutes
+- au bout d'un moment les infos plowdown ne sont plus ajoutées
