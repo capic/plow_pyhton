@@ -1,8 +1,10 @@
 __author__ = 'Vincent'
 
 import psutil
+import subprocess
 import re
 from mysql.connector import (connection)
+from bean.downloadBean import Download
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
@@ -16,7 +18,7 @@ def database_connect():
 
 def hms_to_seconds(t):
     h, m, s = [int(i) for i in t.split(':')]
-    return int(3600*h + 60*m + s)
+    return int(3600 * h + 60 * m + s)
 
 
 def compute_size(s):
@@ -66,3 +68,47 @@ def clean_plowdown_line(line):
                 line = line[:idx - n]
 
     return line
+
+
+def get_infos_plowprobe(cmd):
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0]
+
+    tab_infos = output.split('=$=')
+    name = tab_infos[0]
+
+    size = 0
+    if tab_infos[1] is not None and tab_infos[1] != '':
+        size = int(tab_infos[1])
+
+    return [name, size]
+
+
+def cursor_to_download_object(cursor):
+    list_downloads = []
+
+    if cursor is not None:
+        for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
+             pid_plowdown, pid_curl, pid_python, file_path, infos_plowdown, lifecycle_insert_date,
+             lifecycle_update_date) in cursor:
+            download = Download()
+            download.id = database_download_id
+            download.name = name
+            download.link = link
+            download.origin_size = origin_size
+            download.size = size
+            download.status = status
+            download.progress = progress
+            download.average_speed = average_speed
+            download.time_left = time_left
+            download.pid_plowdown = pid_plowdown
+            download.pid_python = pid_python
+            download.file_path = file_path
+            download.infos_plowdown = infos_plowdown
+            download.lifecycle_insert_date = lifecycle_insert_date
+            download.lifecycle_update_date = lifecycle_update_date
+
+        list_downloads.append(download)
+
+        cursor.close()
+
+    return list_downloads

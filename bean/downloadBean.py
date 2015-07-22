@@ -20,6 +20,8 @@ class Download:
         self.pid_python = 0
         self.file_path = ''
         self.infos_plowdown = ''
+        self.lifecycle_insert_date = 0
+        self.lifecycle_update_date = 0
 
     def to_string(self):
         return 'download : \n id => ' + str(self.id) + ' | name => ' + self.name \
@@ -27,4 +29,7 @@ class Download:
                + str(self.size) + ' | status => ' + str(self.status) + ' | progress => ' + str(self.progress) \
                + ' | average_speed => ' + str(self.average_speed) + ' | time_left => ' + str(self.time_left) \
                + ' | pid_plowdown => ' + str(self.pid_plowdown) + ' | pid_python => ' + str(self.pid_python) \
-               + '| file_path => ' + self.file_path
+               + ' | file_path => ' + self.file_path
+
+# + ' | lifecycle_insert_date => ' + str(self.lifecycle_insert_date)
+# + ' | lifecycle_update_date => ' + str(self.lifecycle_update_date)

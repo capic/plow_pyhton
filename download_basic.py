@@ -17,6 +17,7 @@ import utils
 # from autobahn.twisted.websocket import WebSocketClientProtocol, \
 # WebSocketClientFactory
 import time
+from datetime import datetime
 
 
 # class NotificationServer(WebSocketServerProtocol):
@@ -29,11 +30,11 @@ import time
 #
 # def onMessage(self, payload, isBinary):
 # if isBinary:
-#             logging.debug("Binary message received: {} bytes".format(len(payload)))
-#             print("Binary message received: {} bytes".format(len(payload)))
-#         else:
-#             logging.debug("Text message received: {}".format(payload.decode('utf8')))
-#             print("Text message received: {}".format(payload.decode('utf8')))
+# logging.debug("Binary message received: {} bytes".format(len(payload)))
+# print("Binary message received: {} bytes".format(len(payload)))
+# else:
+# logging.debug("Text message received: {}".format(payload.decode('utf8')))
+# print("Text message received: {}".format(payload.decode('utf8')))
 #
 #         ## echo back message verbatim
 #         self.sendMessage(payload, isBinary)
@@ -57,52 +58,40 @@ import time
 class ManageDownloads:
     DIRECTORY_DOWNLOAD_DESTINATION_TEMP = "/mnt/HD/HD_a2/telechargement/temp_plowdown/"
     DIRECTORY_DOWNLOAD_DESTINATION = "/mnt/HD/HD_a2/telechargement/"
-    COMMAND_DOWNLOAD = "plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
-    COMMAND_DOWNLOAD_INFOS = "plowprobe --printf '\"%%f\"|\"%%s\"' %s"
+    COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
+    COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '%%f=$=%%s' %s"
 
     def __init__(self):
         self.cnx = utils.database_connect()
         self.stop_loop_file_treatment = False
-        
+
     def get_download_by_link_file_path(self, link, file_path):
-        logging.debug('*** get_download_by_link_file_path ***')
-        logging.debug('link: %s, file_path: %s' % (link, file_path))
-        
+        logging.debug('   *** get_download_by_link_file_path ***')
+        indent_log = '   '
+        logging.debug('%s link: %s, file_path: %s' % (indent_log, link, file_path))
+
         download = None
-        
+
         cursor = self.cnx.cursor()
         sql = 'SELECT * FROM download WHERE link = %s and file_path = %s'
         data = (link, file_path)
-        logging.debug('query : %s | data : (%s, %s)' % (sql, link, file_path))
+        logging.debug('%s query : %s | data : (%s, %s)' % (indent_log, sql, link, file_path))
         cursor.execute(sql, data)
-    
-        if cursor is not None:
-            for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
-                 pid_plowdown, pid_curl, pid_python, file_path, infos_plowdown) in cursor:
-                download = Download()
-                download.id = database_download_id
-                download.name = name
-                download.link = link
-                download.origin_size = origin_size
-                download.size = size
-                download.status = status
-                download.progress = progress
-                download.average_speed = average_speed
-                download.time_left = time_left
-                download.pid_plowdown = pid_plowdown
-                download.pid_python = pid_python
-                download.file_path = file_path
-                download.infos_plowdown = infos_plowdown
 
-                logging.debug('download : %s' % download.to_string())
+        list_download = utils.cursor_to_download_object(cursor)
 
-            cursor.close()
+        if len(list_download) == 1:
+            download = list_download[0]
+
+        logging.debug('%s download : %s' % (indent_log, download.to_string()))
 
         return download
 
     def get_download_to_start(self, download_id, file_path=None):
-        logging.debug('*** get_download_to_start ***')
-        logging.debug('download_id: %s' % str(download_id))
+        logging.debug(' *** get_download_to_start ***')
+        indent_log = ' '
+        logging.debug(' %s download_id: %s' % (indent_log, str(download_id)))
+
         download = None
 
         cursor = self.cnx.cursor()
@@ -112,42 +101,26 @@ class ManageDownloads:
 
             if file_path is not None:
                 sql += ' AND file_path = %s'
-                logging.debug('query : %s | data : (%s, %s)' % (sql, str(Download.STATUS_WAITING), file_path))
+                logging.debug(
+                    '%s query : %s | data : (%s, %s)' % (indent_log, sql, str(Download.STATUS_WAITING), file_path))
                 data = (Download.STATUS_WAITING, file_path)
             else:
                 data = (Download.STATUS_WAITING, )
-                logging.debug('query : %s | data : (%s)' % (sql, str(Download.STATUS_WAITING)))
+                logging.debug('%s query : %s | data : (%s)' % (indent_log, sql, str(Download.STATUS_WAITING)))
 
             sql += ' HAVING MIN(id)'
 
         else:
             sql = 'SELECT * FROM download WHERE id = %s'
             data = (download_id, )
-            logging.debug('query : %s | data : (%s)' % (sql, str(download_id)))
+            logging.debug('%s query : %s | data : (%s)' % (indent_log, sql, str(download_id)))
 
         cursor.execute(sql, data)
 
-        if cursor is not None:
-            for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
-                 pid_plowdown, pid_curl, pid_python, file_path, infos_plowdown) in cursor:
-                download = Download()
-                download.id = database_download_id
-                download.name = name
-                download.link = link
-                download.origin_size = origin_size
-                download.size = size
-                download.status = status
-                download.progress = progress
-                download.average_speed = average_speed
-                download.time_left = time_left
-                download.pid_plowdown = pid_plowdown
-                download.pid_python = pid_python
-                download.file_path = file_path
-                download.infos_plowdown = infos_plowdown
+        list_download = utils.cursor_to_download_object(cursor)
 
-                logging.debug('download : %s' % download.to_string())
-
-            cursor.close()
+        if len(list_download) == 1:
+            download = list_download[0]
 
         return download
 
@@ -170,29 +143,7 @@ class ManageDownloads:
 
         cursor.execute(sql, data)
 
-        if cursor is not None:
-            for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
-                 pid_plowdown, pid_curl, pid_python, file_path, infos_plowdown) in cursor:
-                download = Download()
-                download.id = database_download_id
-                download.name = name
-                download.link = link
-                download.origin_size = origin_size
-                download.size = size
-                download.status = status
-                download.progress = progress
-                download.average_speed = average_speed
-                download.time_left = time_left
-                download.pid_plowdown = pid_plowdown
-                download.pid_python = pid_python
-                download.file_path = file_path
-                download.infos_plowdown = infos_plowdown
-
-                logging.debug('download : %s' % download.to_string())
-
-                list_downloads.append(download)
-
-            cursor.close()
+        list_download = utils.cursor_to_download_object(cursor)
 
         return list_downloads
 
@@ -233,69 +184,70 @@ class ManageDownloads:
         f.close()
 
     def insert_update_download(self, link, file_path):
-        logging.debug('*** insert_update_download ***')
-        
+        logging.debug('  *** insert_update_download ***')
+        indent_log = '  '
+
+        # si la ligne n'est pas marqué comme terminé avec ce programme
         if not link.startswith('# '):
+            # si la ligne est marqué comme terminé par le traitement par liste de plowdown
             if link.startswith('#OK'):
+                finished = True
                 link = link.replace('#OK ', '')
-                   
-            cmd = (self.COMMAND_DOWNLOAD_INFOS % (link))
-            logging.debug('command : %s' % cmd)
-            p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
-    
-            name = ''
-            size = 0
-            line = ''
-            while True:
-                out = p.stderr.read(1)
-                if out == '' and p.poll() is not None:
-                    break
-                if out != '':
-                    if out != '\n' and out != '\r':
-                        line += out
-                    else:
-                        logging.debug('plowprobe line : %s' % line)
-                        name = line.split('|')[0]
-                        size = line.split('|')[1]
-    
-            if not self.download_already_exists(link):
-                logging.debug('download %s doesn''t exist -> insert' % link)
-    
-                cursor = self.cnx.cursor()
-            
-                sql = 'INSERT INTO download (name, link, size, status, file_path) values (%s, %s, %s, %s, %s)'
-                data = (link, name, Download.STATUS_WAITING, size, file_path)
-                logging.debug(
-                    'query: %s | data: (%s, %s, %s, %s, %s)' % (sql, name, link, size, Download.STATUS_WAITING, file_path))
-    
-                cursor.execute(sql, data)
-    
-                cursor.close()
+
+            cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
+            exists = self.download_already_exists(link)
+            # on n'insère pas un lien qui existe déjà ou qui est terminé
+            if not exists:
+                if not finished:
+                    logging.debug('%s Download %s doesn''t exist -> insert' % (indent_log, link))
+
+                    logging.debug('%s command : %s' % (indent_log, cmd))
+                    name, size = utils.get_infos_plowprobe(cmd)
+                    logging.debug('%s Infos get from plowprobe %s,%s' % (indent_log, name, size))
+                    cursor = self.cnx.cursor()
+
+                    sql = 'INSERT INTO download (name, link, size, status, file_path, lifecycle_insert_date) values (%s, %s, %s, %s, %s, %s)'
+                    data = (name, link, size, Download.STATUS_WAITING, file_path, datetime.now())
+                    logging.debug(
+                        '%s query: %s | data: (%s, %s, %s, %s, %s, %s)' % (
+                            indent_log, sql, name, link, size, Download.STATUS_WAITING, file_path, str(datetime.now()),))
+
+                    cursor.execute(sql, data)
+
+                    cursor.close()
             else:
-                logging.debug('download %s exists -> update' % link)
+                logging.debug('%s Download %s exists -> update' % (indent_log, link))
                 download = self.get_download_by_link_file_path(link, file_path)
-                    
-                if download is not None:
-                    download.name = name
-                    download.size = size
-                    download.status = Download.STATUS_FINISHED
-                    self.update_download(download)  
+
+                if download is not None and download.status != Download.STATUS_FINISHED:
+                    if download.name is None or download.name == '':
+                        logging.debug('%s command : %s' % (indent_log, cmd))
+                        name, size = utils.get_infos_plowprobe(cmd)
+                        logging.debug('%s Infos get from plowprobe %s,%s' % (indent_log, name, size))
+
+                    if finished:
+                        download.status = Download.STATUS_FINISHED
+
+                    self.update_download(download)
 
     def update_download(self, download):
-        logging.debug('*** update_download ***')
+        logging.debug('  *** update_download ***')
+        indent_log = '   '
 
         cursor = self.cnx.cursor()
 
         sql = 'UPDATE download SET name = %s, link = %s, origin_size = %s, size = %s, status = %s, progress = %s, average_speed = %s, time_left = %s ' \
-              + ', pid_plowdown = %s, pid_python = %s, file_path = %s, infos_plowdown = %s WHERE id = %s'
+              + ', pid_plowdown = %s, pid_python = %s, file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), lifecycle_update_date = %s WHERE id = %s'
         data = (download.name, download.link, download.origin_size, download.size, download.status, download.progress,
                 download.average_speed, download.time_left,
-                download.pid_plowdown, download.pid_python, download.file_path, download.infos_plowdown, download.id)
-        logging.debug('query : %s | data : (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
-            sql, download.name, download.link, str(download.origin_size), str(download.size), str(download.status),
+                download.pid_plowdown, download.pid_python, download.file_path, download.infos_plowdown, datetime.now(),
+                download.id)
+        logging.debug('%s query : %s | data : (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
+            indent_log, sql, download.name, download.link, str(download.origin_size), str(download.size),
+            str(download.status),
             str(download.progress), str(download.average_speed), str(download.time_left),
             str(download.pid_plowdown), str(download.pid_python), download.file_path, download.infos_plowdown,
-            str(download.id)))
+            str(datetime.now()), str(download.id)))
         cursor.execute(sql, data)
 
         cursor.close()
@@ -312,11 +264,12 @@ class ManageDownloads:
 
     def start_download(self, download):
         logging.debug('*** start_download ***')
+        indent_log = '  '
 
         cmd = (
             self.COMMAND_DOWNLOAD % (
                 self.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, self.DIRECTORY_DOWNLOAD_DESTINATION, download.link))
-        logging.debug('command : %s' % cmd)
+        logging.debug('%s command : %s' % (indent_log, cmd))
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
         download.pid_plowdown = p.pid
         download.pid_python = os.getpid()
@@ -340,24 +293,27 @@ class ManageDownloads:
         return download
 
     def start_file_treatment(self, file_path):
-        logging.debug('*** start_file_treatment ***')
+        logging.debug(' *** start_file_treatment ***')
+        indent_log = ' '
 
+        logging.debug('%s =========> Insert new links or update old in database <=========')
         # insert links in database
         file = open(file_path, 'r')
-        logging.debug('file %s opened' % file_path)
         for line in file:
             if 'http' in line:
-                logging.debug('line contains http')
+                logging.debug('%s Line %s contains http' % (indent_log, line))
                 self.insert_update_download(line, file_path)
         file.close()
+        logging.debug('%s =========< End insert new links or update old in database >=========')
 
         download = self.get_download_to_start(None, file_path)
         while not self.stop_loop_file_treatment and download is not None:
+            logging.debug('%s =========> Start new download <=========')
             download = self.start_download(download)
             # mark link with # in file
             if download.status == Download.STATUS_FINISHED:
                 self.mark_link_finished_in_file(download)
-
+            logging.debug('%s =========< End download >=========')
             # next download
             download = self.get_download_to_start(None, file_path)
 
@@ -399,7 +355,8 @@ class ManageDownloads:
                 tab_name = values_line.split('Filename:')
                 download.name = tab_name[len(tab_name) - 1]
 
-            download.infos_plowdown += time.strftime('%d/%m/%y %H:%M:%S', time.localtime()) + ': ' + values_line + '\r\n'
+            download.infos_plowdown = time.strftime('%d/%m/%y %H:%M:%S',
+                                                    time.localtime()) + ': ' + values_line + '\r\n'
             self.update_download(download)
 
         return download
@@ -415,6 +372,7 @@ class ManageDownloads:
             download.status = Download.STATUS_WAITING
             download.time_left = 0
             download.average_speed = 0
+            download.infos_plowdown = 'Process killed by inactivity ...\r\n'
 
             self.update_download(download)
 
@@ -430,9 +388,9 @@ COMMAND_USAGE = 'usage: script start|stop (download_id)'
 def main(argv):
     logging.basicConfig(filename='/var/www/log.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
                         datefmt='%d/%m/%Y %H:%M:%S')
-    # log.startLogging(sys.stdout)
+    logging.debug('*** Start application ***')
+    indent_log = "";
 
-    logging.debug('Start application')
     try:
         opts, args = getopt.getopt(argv, "", [])
     except getopt.GetoptError:
@@ -457,21 +415,20 @@ def main(argv):
         # reactor.run()
 
         manage_download = ManageDownloads()
-        logging.debug('args[0]: %s' % args[0])
-        logging.debug('args length: %s' % str(len(args)))
+
         # start a download
         if args[0] == 'start':
             if len(args) > 1:
-                logging.debug('args[1]: %s' % str(args[1]))
+                logging.debug('%s args[1]: %s' % (indent_log, str(args[1])))
                 download_id = args[1]
                 # print(time.ctime())
                 # time.sleep(30)
                 # print(time.ctime())
                 # print("sending start")
                 # factory.protocol.sendMessage('staaaaaaaaaaaaaaart')
-                logging.debug('download_id %s' % download_id)
+                logging.debug('%s download_id %s' % (indent_log, download_id))
                 download_to_start = manage_download.get_download_to_start(download_id)
-                logging.debug('download to start %s' % download_to_start.to_string())
+                logging.debug('%s download to start %s' % (indent_log, download_to_start.to_string()))
                 manage_download.start_download(download_to_start)
             else:
                 print(COMMAND_USAGE)
@@ -479,9 +436,9 @@ def main(argv):
         elif args[0] == 'stop':
             if len(args) > 1:
                 download_id = args[1]
-                logging.debug('download_id %s' % download_id)
+                logging.debug('%s download_id %s' % (indent_log, download_id))
                 download_to_start = manage_download.get_download_to_start(download_id)
-                logging.debug('download to stop %s' % download_to_start.to_string())
+                logging.debug('%s download to stop %s' % (indent_log, download_to_start.to_string()))
                 manage_download.stop_download(download_to_start)
             else:
                 print(COMMAND_USAGE)
@@ -489,7 +446,7 @@ def main(argv):
         elif args[0] == 'start_file':
             if len(args) > 1:
                 file_path = args[1]
-                logging.debug('file path containing links %s', file_path)
+                logging.debug('%s Start file mode: %s', (indent_log, file_path))
                 manage_download.start_file_treatment(file_path)
         # stop downloads from file TODO: don't work
         elif args[0] == 'stop_file':
