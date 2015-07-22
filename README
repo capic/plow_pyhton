@@ -19,3 +19,4 @@ TODO:
       (22/07/15 09:17:43: Failed inside uptobox_download(), line 234, uptobox.sh
         22/07/15 09:17:43: Failed inside uptobox_download() [1])
 - certains processus sont killé alors qu'ils sont bien en cours de téléchargement => mauvais pid ????
+- ajouter .encode('UTF-8') sur toutes les chaines de caractères pour les logs
