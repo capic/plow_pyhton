@@ -171,17 +171,19 @@ class ManageDownloads:
 
     def mark_link_finished_in_file(self, download):
         logging.debug('*** mark_link_finished_in_file ***')
+        try:
+            f = open(download.file_path, 'r')
+            file_data = f.read()
+            f.close()
 
-        f = open(download.file_path, 'r')
-        file_data = f.read()
-        f.close()
-
-        replace_string = "# " + download.name + "\r\n# OK " + download.link
-        new_data = file_data.replace(download.link, replace_string)
-
-        f = open(download.file_path, 'w')
-        f.write(new_data)
-        f.close()
+            replace_string = "# " + download.name + "\r\n# OK " + download.link
+            new_data = file_data.replace(download.link, replace_string)
+    
+            f = open(download.file_path, 'w')
+            f.write(new_data)
+            f.close()
+        except:
+            loggin.error('Unexpected error:', sys.exc_info()[0])
 
     def insert_update_download(self, link, file_path):
         logging.debug('  *** insert_update_download ***')
