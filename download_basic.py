@@ -183,7 +183,7 @@ class ManageDownloads:
             f.write(new_data)
             f.close()
         except:
-            loggin.error('Unexpected error:', sys.exc_info()[0])
+            logging.error('Unexpected error:', sys.exc_info()[0])
 
     def insert_update_download(self, link, file_path):
         logging.debug('  *** insert_update_download ***')
