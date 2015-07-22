@@ -371,7 +371,7 @@ class ManageDownloads:
         logging.debug('*** check_download_alive ***')
 
         if not utils.check_pid(download.pid_plowdown):
-            utils.kill_proc_tree(download.pid_python)
+            # utils.kill_proc_tree(download.pid_python)
             logging.debug('Process %s for download %s killed for inactivity ...\r\n' % (download.pid_python, download.name))
 
             download.pid_plowdown = 0
