@@ -22,3 +22,4 @@ TODO:
 - ajouter .encode('UTF-8') sur toutes les chaines de caractères pour les logs
 - la taille en MB de certains fichiers n'est pas bonne (189M réélle => 1.8MB en BDD)
 - certain process plodown tourne en fond ... pourquoi ?
+- avec uptobox les liens sont pas marqué comme téléchargé dans le fichier
