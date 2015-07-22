@@ -15,3 +15,6 @@ TODO:
 - mettre au statut waiting seulement si en in progress et que le processus est absent
 - apparemment le téléchargement s'arrête au bout de 2 minutes
 - lorsque l'on a vidé les infos log pendant que le download est en cours il faut penser à vider ce qu'il y avait dans l'objet => a tester
+- lorsqu'il y a une erreur dans le téléchargmement en lui même le statut n'est pas repassé à waiting
+      (22/07/15 09:17:43: Failed inside uptobox_download(), line 234, uptobox.sh
+        22/07/15 09:17:43: Failed inside uptobox_download() [1])
