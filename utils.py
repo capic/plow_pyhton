@@ -107,7 +107,7 @@ def cursor_to_download_object(cursor):
             download.lifecycle_insert_date = lifecycle_insert_date
             download.lifecycle_update_date = lifecycle_update_date
 
-        list_downloads.append(download)
+            list_downloads.append(download)
 
         cursor.close()
 

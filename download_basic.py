@@ -143,7 +143,9 @@ class ManageDownloads:
 
         cursor.execute(sql, data)
 
-        list_download = utils.cursor_to_download_object(cursor)
+        list_downloads = utils.cursor_to_download_object(cursor)
+
+        print(list_downloads)
 
         return list_downloads
 
@@ -189,17 +191,19 @@ class ManageDownloads:
         logging.debug('  *** insert_update_download ***')
         indent_log = '  '
 
-        # si la ligne n'est pas marqué comme terminé avec ce programme
+        # si la ligne n'est pas marque comme termine avec ce programme
         if not link.startswith('# '):
-            # si la ligne est marqué comme terminé par le traitement par liste de plowdown
+            finished = False
+            # si la ligne est marque comme termine par le traitement par liste de plowdown
             if link.startswith('#OK'):
                 finished = True
                 link = link.replace('#OK ', '')
 
             cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
             exists = self.download_already_exists(link)
-            # on n'insère pas un lien qui existe déjà ou qui est terminé
+            # on n'insere pas un lien qui existe deja ou qui est termine
             if not exists:
+                logging.debug('%s Download finished ? %s' % (indent_log, str(finished)))
                 if not finished:
                     logging.debug('%s Download %s doesn''t exist -> insert' % (indent_log, link))
 
@@ -389,10 +393,11 @@ COMMAND_USAGE = 'usage: script start|stop (download_id)'
 
 
 def main(argv):
+
     logging.basicConfig(filename='/var/www/log.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
                         datefmt='%d/%m/%Y %H:%M:%S')
     logging.debug('*** Start application ***')
-    indent_log = "";
+    indent_log = ""
 
     try:
         opts, args = getopt.getopt(argv, "", [])
