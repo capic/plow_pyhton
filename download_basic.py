@@ -454,7 +454,7 @@ def main(argv):
         elif args[0] == 'start_file':
             if len(args) > 1:
                 file_path = args[1]
-                logging.debug('%s Start file mode: %s', (indent_log, file_path))
+                logging.debug('%s Start file mode: %s', % (indent_log, file_path))
                 manage_download.start_file_treatment(file_path)
         # stop downloads from file TODO: don't work
         elif args[0] == 'stop_file':
