@@ -38,9 +38,9 @@ from datetime import datetime
 # print("Text message received: {}".format(payload.decode('utf8')))
 #
 # ## echo back message verbatim
-#         self.sendMessage(payload, isBinary)
+# self.sendMessage(payload, isBinary)
 #
-#     def onClose(self, wasClean, code, reason):
+# def onClose(self, wasClean, code, reason):
 #         print("WebSocket connection closed: {}".format(reason))
 
 
@@ -77,15 +77,15 @@ class ManageDownloads:
         sql = '' \
               'SELECT * FROM download WHERE link = %s and file_path = %s'
         data = (link, file_path)
-        logging.debug('%s query : %s | data : (%s, %s)' % (indent_log, sql, link.encode('UTF-8'), file_path.encode('UTF-8')))
+        logging.debug(
+            '%s query : %s | data : (%s, %s)' % (indent_log, sql, link.encode('UTF-8'), file_path.encode('UTF-8')))
         cursor.execute(sql, data)
 
         list_download = utils.cursor_to_download_object(cursor)
 
         if len(list_download) == 1:
             download = list_download[0]
-
-        logging.debug('%s download : %s' % (indent_log, download.to_string().encode('UTF-8')))
+            logging.debug('%s download : %s' % (indent_log, download.to_string().encode('UTF-8')))
 
         return download
 
@@ -104,11 +104,13 @@ class ManageDownloads:
             if file_path is not None:
                 sql += ' AND file_path = %s'
                 logging.debug(
-                    '%s query : %s | data : (%s, %s)' % (indent_log, sql, str(Download.STATUS_WAITING).encode('UTF-8'), file_path.encode('UTF-8')))
+                    '%s query : %s | data : (%s, %s)' % (
+                        indent_log, sql, str(Download.STATUS_WAITING).encode('UTF-8'), file_path.encode('UTF-8')))
                 data = (Download.STATUS_WAITING, file_path)
             else:
                 data = (Download.STATUS_WAITING, )
-                logging.debug('%s query : %s | data : (%s)' % (indent_log, sql, str(Download.STATUS_WAITING).encode('UTF-8')))
+                logging.debug(
+                    '%s query : %s | data : (%s)' % (indent_log, sql, str(Download.STATUS_WAITING).encode('UTF-8')))
 
             sql += ' HAVING MIN(id)'
 
@@ -173,19 +175,28 @@ class ManageDownloads:
 
     def mark_link_finished_in_file(self, download):
         logging.debug('*** mark_link_finished_in_file ***')
+        logging.debug('# %s \r\n# OK %s' % (download.name.encode('UTF-8'), download.link.encode('UTF-8')))
+        # try:
+        f = open(download.file_path, 'r')
+        logging.debug('file opened %s' % download.file_path)
+        file_data = f.read()
+        logging.debug('file red : %s' % file_data)
+        f.close()
+        logging.debug('file closed')
+        logging.debug('download.name %s' % download.name.encode('UTF-8'))
+        logging.debug('download.link %s' % download.link)
+        new_data = file_data.replace(download.link.encode('UTF-8'), '# %s \r\n# OK %s' % (
+            download.name.encode('UTF-8'), download.link.encode('UTF-8')))
+        # logging.debug('NEW DATA : %s' % new_data.encode('UTF-8'))
 
-        try:
-            f = open(download.file_path, 'r')
-            file_data = f.read()
-            f.close()
-
-            new_data = file_data.replace(download.link, '# %s \r\n# OK %s' % (download.name.encode('UTF-8'), download.link))
-
-            f = open(download.file_path, 'w')
-            f.write(new_data)
-            f.close()
-        except:
-            logging.error('Unexpected error:', sys.exc_info()[0])
+        f = open(download.file_path, 'w')
+        logging.debug('file opened')
+        f.write(new_data)
+        logging.debug('file wrote')
+        f.close()
+        logging.debug('file closed')
+        # except:
+        #    logging.error('Unexpected error:', sys.exc_info()[0])
 
     def insert_update_download(self, link, file_path):
         logging.debug('  *** insert_update_download ***')
@@ -209,14 +220,16 @@ class ManageDownloads:
 
                     logging.debug('%s command : %s' % (indent_log, cmd.encode('UTF-8')))
                     name, size = utils.get_infos_plowprobe(cmd)
-                    logging.debug('%s Infos get from plowprobe %s,%s' % (indent_log, name.encode('UTF-8'), str(size).encode('UTF-8')))
+                    logging.debug('%s Infos get from plowprobe %s,%s' % (
+                        indent_log, name.encode('UTF-8'), str(size).encode('UTF-8')))
                     cursor = self.cnx.cursor()
 
                     sql = 'INSERT INTO download (name, link, size, status, file_path, lifecycle_insert_date) values (%s, %s, %s, %s, %s, %s)'
                     data = (name, link, size, Download.STATUS_WAITING, file_path, datetime.now())
                     logging.debug(
                         '%s query: %s | data: (%s, %s, %s, %s, %s, %s)' % (
-                            indent_log, sql, name.encode('UTF-8'), link.encode('UTF-8'), str(size).encode('UTF-8'), str(Download.STATUS_WAITING).encode('UTF-8'), file_path.encode('UTF-8'),
+                            indent_log, sql, name.encode('UTF-8'), link.encode('UTF-8'), str(size).encode('UTF-8'),
+                            str(Download.STATUS_WAITING).encode('UTF-8'), file_path.encode('UTF-8'),
                             str(datetime.now()).encode('UTF-8'),))
 
                     cursor.execute(sql, data)
@@ -230,7 +243,8 @@ class ManageDownloads:
                     if download.name is None or download.name == '':
                         logging.debug('%s command : %s' % (indent_log, cmd.encode('UTF-8')))
                         name, size = utils.get_infos_plowprobe(cmd)
-                        logging.debug('%s Infos get from plowprobe %s,%s' % (indent_log, name.encode('UTF-8'), size.encode('UTF-8')))
+                        logging.debug('%s Infos get from plowprobe %s,%s' % (
+                            indent_log, name.encode('UTF-8'), size.encode('UTF-8')))
 
                     if finished:
                         download.status = Download.STATUS_FINISHED
@@ -250,10 +264,13 @@ class ManageDownloads:
                 download.pid_plowdown, download.pid_python, download.file_path, download.infos_plowdown, datetime.now(),
                 download.id)
         logging.debug('%s query : %s | data : (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
-            indent_log, sql, download.name.encode('UTF-8'), download.link.encode('UTF-8'), str(download.origin_size).encode('UTF-8'), str(download.size).encode('UTF-8'),
+            indent_log, sql, download.name.encode('UTF-8'), download.link.encode('UTF-8'),
+            str(download.origin_size).encode('UTF-8'), str(download.size).encode('UTF-8'),
             str(download.status).encode('UTF-8'),
-            str(download.progress).encode('UTF-8'), str(download.average_speed).encode('UTF-8'), str(download.time_left).encode('UTF-8'),
-            str(download.pid_plowdown).encode('UTF-8'), str(download.pid_python).encode('UTF-8'), download.file_path.encode('UTF-8'), download.infos_plowdown.encode('UTF-8'),
+            str(download.progress).encode('UTF-8'), str(download.average_speed).encode('UTF-8'),
+            str(download.time_left).encode('UTF-8'),
+            str(download.pid_plowdown).encode('UTF-8'), str(download.pid_python).encode('UTF-8'),
+            download.file_path.encode('UTF-8'), download.infos_plowdown.encode('UTF-8'),
             str(datetime.now()).encode('UTF-8'), str(download.id).encode('UTF-8')))
         cursor.execute(sql, data)
 
@@ -261,7 +278,7 @@ class ManageDownloads:
 
     def stop_download(self, download):
         logging.debug('*** stop_download ***')
-        logging.debug('pid python: ' + str(download.pid_python).encode('UTF-8'))
+        logging.debug('pid python: %s' % str(download.pid_python).encode('UTF-8'))
         utils.kill_proc_tree(download.pid_python)
 
         download.pid_python = 0
@@ -329,7 +346,7 @@ class ManageDownloads:
             # next download
             download = self.get_download_to_start(None, file_path)
 
-    def stop_file_treatment(self):
+    def stop_file_treatment(self, file_path):
         logging.debug('*** stop_file_treatment ***')
 
         # TODO: stop current download
@@ -379,7 +396,8 @@ class ManageDownloads:
         if not utils.check_pid(download.pid_plowdown):
             # utils.kill_proc_tree(download.pid_python)
             logging.debug(
-                'Process %s for download %s killed for inactivity ...\r\n' % (str(download.pid_python).encode('UTF-8'), download.name.encode('UTF-8')))
+                'Process %s for download %s killed for inactivity ...\r\n' % (
+                    str(download.pid_python).encode('UTF-8'), download.name.encode('UTF-8')))
 
             download.pid_plowdown = 0
             download.pid_python = 0

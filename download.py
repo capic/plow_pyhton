@@ -3,6 +3,7 @@ __author__ = 'Vincent'
 from injector import Module, Key, provides, Injector, inject, singleton
 import mysql.connector
 
+
 class RequestHandler(object):
     @inject(db=mysql.connector.MySQLConnection)
     def __init__(self, db):
@@ -13,11 +14,15 @@ class RequestHandler(object):
         cursor.execute('SELECT key, value FROM data ORDER BY key')
         return cursor.fetchall()
 
+
 Configuration = Key('configuration')
 
+
 def configure_for_testing(binder):
-    configuration = {'db_connection_string': 'host="localhost", user="root", password="capic_20_04_1982", database="plowshare"'}
+    configuration = {
+        'db_connection_string': 'host="localhost", user="root", password="capic_20_04_1982", database="plowshare"'}
     binder.bind(Configuration, to=configuration, scope=singleton)
+
 
 class DatabaseModule(Module):
     @singleton
@@ -30,6 +35,7 @@ class DatabaseModule(Module):
         cursor.execute('INSERT OR REPLACE INTO data VALUES ("hello", "world")')
 
         return conn
+
 
 injector = Injector([configure_for_testing, DatabaseModule()])
 handler = injector.get(RequestHandler)
