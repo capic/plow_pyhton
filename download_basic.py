@@ -218,14 +218,14 @@ class ManageDownloads:
 
                     logging.debug('%s command : %s' % (indent_log, cmd.encode('UTF-8')))
                     name, size = utils.get_infos_plowprobe(cmd)
-                    logging.debug('%s Infos get from plowprobe %s,%s' % (indent_log, name.encode('UTF-8'), size.encode('UTF-8')))
+                    logging.debug('%s Infos get from plowprobe %s,%s' % (indent_log, name.encode('UTF-8'), str(size).encode('UTF-8')))
                     cursor = self.cnx.cursor()
 
                     sql = 'INSERT INTO download (name, link, size, status, file_path, lifecycle_insert_date) values (%s, %s, %s, %s, %s, %s)'
                     data = (name, link, size, Download.STATUS_WAITING, file_path, datetime.now())
                     logging.debug(
                         '%s query: %s | data: (%s, %s, %s, %s, %s, %s)' % (
-                            indent_log, sql, name.encode('UTF-8'), link.encode('UTF-8'), size.encode('UTF-8'), Download.STATUS_WAITING.encode('UTF-8'), file_path.encode('UTF-8'),
+                            indent_log, sql, name.encode('UTF-8'), link.encode('UTF-8'), str(size).encode('UTF-8'), str(Download.STATUS_WAITING).encode('UTF-8'), file_path.encode('UTF-8'),
                             str(datetime.now()).encode('UTF-8'),))
 
                     cursor.execute(sql, data)
