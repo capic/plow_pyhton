@@ -329,6 +329,11 @@ class ManageDownloads:
             # mark link with # in file
             if download.status == Download.STATUS_FINISHED:
                 self.mark_link_finished_in_file(download)
+            else:
+                download.status = Download.STATUS_WAITING
+                download.time_left = 0
+                download.average_speed = 0
+                self.update_download(download)
             logging.debug('%s =========< End download >=========')
             # next download
             download = self.get_download_to_start(None, file_path)
