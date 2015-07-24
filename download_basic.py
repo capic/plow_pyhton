@@ -285,7 +285,7 @@ class ManageDownloads:
         download.pid_python = 0
         download.pid_plowdown = 0
         download.status = Download.STATUS_WAITING
-        download.infos_plodown = 'updated by stop_download method\r\n
+        download.infos_plodown = 'updated by stop_download method\r\n'
         self.update_download(download)
 
     def start_download(self, download):
