@@ -300,7 +300,7 @@ class ManageDownloads:
         download.pid_plowdown = p.pid
         download.pid_python = os.getpid()
         download.status = Download.STATUS_IN_PROGRESS
-        download.infos_plodown = 'updated by start_download method\r\n
+        download.infos_plodown = 'updated by start_download method\r\n'
         self.update_download(download)
 
         line = ''
@@ -344,7 +344,7 @@ class ManageDownloads:
                 download.status = Download.STATUS_WAITING
                 download.time_left = 0
                 download.average_speed = 0
-                download.infos_plodown = 'updated by start_file_treatment method\r\n
+                download.infos_plodown = 'updated by start_file_treatment method\r\n'
                 self.update_download(download)
             logging.debug('%s =========< End download >=========')
             # next download
