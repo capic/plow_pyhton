@@ -249,6 +249,7 @@ class ManageDownloads:
                     if finished:
                         download.status = Download.STATUS_FINISHED
 
+                    download.infos_plodown = 'updated by insert_update_download method\r\n'
                     self.update_download(download)
 
     def update_download(self, download):
@@ -284,6 +285,7 @@ class ManageDownloads:
         download.pid_python = 0
         download.pid_plowdown = 0
         download.status = Download.STATUS_WAITING
+        download.infos_plodown = 'updated by stop_download method\r\n
         self.update_download(download)
 
     def start_download(self, download):
@@ -298,6 +300,7 @@ class ManageDownloads:
         download.pid_plowdown = p.pid
         download.pid_python = os.getpid()
         download.status = Download.STATUS_IN_PROGRESS
+        download.infos_plodown = 'updated by start_download method\r\n
         self.update_download(download)
 
         line = ''
@@ -341,6 +344,7 @@ class ManageDownloads:
                 download.status = Download.STATUS_WAITING
                 download.time_left = 0
                 download.average_speed = 0
+                download.infos_plodown = 'updated by start_file_treatment method\r\n
                 self.update_download(download)
             logging.debug('%s =========< End download >=========')
             # next download
@@ -404,7 +408,7 @@ class ManageDownloads:
             download.status = Download.STATUS_WAITING
             download.time_left = 0
             download.average_speed = 0
-            download.infos_plowdown = 'Process killed by inactivity ...\r\n'
+            download.infos_plowdown = 'updated by check_download_alive_method\r\nProcess killed by inactivity ...\r\n'
 
             self.update_download(download)
 
