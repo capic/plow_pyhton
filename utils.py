@@ -86,18 +86,22 @@ def cursor_to_download_object(cursor):
     list_downloads = []
 
     if cursor is not None:
-        for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
-             pid_plowdown, pid_curl, pid_python, file_path, priority, infos_plowdown, lifecycle_insert_date,
-             lifecycle_update_date) in cursor:
+        for (database_download_id, name, link, size_file, size_part, size_file_downloaded, size_part_downloaded,
+             status, progress_part, average_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python, file_path,
+             priority, infos_plowdown, lifecycle_insert_date, lifecycle_update_date) in cursor:
+
             download = Download()
             download.id = database_download_id
             download.name = name
             download.link = link
-            download.origin_size = origin_size
-            download.size = size
+            download.size_file = size_file
+            download.size_part = size_part
+            download.size_file_downloaded = size_file_downloaded
+            download.size_part_downloaded = size_part_downloaded
             download.status = status
-            download.progress = progress
+            download.progress_part = progress_part
             download.average_speed = average_speed
+            download.time_spent = time_spent
             download.time_left = time_left
             download.pid_plowdown = pid_plowdown
             download.pid_python = pid_python

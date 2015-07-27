@@ -27,9 +27,10 @@ class ManageDownloads:
         if download is not None:
             cursor = self.cnx.cursor()
 
-            sql = 'INSERT INTO download (name, link, size, status, file_path, priority, lifecycle_insert_date) values (%s, %s, %s, %s, %s, %s, %s)'
+            sql = 'INSERT INTO download (name, link, size_file, status, file_path, priority, lifecycle_insert_date) values (%s, %s, %s, %s, %s, %s, %s)'
             data = (
-                download.name, download.link, download.size, download.status, download.file_path, download.priority,
+                download.name, download.link, download.size_file, download.status, download.file_path,
+                download.priority,
                 datetime.now())
             logging.debug(
                 '%s query: %s | data: (%s, %s, %s, %s, %s, %s)' % (
@@ -50,24 +51,26 @@ class ManageDownloads:
 
         cursor = self.cnx.cursor()
 
-        sql = 'UPDATE download SET name = %s, link = %s, origin_size = %s, size = %s, status = %s, progress = %s, average_speed = %s, time_left = %s ' \
-              + ', pid_plowdown = %s, pid_python = %s, priority = %s, file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), lifecycle_update_date = %s WHERE id = %s'
-        data = (download.name, download.link, download.origin_size, download.size, download.status, download.progress,
-                download.average_speed, download.time_left,
-                download.pid_plowdown, download.pid_python, download.priority, download.file_path,
-                download.infos_plowdown, datetime.now(),
-                download.id)
-        logging.debug('%s query : %s | data : (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
-            indent_log, sql, download.name.encode('UTF-8'), download.link.encode('UTF-8'),
-            str(download.origin_size).encode('UTF-8'), str(download.size).encode('UTF-8'),
-            str(download.status).encode('UTF-8'),
-            str(download.progress).encode('UTF-8'), str(download.average_speed).encode('UTF-8'),
-            str(download.time_left).encode('UTF-8'),
-            str(download.pid_plowdown).encode('UTF-8'), str(download.pid_python).encode('UTF-8'),
-            str(download.priority),
-            download.file_path.encode('UTF-8'),
-            download.infos_plowdown.encode('UTF-8'),
-            str(datetime.now()).encode('UTF-8'), str(download.id).encode('UTF-8')))
+        sql = 'UPDATE download SET name = %s, link = %s, size_file = %s, size_part = %s, size_file_downloaded = %s, size_part_downloaded = %s,' \
+              'status = %s, progress_part = %s, average_speed = %s, time_spent = %s, time_left = %s , pid_plowdown = %s, pid_python = %s, priority = %s, ' \
+              'file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), lifecycle_update_date = %s WHERE id = %s'
+        data = (download.name, download.link, download.size_file, download.size_part, download.size_file_downloaded,
+                download.size_part_downloaded, download.status, download.progress_part, download.average_speed,
+                download.time_spent, download.time_left, download.pid_plowdown, download.pid_python, download.priority,
+                download.file_path, download.infos_plowdown, datetime.now(), download.id)
+        logging.debug(
+            '%s query : %s | data : (%s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
+                indent_log, sql, download.name.encode('UTF-8'), download.link.encode('UTF-8'),
+                str(download.size_file).encode('UTF-8'), str(download.size_part).encode('UTF-8'),
+                str(download.size_file_downloaded).encode('UTF-8'), str(download.size_part_downloaded).encode('UTF-8'),
+                str(download.status).encode('UTF-8'), str(download.progress_part).encode('UTF-8'),
+                str(download.average_speed).encode('UTF-8'), str(download.time_spent).encode('UTF-8'),
+                str(download.time_left).encode('UTF-8'),
+                str(download.pid_plowdown).encode('UTF-8'), str(download.pid_python).encode('UTF-8'),
+                str(download.priority),
+                download.file_path.encode('UTF-8'),
+                download.infos_plowdown.encode('UTF-8'),
+                str(datetime.now()).encode('UTF-8'), str(download.id).encode('UTF-8')))
         cursor.execute(sql, data)
 
         cursor.close()
@@ -226,8 +229,6 @@ class ManageDownloads:
 
         return exists
 
-    # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
-    # 6 => vitesse moyenne recu, 7 => vitesse moyenne envoye, 8 => temps total, 9 => temps passe, 10 => temps restant, 11 => vitesse courante
     def insert_update_download(self, link, file_path):
         logging.debug('  *** insert_update_download ***')
         indent_log = '  '
@@ -322,6 +323,8 @@ class ManageDownloads:
 
         return download
 
+    # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
+    # 6 => vitesse moyenne recu, 7 => vitesse moyenne envoye, 8 => temps total, 9 => temps passe, 10 => temps restant, 11 => vitesse courante
     def get_download_values(self, values_line, download):
         logging.debug('*** get_download_values ***')
 
@@ -331,19 +334,30 @@ class ManageDownloads:
         if len(values) > 0:
             logging.debug("values[0]: %s" % str(values[0]).encode('UTF-8'))
             if values[0].isdigit():
-                download.progress = int(values[0])
+                # progress part
+                download.progress_part = int(values[2])
 
-                if download.origin_size is None or download.origin_size == 0:
-                    logging.debug('origin size to compute : ' + values[1].encode('UTF-8'))
-                    download.origin_size = utils.compute_size(values[1])
+                if download.size_file is None or download.size_file == 0:
+                    # size file
+                    download.size_file = utils.compute_size(values[1])
 
-                logging.debug('size to compute : ' + values[1].encode('UTF-8'))
-                download.size = utils.compute_size(values[1])
+                # size part
+                download.size_part = utils.compute_size(values[1])
 
-                logging.debug('average_speed to compute : ' + values[6].encode('UTF-8'))
+                # size part downloaded
+                download.size_part_downloaded = utils.compute_size(values[1])
+                # size file downloaded
+                download.size_file_downloaded = download.size_previous_part_downloaded + download.size_part_downloaded
+
+                # average speed
                 download.average_speed = utils.compute_size(values[6])
 
+                if '-' not in values[9]:
+                    # time spent
+                    download.time_left = utils.hms_to_seconds(values[9])
+
                 if '-' not in values[10]:
+                    # time left
                     download.time_left = utils.hms_to_seconds(values[10])
 
                 if values[1] == values[3] and values[1] != '0':
