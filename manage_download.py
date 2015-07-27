@@ -225,8 +225,9 @@ class ManageDownloads:
             logging.error('Link is none')
 
         return exists
-    # 0 => pourcentage, 1 => taille totale, 2 => pourcentage reçu, 3 => taille reçu, 4 pourcentage transféré, 5 => taille transféré,
-    # 6 => vitesse moyenne reçu, 7 => vitesse moyenne enoyé, 8 => temps total, 9 => temps passé, 10 => temps restant, 11 => vitesse courante
+
+    # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
+    # 6 => vitesse moyenne recu, 7 => vitesse moyenne envoye, 8 => temps total, 9 => temps passe, 10 => temps restant, 11 => vitesse courante
     def insert_update_download(self, link, file_path):
         logging.debug('  *** insert_update_download ***')
         indent_log = '  '
