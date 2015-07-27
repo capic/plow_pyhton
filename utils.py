@@ -15,7 +15,6 @@ MYSQL_DATABASE = 'plowshare'
 def database_connect():
     return connection.MySQLConnection(user=MYSQL_LOGIN, password=MYSQL_PASS, host=MYSQL_HOST, database=MYSQL_DATABASE)
 
-
 def hms_to_seconds(t):
     h, m, s = [int(i) for i in t.split(':')]
     return int(3600 * h + 60 * m + s)
@@ -27,9 +26,9 @@ def compute_size(s):
         size_number = float(s[:-1])
 
         if size_letter == 'k':
-            size_number *= 1000
+            size_number *= 1024
         elif size_letter == 'm':
-            size_number *= 10000
+            size_number *= 1024 * 1024
     else:
         size_number = int(s)
 
@@ -88,7 +87,7 @@ def cursor_to_download_object(cursor):
 
     if cursor is not None:
         for (database_download_id, name, link, origin_size, size, status, progress, average_speed, time_left,
-             pid_plowdown, pid_curl, pid_python, file_path, infos_plowdown, lifecycle_insert_date,
+             pid_plowdown, pid_curl, pid_python, file_path, priority, infos_plowdown, lifecycle_insert_date,
              lifecycle_update_date) in cursor:
             download = Download()
             download.id = database_download_id
@@ -103,6 +102,7 @@ def cursor_to_download_object(cursor):
             download.pid_plowdown = pid_plowdown
             download.pid_python = pid_python
             download.file_path = file_path
+            download.priority = priority
             download.infos_plowdown = infos_plowdown
             download.lifecycle_insert_date = lifecycle_insert_date
             download.lifecycle_update_date = lifecycle_update_date
