@@ -342,10 +342,10 @@ class ManageDownloads:
                     download.size_file = utils.compute_size(values[1])
 
                 # size part
-                download.size_part = utils.compute_size(values[3])
+                download.size_part = utils.compute_size(values[1])
 
                 # size part downloaded
-                download.size_part_downloaded = utils.compute_size(values[1])
+                download.size_part_downloaded = utils.compute_size(values[3])
                 # size file downloaded
                 download.size_file_downloaded = download.size_previous_part_downloaded + download.size_part_downloaded
 
