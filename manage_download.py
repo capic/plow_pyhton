@@ -9,6 +9,7 @@ import subprocess
 import time
 from datetime import datetime
 from bean.downloadBean import Download
+from websocket import create_connection
 
 
 class ManageDownloads:
@@ -18,6 +19,7 @@ class ManageDownloads:
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '%%f=$=%%s' %s"
 
     def __init__(self):
+        self.ws = create_connection("ws://192.168.1.200:7070/")
         self.cnx = utils.database_connect()
 
     def insert_download(self, download):
@@ -74,6 +76,8 @@ class ManageDownloads:
         cursor.execute(sql, data)
 
         cursor.close()
+
+        self.ws.send(download.infos_plowdown)
 
     def get_download_by_id(self, download_id):
         logging.debug('   *** get_download_by_id ***')
@@ -396,3 +400,4 @@ class ManageDownloads:
         logging.debug('*** disconnect ***')
 
         self.cnx.close()
+        self.ws.close()
