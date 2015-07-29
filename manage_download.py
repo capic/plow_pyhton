@@ -354,7 +354,7 @@ class ManageDownloads:
 
                 if '-' not in values[9]:
                     # time spent
-                    download.time_left = utils.hms_to_seconds(values[9])
+                    download.time_spent = utils.hms_to_seconds(values[9])
 
                 if '-' not in values[10]:
                     # time left
