@@ -86,13 +86,14 @@ def cursor_to_download_object(cursor):
     list_downloads = []
 
     if cursor is not None:
-        for (database_download_id, name, link, size_file, size_part, size_file_downloaded, size_part_downloaded,
+        for (database_download_id, name, package, link, size_file, size_part, size_file_downloaded, size_part_downloaded,
              status, progress_part, average_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python, file_path,
              priority, infos_plowdown, lifecycle_insert_date, lifecycle_update_date) in cursor:
 
             download = Download()
             download.id = database_download_id
             download.name = name
+            download.package = package
             download.link = link
             download.size_file = size_file
             download.size_part = size_part
@@ -116,3 +117,12 @@ def cursor_to_download_object(cursor):
         cursor.close()
 
     return list_downloads
+
+
+def package_name_from_download_name(download_name):
+    ext = download_name.split(".")[-1]
+
+    if ext == 'rar':
+        return download_name.split(".part")[0]
+    else:
+        return download_name

@@ -9,17 +9,18 @@ import subprocess
 import time
 from datetime import datetime
 from bean.downloadBean import Download
-from websocket import create_connection
+# from websocket import create_connection
 
 
-class ManageDownloads:
+class ManageDownload:
     DIRECTORY_DOWNLOAD_DESTINATION_TEMP = "/mnt/HD/HD_a2/telechargement/temp_plowdown/"
     DIRECTORY_DOWNLOAD_DESTINATION = "/mnt/HD/HD_a2/telechargement/"
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '%%f=$=%%s' %s"
+    MARK_AS_FINISHED = "# FINNISHED "
 
     def __init__(self):
-        self.ws = create_connection("ws://192.168.1.200:7070/")
+        # self.ws = create_connection("ws://192.168.1.200:7070/")
         self.cnx = utils.database_connect()
 
     def insert_download(self, download):
@@ -29,17 +30,20 @@ class ManageDownloads:
         if download is not None:
             cursor = self.cnx.cursor()
 
-            sql = 'INSERT INTO download (name, link, size_file, status, file_path, priority, lifecycle_insert_date) values (%s, %s, %s, %s, %s, %s, %s)'
+            download.package = utils.package_name_from_download_name(download.name)
+
+            sql = 'INSERT INTO download (name, package, link, size_file, status, file_path, priority, lifecycle_insert_date) values (%s, %s, %s, %s, %s, %s, %s, %s)'
             data = (
-                download.name, download.link, download.size_file, download.status, download.file_path,
+                download.name, download.package, download.link, download.size_file, download.status, download.file_path,
                 download.priority,
                 datetime.now())
             logging.debug(
-                '%s query: %s | data: (%s, %s, %s, %s, %s, %s)' % (
-                    indent_log, sql, download.name.encode('UTF-8'), download.link.encode('UTF-8'),
-                    str(download.size).encode('UTF-8'),
-                    str(download.priority).encode('UTF-8'), download.file_path.encode('UTF-8'),
-                    str(datetime.now()).encode('UTF-8'),))
+                '%s query: %s | data: (%s, %s, %s, %s, %s, %s, %s, %s)' % (
+                    indent_log, sql, download.name.encode('UTF-8'), download.package.encode('UTF-8'),
+                    download.link.encode('UTF-8'),
+                    str(download.size_file).encode('UTF-8'), str(download.status), download.file_path,
+                    str(download.priority).encode('UTF-8'),
+                    str(datetime.now()).encode('UTF-8')))
 
             cursor.execute(sql, data)
 
@@ -53,16 +57,18 @@ class ManageDownloads:
 
         cursor = self.cnx.cursor()
 
-        sql = 'UPDATE download SET name = %s, link = %s, size_file = %s, size_part = %s, size_file_downloaded = %s, size_part_downloaded = %s,' \
+        sql = 'UPDATE download SET name = %s, package = %s, link = %s, size_file = %s, size_part = %s, size_file_downloaded = %s, size_part_downloaded = %s,' \
               'status = %s, progress_part = %s, average_speed = %s, time_spent = %s, time_left = %s , pid_plowdown = %s, pid_python = %s, priority = %s, ' \
               'file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), lifecycle_update_date = %s WHERE id = %s'
-        data = (download.name, download.link, download.size_file, download.size_part, download.size_file_downloaded,
+        data = (download.name, download.package, download.link, download.size_file, download.size_part,
+                download.size_file_downloaded,
                 download.size_part_downloaded, download.status, download.progress_part, download.average_speed,
                 download.time_spent, download.time_left, download.pid_plowdown, download.pid_python, download.priority,
                 download.file_path, download.infos_plowdown, datetime.now(), download.id)
         logging.debug(
-            '%s query : %s | data : (%s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
-                indent_log, sql, download.name.encode('UTF-8'), download.link.encode('UTF-8'),
+            '%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
+                indent_log, sql, download.name.encode('UTF-8'), download.package.encode('UTF-8'),
+                download.link.encode('UTF-8'),
                 str(download.size_file).encode('UTF-8'), str(download.size_part).encode('UTF-8'),
                 str(download.size_file_downloaded).encode('UTF-8'), str(download.size_part_downloaded).encode('UTF-8'),
                 str(download.status).encode('UTF-8'), str(download.progress_part).encode('UTF-8'),
@@ -77,7 +83,7 @@ class ManageDownloads:
 
         cursor.close()
 
-        self.ws.send(download.infos_plowdown)
+        # self.ws.send(download.infos_plowdown)
 
     def get_download_by_id(self, download_id):
         logging.debug('   *** get_download_by_id ***')
@@ -238,7 +244,7 @@ class ManageDownloads:
         indent_log = '  '
 
         # si la ligne n'est pas marque comme termine avec ce programme
-        if not link.startswith('# '):
+        if not link.startswith(self.MARK_AS_FINISHED):
             finished = False
             # si la ligne est marque comme termine par le traitement par liste de plowdown
             if link.startswith('#OK'):
@@ -400,4 +406,4 @@ class ManageDownloads:
         logging.debug('*** disconnect ***')
 
         self.cnx.close()
-        self.ws.close()
+        # self.ws.close()

@@ -11,6 +11,7 @@ class Download:
     def __init__(self):
         self.id = -1
         self.name = ''
+        self.package = ''
         self.link = ''
         # the size of the file (values[1] gives by plowprobe or by the first rows of plowdown)
         self.size_file = 0
@@ -41,8 +42,8 @@ class Download:
         return 'download : \n id => %s | name => %s | link => %s | size_file => %s | size_part => %s' \
                ' | size_file_downloaded => %s | size_previous_part_downloaded => %s | size_part_downloaded => %s' \
                ' | status => %s | progress_part => %s | average_speed => %s | time_left => %s | time_spent => %s' \
-               'pid_plowdown => %s | pid_python => %s | file_path => %s | priority => %s' % (
-                   str(self.id), self.name, self.link, str(self.size_file), str(self.size_part),
+               'pid_plowdown => %s | pid_python => %s | file_path => %s | priority => %s | package_id => %s '% (
+                   str(self.id), self.name, self.package, self.link, str(self.size_file), str(self.size_part),
                    str(self.size_file_downloaded), str(self.size_previous_part_downloaded),
                    str(self.size_part_downloaded), str(self.status), str(self.progress_part), str(self.average_speed),
                    str(self.time_left), str(self.time_spent), str(self.pid_plowdown), str(self.pid_python),
