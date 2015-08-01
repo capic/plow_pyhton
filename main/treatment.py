@@ -5,7 +5,7 @@ __author__ = 'Vincent'
 import logging
 
 from bean.downloadBean import Download
-from main.manage_download import ManageDownload
+from manage_download import ManageDownload
 
 
 class Treatment:
@@ -57,8 +57,8 @@ class Treatment:
             logging.debug('=========> Close file %s <=========' % download.file_path)
 
             new_data = file_data.replace(download.link.encode('UTF-8'),
-                                         '# %s \r\n%s %s' % (self.manage_download.MARK_AS_FINISHED,
-                                                             download.name.encode('UTF-8'),
+                                         '# %s \r\n%s %s' % (download.name.encode('UTF-8'),
+                                                             self.manage_download.MARK_AS_FINISHED,
                                                              download.link.encode('UTF-8')))
 
             logging.debug('=========> Open file %s to write <=========' % download.file_path)

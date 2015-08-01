@@ -5,7 +5,7 @@ import re
 
 import psutil
 from mysql.connector import (connection)
-from main.bean.downloadBean import Download
+from bean.downloadBean import Download
 
 
 MYSQL_LOGIN = 'root'

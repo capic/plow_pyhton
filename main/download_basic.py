@@ -6,7 +6,7 @@ import sys
 import getopt
 import logging
 
-from main.treatment import Treatment
+from treatment import Treatment
 
 
 COMMAND_USAGE = 'usage: script start|stop (download_id)'
