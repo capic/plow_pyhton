@@ -3,12 +3,14 @@
 __author__ = 'Vincent'
 
 import logging
-import utils
 import os
 import subprocess
 import time
 from datetime import datetime
+
+from main import utils
 from bean.downloadBean import Download
+
 # from websocket import create_connection
 
 

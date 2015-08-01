@@ -3,8 +3,9 @@
 __author__ = 'Vincent'
 
 import logging
+
 from bean.downloadBean import Download
-from manage_download import ManageDownload
+from main.manage_download import ManageDownload
 
 
 class Treatment:

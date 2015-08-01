@@ -5,7 +5,9 @@ __author__ = 'Vincent'
 import sys
 import getopt
 import logging
-from treatment import Treatment
+
+from main.treatment import Treatment
+
 
 COMMAND_USAGE = 'usage: script start|stop (download_id)'
 

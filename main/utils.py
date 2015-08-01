@@ -1,10 +1,12 @@
 __author__ = 'Vincent'
 
-import psutil
 import subprocess
 import re
+
+import psutil
 from mysql.connector import (connection)
-from bean.downloadBean import Download
+from main.bean.downloadBean import Download
+
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
