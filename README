@@ -4,7 +4,7 @@ pip install websocket-client
 
 Taches planifiés:
 */15 * * * * sh /mnt/HD/HD_a2/start_download.sh >> log_cron.txt
-*/2 * * * * python /var/www/download_basic.py check_download_alive >> log_cron.txt
+*/2 * * * * python /var/www/main/download_basic.py check_download_alive >> log_cron.txt
 
 TODO:
 - Par moment le statut est waiting lorsque le téléchargement est en cours => pas normal

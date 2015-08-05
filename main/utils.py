@@ -6,12 +6,16 @@ import re
 import psutil
 from mysql.connector import (connection)
 from bean.downloadBean import Download
+import logging
 
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
 MYSQL_HOST = '127.0.0.1'
 MYSQL_DATABASE = 'plowshare'
+
+LOG_OUTPUT = True
+CONSOLE_OUTPUT = False
 
 
 def database_connect():
@@ -128,3 +132,11 @@ def package_name_from_download_name(download_name):
         return download_name.split(".part")[0]
     else:
         return download_name
+
+
+def log_debug(value):
+    if LOG_OUTPUT:
+        logging.debug(value.encode('UTF-8'))
+
+    if CONSOLE_OUTPUT:
+        print(value.encode('UTF-8'))

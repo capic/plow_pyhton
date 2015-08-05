@@ -26,7 +26,7 @@ class ManageDownload:
         self.cnx = utils.database_connect()
 
     def insert_download(self, download):
-        logging.debug('  *** insert_download ***')
+        utils.log_debug(u'  *** insert_download ***')
         indent_log = '   '
 
         if download is not None:
@@ -39,13 +39,12 @@ class ManageDownload:
                 download.name, download.package, download.link, download.size_file, download.status, download.file_path,
                 download.priority,
                 datetime.now())
-            logging.debug(
-                '%s query: %s | data: (%s, %s, %s, %s, %s, %s, %s, %s)' % (
-                    indent_log, sql, download.name.encode('UTF-8'), download.package.encode('UTF-8'),
-                    download.link.encode('UTF-8'),
-                    str(download.size_file).encode('UTF-8'), str(download.status), download.file_path,
-                    str(download.priority).encode('UTF-8'),
-                    str(datetime.now()).encode('UTF-8')))
+            utils.log_debug(u'%s query: %s | data: (%s, %s, %s, %s, %s, %s, %s, %s)' % (
+                    indent_log, sql, download.name, download.package,
+                    download.link,
+                    str(download.size_file), str(download.status), download.file_path,
+                    str(download.priority),
+                    str(datetime.now())))
 
             cursor.execute(sql, data)
 
@@ -54,7 +53,7 @@ class ManageDownload:
             logging.error("Download is none")
 
     def update_download(self, download):
-        logging.debug('  *** update_download ***')
+        utils.log_debug(u'  *** update_download ***')
         indent_log = '   '
 
         cursor = self.cnx.cursor()
@@ -67,20 +66,19 @@ class ManageDownload:
                 download.size_part_downloaded, download.status, download.progress_part, download.average_speed,
                 download.time_spent, download.time_left, download.pid_plowdown, download.pid_python, download.priority,
                 download.file_path, download.infos_plowdown, datetime.now(), download.id)
-        logging.debug(
-            '%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
-                indent_log, sql, download.name.encode('UTF-8'), download.package.encode('UTF-8'),
-                download.link.encode('UTF-8'),
-                str(download.size_file).encode('UTF-8'), str(download.size_part).encode('UTF-8'),
-                str(download.size_file_downloaded).encode('UTF-8'), str(download.size_part_downloaded).encode('UTF-8'),
-                str(download.status).encode('UTF-8'), str(download.progress_part).encode('UTF-8'),
-                str(download.average_speed).encode('UTF-8'), str(download.time_spent).encode('UTF-8'),
-                str(download.time_left).encode('UTF-8'),
-                str(download.pid_plowdown).encode('UTF-8'), str(download.pid_python).encode('UTF-8'),
+        utils.log_debug(u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
+                indent_log, sql, download.name, download.package,
+                download.link,
+                str(download.size_file), str(download.size_part),
+                str(download.size_file_downloaded), str(download.size_part_downloaded),
+                str(download.status), str(download.progress_part),
+                str(download.average_speed), str(download.time_spent),
+                str(download.time_left),
+                str(download.pid_plowdown), str(download.pid_python),
                 str(download.priority),
-                download.file_path.encode('UTF-8'),
-                download.infos_plowdown.encode('UTF-8'),
-                str(datetime.now()).encode('UTF-8'), str(download.id).encode('UTF-8')))
+                download.file_path,
+                download.infos_plowdown,
+                str(datetime.now()), str(download.id)))
         cursor.execute(sql, data)
 
         cursor.close()
@@ -88,7 +86,7 @@ class ManageDownload:
         # self.ws.send(download.infos_plowdown)
 
     def get_download_by_id(self, download_id):
-        logging.debug('   *** get_download_by_id ***')
+        utils.log_debug(u'   *** get_download_by_id ***')
         indent_log = '   '
         download = None
 
@@ -97,7 +95,7 @@ class ManageDownload:
 
             sql = 'SELECT * FROM download WHERE id = %s'
             data = (download_id, )
-            logging.debug('%s query : %s | data : (%s)' % (indent_log, sql, str(download_id).encode('UTF-8')))
+            utils.log_debug(u'%s query : %s | data : (%s)' % (indent_log, sql, str(download_id)))
 
             cursor.execute(sql, data)
 
@@ -107,7 +105,7 @@ class ManageDownload:
                 logging.info('No download fouud with id %s' % download_id)
             elif len(list_download) == 1:
                 download = list_download[0]
-                logging.debug('%s download : %s' % (indent_log, download.to_string().encode('UTF-8')))
+                utils.log_debug(u'%s download : %s' % (indent_log, download.to_string()))
             else:
                 logging.error('Too many download found with id %s' % download_id)
         else:
@@ -116,10 +114,10 @@ class ManageDownload:
         return download
 
     def get_download_by_link_file_path(self, link, file_path):
-        logging.debug('   *** get_download_by_link_file_path ***')
+        utils.log_debug(u'   *** get_download_by_link_file_path ***')
         indent_log = '   '
 
-        logging.debug('%s link: %s, file_path: %s' % (indent_log, link.encode('UTF-8'), file_path.encode('UTF-8')))
+        utils.log_debug(u'%s link: %s, file_path: %s' % (indent_log, link, file_path))
 
         download = None
 
@@ -127,8 +125,7 @@ class ManageDownload:
             cursor = self.cnx.cursor()
             sql = 'SELECT * FROM download WHERE link = %s and file_path = %s'
             data = (link, file_path)
-            logging.debug(
-                '%s query : %s | data : (%s, %s)' % (indent_log, sql, link.encode('UTF-8'), file_path.encode('UTF-8')))
+            utils.log_debug(u'%s query : %s | data : (%s, %s)' % (indent_log, sql, link, file_path))
 
             cursor.execute(sql, data)
 
@@ -138,16 +135,16 @@ class ManageDownload:
                 logging.info('No download fouud with link %s and file_path %s' % (link, file_path))
             elif len(list_download) == 1:
                 download = list_download[0]
-                logging.debug('%s download : %s' % (indent_log, download.to_string().encode('UTF-8')))
+                utils.log_debug(u'%s download : %s' % (indent_log, download.to_string()))
             else:
                 logging.error('Too many download found with link %s and file_path %s' % (link, file_path))
 
         return download
 
     def get_download_to_start(self, download_id, file_path=None):
-        logging.debug(' *** get_download_to_start ***')
+        utils.log_debug(u' *** get_download_to_start ***')
         indent_log = ' '
-        logging.debug(' %s download_id: %s' % (indent_log, str(download_id).encode('UTF-8')))
+        utils.log_debug(u' %s download_id: %s' % (indent_log, str(download_id)))
 
         download = None
 
@@ -164,17 +161,15 @@ class ManageDownload:
                 sql += ' AND priority = (' + under_sql + ')'
                 data = (Download.STATUS_WAITING, file_path, Download.STATUS_WAITING, file_path)
 
-                logging.debug(
-                    '%s query : %s | data : (%s, %s, %s, %s)' % (
-                        indent_log, sql, str(Download.STATUS_WAITING).encode('UTF-8'), file_path.encode('UTF-8'),
-                        str(Download.STATUS_WAITING).encode('UTF-8'), file_path.encode('UTF-8')))
+                utils.log_debug(u'%s query : %s | data : (%s, %s, %s, %s)' % (
+                        indent_log, sql, str(Download.STATUS_WAITING), file_path,
+                        str(Download.STATUS_WAITING), file_path))
             else:
                 sql += ' AND priority = (' + under_sql + ')'
 
                 data = (Download.STATUS_WAITING, Download.STATUS_WAITING)
-                logging.debug(
-                    '%s query : %s | data : (%s, %s)' % (indent_log, sql, str(Download.STATUS_WAITING).encode('UTF-8'),
-                                                         str(Download.STATUS_WAITING).encode('UTF-8')))
+                utils.log_debug(u'%s query : %s | data : (%s, %s)' % (indent_log, sql, str(Download.STATUS_WAITING),
+                                                         str(Download.STATUS_WAITING)))
 
             sql += ' HAVING  MIN(id)'
 
@@ -185,7 +180,7 @@ class ManageDownload:
                 logging.info('No download found with file_path %s' % file_path)
             elif len(list_download) == 1:
                 download = list_download[0]
-                logging.debug('%s download : %s' % (indent_log, download.to_string().encode('UTF-8')))
+                utils.log_debug(u'%s download : %s' % (indent_log, download.to_string()))
             else:
                 logging.error('Too many download found with file_path %s' % file_path)
         else:
@@ -194,8 +189,8 @@ class ManageDownload:
         return download
 
     def get_downloads_in_progress(self, download_id):
-        logging.debug('*** get_downloads_in_progress ***')
-        logging.debug('download_id: %s' % str(download_id).encode('UTF-8'))
+        utils.log_debug(u'*** get_downloads_in_progress ***')
+        utils.log_debug(u'download_id: %s' % str(download_id))
 
         list_downloads = []
 
@@ -204,7 +199,7 @@ class ManageDownload:
         if download_id is None:
             sql = 'SELECT * FROM download WHERE status = %s'
             data = (Download.STATUS_IN_PROGRESS, )
-            logging.debug('query : %s | data : (%s)' % (sql, str(Download.STATUS_IN_PROGRESS).encode('UTF-8')))
+            utils.log_debug(u'query : %s | data : (%s)' % (sql, str(Download.STATUS_IN_PROGRESS)))
 
             cursor.execute(sql, data)
 
@@ -216,7 +211,7 @@ class ManageDownload:
         return list_downloads
 
     def download_already_exists(self, link):
-        logging.debug('*** download_already_exists ***')
+        utils.log_debug(u'*** download_already_exists ***')
 
         exists = False
         if link is not None and link != '':
@@ -225,24 +220,24 @@ class ManageDownload:
             sql = 'SELECT id FROM download WHERE link = %s'
             data = (link, )
 
-            logging.debug('query : %s | data : (%s)' % (sql, link.encode('UTF-8')))
+            utils.log_debug(u'query : %s | data : (%s)' % (sql, link))
             cursor.execute(sql, data)
 
             if cursor is not None:
                 for (download_id) in cursor:
-                    logging.debug('id: %s' % str(download_id).encode('UTF-8'))
+                    utils.log_debug(u'id: %s' % str(download_id))
                     exists = True
 
                 cursor.close()
 
-            logging.debug('download exists ? %s' % str(exists).encode('UTF-8'))
+            utils.log_debug(u'download exists ? %s' % str(exists))
         else:
             logging.error('Link is none')
 
         return exists
 
     def insert_update_download(self, link, file_path):
-        logging.debug('  *** insert_update_download ***')
+        utils.log_debug(u'  *** insert_update_download ***')
         indent_log = '  '
 
         # si la ligne n'est pas marque comme termine avec ce programme
@@ -257,14 +252,14 @@ class ManageDownload:
             exists = self.download_already_exists(link)
             # on n'insere pas un lien qui existe deja ou qui est termine
             if not exists:
-                logging.debug('%s Download finished ? %s' % (indent_log, str(finished).encode('UTF-8')))
+                utils.log_debug(u'%s Download finished ? %s' % (indent_log, str(finished)))
                 if not finished:
-                    logging.debug('%s Download %s doesn''t exist -> insert' % (indent_log, link.encode('UTF-8')))
-                    logging.debug('%s command : %s' % (indent_log, cmd.encode('UTF-8')))
+                    utils.log_debug(u'%s Download %s doesn''t exist -> insert' % (indent_log, link))
+                    utils.log_debug(u'%s command : %s' % (indent_log, cmd))
 
                     name, size = utils.get_infos_plowprobe(cmd)
-                    logging.debug('%s Infos get from plowprobe %s,%s' % (
-                        indent_log, name.encode('UTF-8'), str(size).encode('UTF-8')))
+                    utils.log_debug(u'%s Infos get from plowprobe %s,%s' % (
+                        indent_log, name, str(size)))
 
                     download = Download()
                     download.name = name
@@ -277,15 +272,15 @@ class ManageDownload:
 
                     self.insert_download(download)
             else:
-                logging.debug('%s Download %s exists -> update' % (indent_log, link.encode('UTF-8')))
+                utils.log_debug(u'%s Download %s exists -> update' % (indent_log, link))
                 download = self.get_download_by_link_file_path(link, file_path)
 
                 if download is not None and download.status != Download.STATUS_FINISHED:
                     if download.name is None or download.name == '':
-                        logging.debug('%s command : %s' % (indent_log, cmd.encode('UTF-8')))
+                        utils.log_debug(u'%s command : %s' % (indent_log, cmd))
                         name, size = utils.get_infos_plowprobe(cmd)
-                        logging.debug('%s Infos get from plowprobe %s,%s' % (
-                            indent_log, name.encode('UTF-8'), size.encode('UTF-8')))
+                        utils.log_debug(u'%s Infos get from plowprobe %s,%s' % (
+                            indent_log, name, size))
 
                     if finished:
                         download.status = Download.STATUS_FINISHED
@@ -294,8 +289,8 @@ class ManageDownload:
                     self.update_download(download)
 
     def stop_download(self, download):
-        logging.debug('*** stop_download ***')
-        logging.debug('pid python: %s' % str(download.pid_python).encode('UTF-8'))
+        utils.log_debug(u'*** stop_download ***')
+        utils.log_debug(u'pid python: %s' % str(download.pid_python))
         utils.kill_proc_tree(download.pid_python)
 
         download.pid_python = 0
@@ -305,13 +300,13 @@ class ManageDownload:
         self.update_download(download)
 
     def start_download(self, download):
-        logging.debug('*** start_download ***')
+        utils.log_debug(u'*** start_download ***')
         indent_log = '  '
 
         cmd = (
             self.COMMAND_DOWNLOAD % (
                 self.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, self.DIRECTORY_DOWNLOAD_DESTINATION, download.link))
-        logging.debug('%s command : %s' % (indent_log, cmd.encode('UTF-8')))
+        utils.log_debug(u'%s command : %s' % (indent_log, cmd))
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
         download.pid_plowdown = p.pid
         download.pid_python = os.getpid()
@@ -329,7 +324,8 @@ class ManageDownload:
                     line += out
                 else:
                     line = utils.clean_plowdown_line(line)
-                    logging.debug('plowdown line : %s' % line.encode('UTF-8'))
+                    # utils.log_debug(u'plowdown line : %s' % line)
+                    print(line)
                     download = self.get_download_values(line, download)
                     line = ''
 
@@ -338,13 +334,13 @@ class ManageDownload:
     # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
     # 6 => vitesse moyenne recu, 7 => vitesse moyenne envoye, 8 => temps total, 9 => temps passe, 10 => temps restant, 11 => vitesse courante
     def get_download_values(self, values_line, download):
-        logging.debug('*** get_download_values ***')
+        utils.log_debug(u'*** get_download_values ***')
 
         print(values_line)
         values = values_line.split()
 
         if len(values) > 0:
-            logging.debug("values[0]: %s" % str(values[0]).encode('UTF-8'))
+            utils.log_debug(u"values[0]: %s" % str(values[0]))
             if values[0].isdigit():
                 # progress part
                 download.progress_part = int(values[2])
@@ -373,7 +369,7 @@ class ManageDownload:
                     download.time_left = utils.hms_to_seconds(values[10])
 
                 if values[1] == values[3] and values[1] != '0':
-                    logging.debug('download marked as finished')
+                    utils.log_debug(u'download marked as finished')
                     download.status = Download.STATUS_FINISHED
 
             elif "Filename" in values[0]:
@@ -387,13 +383,12 @@ class ManageDownload:
         return download
 
     def check_download_alive(self, download):
-        logging.debug('*** check_download_alive ***')
+        utils.log_debug(u'*** check_download_alive ***')
 
         if not utils.check_pid(download.pid_plowdown):
             # utils.kill_proc_tree(download.pid_python)
-            logging.debug(
-                'Process %s for download %s killed for inactivity ...\r\n' % (
-                    str(download.pid_python).encode('UTF-8'), download.name.encode('UTF-8')))
+            utils.log_debug(u'Process %s for download %s killed for inactivity ...\r\n' % (
+                    str(download.pid_python), download.name))
 
             download.pid_plowdown = 0
             download.pid_python = 0
@@ -405,7 +400,7 @@ class ManageDownload:
             self.update_download(download)
 
     def disconnect(self):
-        logging.debug('*** disconnect ***')
+        utils.log_debug(u'*** disconnect ***')
 
         self.cnx.close()
         # self.ws.close()

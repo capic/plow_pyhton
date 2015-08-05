@@ -5,6 +5,7 @@ __author__ = 'Vincent'
 import sys
 import getopt
 import logging
+import utils
 
 from treatment import Treatment
 
@@ -15,7 +16,7 @@ COMMAND_USAGE = 'usage: script start|stop (download_id)'
 def main(argv):
     logging.basicConfig(filename='/var/www/log.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
                         datefmt='%d/%m/%Y %H:%M:%S')
-    logging.debug('*** Start application ***')
+    utils.log_debug(u'*** Start application ***')
 
     try:
         opts, args = getopt.getopt(argv, "", [])
