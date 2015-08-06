@@ -76,6 +76,7 @@ def clean_plowdown_line(line):
 
 
 def get_infos_plowprobe(cmd):
+    log_debug(u'Command plowprobe %s' % cmd)
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0]
 
     tab_infos = output.split('=$=')
@@ -84,6 +85,7 @@ def get_infos_plowprobe(cmd):
     size = 0
     if tab_infos[1] is not None and tab_infos[1] != '':
         size = int(tab_infos[1])
+        log_debug(u'Size %s' % str(size))
 
     return [name, size]
 

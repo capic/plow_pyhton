@@ -1,4 +1,7 @@
-#!/usr/bin/env python
+# coding: utf8
+# !/usr/bin/env python
+
+from __future__ import unicode_literals
 
 __author__ = 'Vincent'
 
@@ -258,8 +261,8 @@ class ManageDownload:
                     utils.log_debug(u'%s command : %s' % (indent_log, cmd))
 
                     name, size = utils.get_infos_plowprobe(cmd)
-                    utils.log_debug(u'%s Infos get from plowprobe %s,%s' % (
-                        indent_log, name, str(size)))
+                    utils.log_debug(u'Infos get from plowprobe %s,%s' % (
+                        name.encode('UTF-8'), str(size)))
 
                     download = Download()
                     download.name = name
