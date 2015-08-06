@@ -1,3 +1,4 @@
+# coding: utf8
 __author__ = 'Vincent'
 
 import subprocess
@@ -15,7 +16,7 @@ MYSQL_HOST = '127.0.0.1'
 MYSQL_DATABASE = 'plowshare'
 
 LOG_OUTPUT = True
-CONSOLE_OUTPUT = False
+CONSOLE_OUTPUT = True
 
 
 def database_connect():
@@ -77,10 +78,10 @@ def clean_plowdown_line(line):
 
 def get_infos_plowprobe(cmd):
     log_debug(u'Command plowprobe %s' % cmd)
-    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0]
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
 
     tab_infos = output.split('=$=')
-    name = tab_infos[0]
+    name = tab_infos[0][:-1]
 
     size = 0
     if tab_infos[1] is not None and tab_infos[1] != '':
@@ -138,7 +139,7 @@ def package_name_from_download_name(download_name):
 
 def log_debug(value):
     if LOG_OUTPUT:
-        logging.debug(value.encode('UTF-8'))
+        logging.debug(value)
 
     if CONSOLE_OUTPUT:
-        print(value.encode('UTF-8'))
+        print(value)

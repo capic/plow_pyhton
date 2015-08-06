@@ -240,8 +240,7 @@ class ManageDownload:
         return exists
 
     def insert_update_download(self, link, file_path):
-        utils.log_debug(u'  *** insert_update_download ***')
-        indent_log = '  '
+        utils.log_debug(u'*** insert_update_download ***')
 
         # si la ligne n'est pas marque comme termine avec ce programme
         if not link.startswith(self.MARK_AS_FINISHED):
@@ -255,14 +254,13 @@ class ManageDownload:
             exists = self.download_already_exists(link)
             # on n'insere pas un lien qui existe deja ou qui est termine
             if not exists:
-                utils.log_debug(u'%s Download finished ? %s' % (indent_log, str(finished)))
+                utils.log_debug(u'Download finished ? %s' % (str(finished)))
                 if not finished:
-                    utils.log_debug(u'%s Download %s doesn''t exist -> insert' % (indent_log, link))
-                    utils.log_debug(u'%s command : %s' % (indent_log, cmd))
+                    utils.log_debug(u'Download %s doesn''t exist -> insert' % link)
+                    utils.log_debug(u'command : %s' % cmd)
 
                     name, size = utils.get_infos_plowprobe(cmd)
-                    utils.log_debug(u'Infos get from plowprobe %s,%s' % (
-                        name.encode('UTF-8'), str(size)))
+                    utils.log_debug('Infos get from plowprobe %s' % name)
 
                     download = Download()
                     download.name = name
@@ -275,15 +273,15 @@ class ManageDownload:
 
                     self.insert_download(download)
             else:
-                utils.log_debug(u'%s Download %s exists -> update' % (indent_log, link))
+                utils.log_debug(u'Download %s exists -> update' % link)
                 download = self.get_download_by_link_file_path(link, file_path)
 
                 if download is not None and download.status != Download.STATUS_FINISHED:
                     if download.name is None or download.name == '':
-                        utils.log_debug(u'%s command : %s' % (indent_log, cmd))
+                        utils.log_debug(u'command : %s' % cmd)
                         name, size = utils.get_infos_plowprobe(cmd)
-                        utils.log_debug(u'%s Infos get from plowprobe %s,%s' % (
-                            indent_log, name, size))
+                        utils.log_debug(u'Infos get from plowprobe %s,%s' % (
+                            name, size))
 
                     if finished:
                         download.status = Download.STATUS_FINISHED

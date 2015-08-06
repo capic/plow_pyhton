@@ -1,3 +1,5 @@
+# coding: utf8
+
 __author__ = 'Vincent'
 
 from injector import Module, Key, provides, Injector, inject, singleton
