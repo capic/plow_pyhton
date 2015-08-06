@@ -16,7 +16,7 @@ MYSQL_HOST = '127.0.0.1'
 MYSQL_DATABASE = 'plowshare'
 
 LOG_OUTPUT = True
-CONSOLE_OUTPUT = True
+CONSOLE_OUTPUT = False
 
 
 def database_connect():

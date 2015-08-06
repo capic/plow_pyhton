@@ -325,8 +325,6 @@ class ManageDownload:
                     line += out
                 else:
                     line = utils.clean_plowdown_line(line)
-                    # utils.log_debug(u'plowdown line : %s' % line)
-                    print(line)
                     download = self.get_download_values(line, download)
                     line = ''
 
@@ -337,7 +335,6 @@ class ManageDownload:
     def get_download_values(self, values_line, download):
         utils.log_debug(u'*** get_download_values ***')
 
-        print(values_line)
         values = values_line.split()
 
         if len(values) > 0:
