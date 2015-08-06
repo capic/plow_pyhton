@@ -81,7 +81,7 @@ def get_infos_plowprobe(cmd):
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
 
     tab_infos = output.split('=$=')
-    name = tab_infos[0][:-1]
+    name = tab_infos[0]
 
     size = 0
     if tab_infos[1] is not None and tab_infos[1] != '':
