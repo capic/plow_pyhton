@@ -359,6 +359,9 @@ class ManageDownload:
                 # average speed
                 download.average_speed = utils.compute_size(values[6])
 
+                 # current speed
+                download.current_speed = utils.compute_size(values[11])
+
                 if '-' not in values[9]:
                     # time spent
                     download.time_spent = utils.hms_to_seconds(values[9])
