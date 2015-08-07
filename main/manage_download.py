@@ -62,20 +62,20 @@ class ManageDownload:
         cursor = self.cnx.cursor()
 
         sql = 'UPDATE download SET name = %s, package = %s, link = %s, size_file = %s, size_part = %s, size_file_downloaded = %s, size_part_downloaded = %s,' \
-              'status = %s, progress_part = %s, average_speed = %s, time_spent = %s, time_left = %s , pid_plowdown = %s, pid_python = %s, priority = %s, ' \
+              'status = %s, progress_part = %s, average_speed = %s, current_speed = %s, time_spent = %s, time_left = %s , pid_plowdown = %s, pid_python = %s, priority = %s, ' \
               'file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), lifecycle_update_date = %s WHERE id = %s'
         data = (download.name, download.package, download.link, download.size_file, download.size_part,
-                download.size_file_downloaded,
-                download.size_part_downloaded, download.status, download.progress_part, download.average_speed,
-                download.time_spent, download.time_left, download.pid_plowdown, download.pid_python, download.priority,
-                download.file_path, download.infos_plowdown, datetime.now(), download.id)
-        utils.log_debug(u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
+                download.size_file_downloaded, download.size_part_downloaded, download.status, download.progress_part,
+                download.average_speed, download.current_speed, download.time_spent, download.time_left,
+                download.pid_plowdown, download.pid_python, download.priority, download.file_path,
+                download.infos_plowdown, datetime.now(), download.id)
+        utils.log_debug(u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
                 indent_log, sql, download.name, download.package,
                 download.link,
                 str(download.size_file), str(download.size_part),
                 str(download.size_file_downloaded), str(download.size_part_downloaded),
                 str(download.status), str(download.progress_part),
-                str(download.average_speed), str(download.time_spent),
+                str(download.average_speed), str(download.current_speed), str(download.time_spent),
                 str(download.time_left),
                 str(download.pid_plowdown), str(download.pid_python),
                 str(download.priority),
@@ -336,6 +336,7 @@ class ManageDownload:
         utils.log_debug(u'*** get_download_values ***')
 
         values = values_line.split()
+        print(values_line)
 
         if len(values) > 0:
             utils.log_debug(u"values[0]: %s" % str(values[0]))

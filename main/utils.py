@@ -9,7 +9,6 @@ from mysql.connector import (connection)
 from bean.downloadBean import Download
 import logging
 
-
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
 MYSQL_HOST = '127.0.0.1'
@@ -21,6 +20,7 @@ CONSOLE_OUTPUT = False
 
 def database_connect():
     return connection.MySQLConnection(user=MYSQL_LOGIN, password=MYSQL_PASS, host=MYSQL_HOST, database=MYSQL_DATABASE)
+
 
 def hms_to_seconds(t):
     h, m, s = [int(i) for i in t.split(':')]
@@ -95,10 +95,10 @@ def cursor_to_download_object(cursor):
     list_downloads = []
 
     if cursor is not None:
-        for (database_download_id, name, package, link, size_file, size_part, size_file_downloaded, size_part_downloaded,
-             status, progress_part, average_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python, file_path,
-             priority, infos_plowdown, lifecycle_insert_date, lifecycle_update_date) in cursor:
-
+        for (
+        database_download_id, name, package, link, size_file, size_part, size_file_downloaded, size_part_downloaded,
+        status, progress_part, average_speed, current_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python,
+        file_path, priority, infos_plowdown, lifecycle_insert_date, lifecycle_update_date) in cursor:
             download = Download()
             download.id = database_download_id
             download.name = name
@@ -111,6 +111,7 @@ def cursor_to_download_object(cursor):
             download.status = status
             download.progress_part = progress_part
             download.average_speed = average_speed
+            download.current_speed = current_speed
             download.time_spent = time_spent
             download.time_left = time_left
             download.pid_plowdown = pid_plowdown
