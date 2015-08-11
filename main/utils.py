@@ -11,7 +11,7 @@ import logging
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
-MYSQL_HOST = '127.0.0.1'
+MYSQL_HOST = '192.168.1.101'
 MYSQL_DATABASE = 'plowshare'
 
 LOG_OUTPUT = True
