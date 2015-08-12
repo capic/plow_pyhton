@@ -35,6 +35,7 @@ class Download:
         self.file_path = ''
         self.priority = 0
         self.infos_plowdown = ''
+        self.theorical_start_datetime = 0
         self.lifecycle_insert_date = 0
         self.lifecycle_update_date = 0
 

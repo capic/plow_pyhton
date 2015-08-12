@@ -11,7 +11,7 @@ import logging
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
-MYSQL_HOST = '127.0.0.1'
+MYSQL_HOST = '192.168.1.101'
 MYSQL_DATABASE = 'plowshare'
 
 LOG_OUTPUT = True
@@ -20,6 +20,7 @@ CONSOLE_OUTPUT = False
 
 def database_connect():
     return connection.MySQLConnection(user=MYSQL_LOGIN, password=MYSQL_PASS, host=MYSQL_HOST, database=MYSQL_DATABASE)
+
 
 def hms_to_seconds(t):
     h, m, s = [int(i) for i in t.split(':')]
@@ -94,10 +95,13 @@ def cursor_to_download_object(cursor):
     list_downloads = []
 
     if cursor is not None:
-        for (database_download_id, name, package, link, size_file, size_part, size_file_downloaded, size_part_downloaded,
-             status, progress_part, average_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python, file_path,
-             priority, infos_plowdown, lifecycle_insert_date, lifecycle_update_date) in cursor:
-
+        for (
+                database_download_id, name, package, link, size_file, size_part, size_file_downloaded,
+                size_part_downloaded,
+                status, progress_part, average_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python,
+                file_path,
+                priority, infos_plowdown, theorical_start_datetime, lifecycle_insert_date,
+                lifecycle_update_date) in cursor:
             download = Download()
             download.id = database_download_id
             download.name = name
@@ -117,6 +121,7 @@ def cursor_to_download_object(cursor):
             download.file_path = file_path
             download.priority = priority
             download.infos_plowdown = infos_plowdown
+            download.theorical_start_datetime = theorical_start_datetime
             download.lifecycle_insert_date = lifecycle_insert_date
             download.lifecycle_update_date = lifecycle_update_date
 
