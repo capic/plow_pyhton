@@ -62,20 +62,20 @@ class ManageDownload:
         cursor = self.cnx.cursor()
 
         sql = 'UPDATE download SET name = %s, package = %s, link = %s, size_file = %s, size_part = %s, size_file_downloaded = %s, size_part_downloaded = %s,' \
-              'status = %s, progress_part = %s, average_speed = %s, time_spent = %s, time_left = %s , pid_plowdown = %s, pid_python = %s, priority = %s, ' \
-              'file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), theorical_start_datetime = %s, lifecycle_update_date = %s WHERE id = %s'
+              'status = %s, progress_part = %s, average_speed = %s, current_speed = %s, time_spent = %s, time_left = %s , pid_plowdown = %s, pid_python = %s, priority = %s, ' \
+              'file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), theorical_start_datetime, lifecycle_update_date = %s WHERE id = %s'
         data = (download.name, download.package, download.link, download.size_file, download.size_part,
-                download.size_file_downloaded,
-                download.size_part_downloaded, download.status, download.progress_part, download.average_speed,
-                download.time_spent, download.time_left, download.pid_plowdown, download.pid_python, download.priority,
-                download.file_path, download.infos_plowdown, download.theorical_start_datetime, datetime.now(), download.id)
-        utils.log_debug(u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
+                download.size_file_downloaded, download.size_part_downloaded, download.status, download.progress_part,
+                download.average_speed, download.current_speed, download.time_spent, download.time_left,
+                download.pid_plowdown, download.pid_python, download.priority, download.file_path,
+                download.infos_plowdown, datetime.now(), download.id)
+        utils.log_debug(u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
                 indent_log, sql, download.name, download.package,
                 download.link,
                 str(download.size_file), str(download.size_part),
                 str(download.size_file_downloaded), str(download.size_part_downloaded),
                 str(download.status), str(download.progress_part),
-                str(download.average_speed), str(download.time_spent),
+                str(download.average_speed), str(download.current_speed), str(download.time_spent),
                 str(download.time_left),
                 str(download.pid_plowdown), str(download.pid_python),
                 str(download.priority),
@@ -241,8 +241,7 @@ class ManageDownload:
         return exists
 
     def insert_update_download(self, link, file_path):
-        utils.log_debug(u'  *** insert_update_download ***')
-        indent_log = '  '
+        utils.log_debug(u'*** insert_update_download ***')
 
         # si la ligne n'est pas marque comme termine avec ce programme
         if not link.startswith(self.MARK_AS_FINISHED):
@@ -256,14 +255,13 @@ class ManageDownload:
             exists = self.download_already_exists(link)
             # on n'insere pas un lien qui existe deja ou qui est termine
             if not exists:
-                utils.log_debug(u'%s Download finished ? %s' % (indent_log, str(finished)))
+                utils.log_debug(u'Download finished ? %s' % (str(finished)))
                 if not finished:
-                    utils.log_debug(u'%s Download %s doesn''t exist -> insert' % (indent_log, link))
-                    utils.log_debug(u'%s command : %s' % (indent_log, cmd))
+                    utils.log_debug(u'Download %s doesn''t exist -> insert' % link)
+                    utils.log_debug(u'command : %s' % cmd)
 
                     name, size = utils.get_infos_plowprobe(cmd)
-                    utils.log_debug(u'Infos get from plowprobe %s,%s' % (
-                        name.encode('UTF-8'), str(size)))
+                    utils.log_debug('Infos get from plowprobe %s' % name)
 
                     download = Download()
                     download.name = name
@@ -276,15 +274,15 @@ class ManageDownload:
 
                     self.insert_download(download)
             else:
-                utils.log_debug(u'%s Download %s exists -> update' % (indent_log, link))
+                utils.log_debug(u'Download %s exists -> update' % link)
                 download = self.get_download_by_link_file_path(link, file_path)
 
                 if download is not None and download.status != Download.STATUS_FINISHED:
                     if download.name is None or download.name == '':
-                        utils.log_debug(u'%s command : %s' % (indent_log, cmd))
+                        utils.log_debug(u'command : %s' % cmd)
                         name, size = utils.get_infos_plowprobe(cmd)
-                        utils.log_debug(u'%s Infos get from plowprobe %s,%s' % (
-                            indent_log, name, size))
+                        utils.log_debug(u'Infos get from plowprobe %s,%s' % (
+                            name, size))
 
                     if finished:
                         download.status = Download.STATUS_FINISHED
@@ -328,8 +326,6 @@ class ManageDownload:
                     line += out
                 else:
                     line = utils.clean_plowdown_line(line)
-                    # utils.log_debug(u'plowdown line : %s' % line)
-                    print(line)
                     download = self.get_download_values(line, download)
                     line = ''
 
@@ -340,8 +336,8 @@ class ManageDownload:
     def get_download_values(self, values_line, download):
         utils.log_debug(u'*** get_download_values ***')
 
-        print(values_line)
         values = values_line.split()
+        print(values_line)
 
         if len(values) > 0:
             utils.log_debug(u"values[0]: %s" % str(values[0]))
@@ -364,6 +360,9 @@ class ManageDownload:
                 # average speed
                 download.average_speed = utils.compute_size(values[6])
 
+                 # current speed
+                download.current_speed = utils.compute_size(values[11])
+
                 if '-' not in values[9]:
                     # time spent
                     download.time_spent = utils.hms_to_seconds(values[9])
@@ -385,8 +384,6 @@ class ManageDownload:
             download.infos_plowdown = time.strftime('%d/%m/%y %H:%M:%S',
                                                     time.localtime()) + ': ' + values_line + '\r\n'
             self.update_download(download)
-
-
 
         return download
 

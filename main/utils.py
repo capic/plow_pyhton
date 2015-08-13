@@ -1,3 +1,4 @@
+# coding: utf8
 __author__ = 'Vincent'
 
 import subprocess
@@ -7,7 +8,6 @@ import psutil
 from mysql.connector import (connection)
 from bean.downloadBean import Download
 import logging
-
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
@@ -78,7 +78,7 @@ def clean_plowdown_line(line):
 
 def get_infos_plowprobe(cmd):
     log_debug(u'Command plowprobe %s' % cmd)
-    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0]
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
 
     tab_infos = output.split('=$=')
     name = tab_infos[0]
@@ -98,7 +98,7 @@ def cursor_to_download_object(cursor):
         for (
                 database_download_id, name, package, link, size_file, size_part, size_file_downloaded,
                 size_part_downloaded,
-                status, progress_part, average_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python,
+                status, progress_part, average_speed, current_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python,
                 file_path,
                 priority, infos_plowdown, theorical_start_datetime, lifecycle_insert_date,
                 lifecycle_update_date) in cursor:
@@ -114,6 +114,7 @@ def cursor_to_download_object(cursor):
             download.status = status
             download.progress_part = progress_part
             download.average_speed = average_speed
+            download.current_speed = current_speed
             download.time_spent = time_spent
             download.time_left = time_left
             download.pid_plowdown = pid_plowdown
@@ -143,7 +144,7 @@ def package_name_from_download_name(download_name):
 
 def log_debug(value):
     if LOG_OUTPUT:
-        logging.debug(value.encode('UTF-8'))
+        logging.debug(value)
 
     if CONSOLE_OUTPUT:
-        print(value.encode('UTF-8'))
+        print(value)

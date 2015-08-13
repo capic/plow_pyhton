@@ -1,3 +1,4 @@
+# coding: utf8
 #!/usr/bin/env python
 
 __author__ = 'Vincent'
@@ -39,8 +40,9 @@ class Treatment:
         # insert links in database
         file = open(file_path, 'r')
         for line in file:
+            line = line.decode("utf-8")
             if 'http' in line:
-                utils.log_debug(u'Line %s contains http' % (line))
+                utils.log_debug(u'Line %s contains http' % line)
                 self.manage_download.insert_update_download(line, file_path)
         file.close()
         utils.log_debug(u'%s =========< End insert new links or update old in database >=========')
