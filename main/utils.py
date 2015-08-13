@@ -1,4 +1,3 @@
-# coding: utf8
 __author__ = 'Vincent'
 
 import subprocess
@@ -8,6 +7,7 @@ import psutil
 from mysql.connector import (connection)
 from bean.downloadBean import Download
 import logging
+
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
@@ -98,7 +98,7 @@ def cursor_to_download_object(cursor):
         for (
                 database_download_id, name, package, link, size_file, size_part, size_file_downloaded,
                 size_part_downloaded,
-                status, progress_part, average_speed, current_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python,
+                status, progress_part, current_speed, average_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python,
                 file_path,
                 priority, infos_plowdown, theorical_start_datetime, lifecycle_insert_date,
                 lifecycle_update_date) in cursor:

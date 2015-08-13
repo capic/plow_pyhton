@@ -9,7 +9,7 @@ import logging
 import os
 import subprocess
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import utils
 from bean.downloadBean import Download
@@ -43,11 +43,11 @@ class ManageDownload:
                 download.priority,
                 datetime.now())
             utils.log_debug(u'%s query: %s | data: (%s, %s, %s, %s, %s, %s, %s, %s)' % (
-                    indent_log, sql, download.name, download.package,
-                    download.link,
-                    str(download.size_file), str(download.status), download.file_path,
-                    str(download.priority),
-                    str(datetime.now())))
+                indent_log, sql, download.name, download.package,
+                download.link,
+                str(download.size_file), str(download.status), download.file_path,
+                str(download.priority),
+                str(datetime.now())))
 
             cursor.execute(sql, data)
 
@@ -63,13 +63,14 @@ class ManageDownload:
 
         sql = 'UPDATE download SET name = %s, package = %s, link = %s, size_file = %s, size_part = %s, size_file_downloaded = %s, size_part_downloaded = %s,' \
               'status = %s, progress_part = %s, average_speed = %s, current_speed = %s, time_spent = %s, time_left = %s , pid_plowdown = %s, pid_python = %s, priority = %s, ' \
-              'file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), theorical_start_datetime, lifecycle_update_date = %s WHERE id = %s'
+              'file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), theorical_start_datetime = %s, lifecycle_update_date = %s WHERE id = %s'
         data = (download.name, download.package, download.link, download.size_file, download.size_part,
                 download.size_file_downloaded, download.size_part_downloaded, download.status, download.progress_part,
                 download.average_speed, download.current_speed, download.time_spent, download.time_left,
                 download.pid_plowdown, download.pid_python, download.priority, download.file_path,
-                download.infos_plowdown, datetime.now(), download.id)
-        utils.log_debug(u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
+                download.infos_plowdown, download.theorical_start_datetime, datetime.now(), download.id)
+        utils.log_debug(
+            u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
                 indent_log, sql, download.name, download.package,
                 download.link,
                 str(download.size_file), str(download.size_part),
@@ -166,14 +167,14 @@ class ManageDownload:
                 data = (Download.STATUS_WAITING, file_path, Download.STATUS_WAITING, file_path)
 
                 utils.log_debug(u'%s query : %s | data : (%s, %s, %s, %s)' % (
-                        indent_log, sql, str(Download.STATUS_WAITING), file_path,
-                        str(Download.STATUS_WAITING), file_path))
+                    indent_log, sql, str(Download.STATUS_WAITING), file_path,
+                    str(Download.STATUS_WAITING), file_path))
             else:
                 sql += ' AND priority = (' + under_sql + ')'
 
                 data = (Download.STATUS_WAITING, Download.STATUS_WAITING)
                 utils.log_debug(u'%s query : %s | data : (%s, %s)' % (indent_log, sql, str(Download.STATUS_WAITING),
-                                                         str(Download.STATUS_WAITING)))
+                                                                      str(Download.STATUS_WAITING)))
 
             sql += ' HAVING  MIN(id)'
 
@@ -360,7 +361,7 @@ class ManageDownload:
                 # average speed
                 download.average_speed = utils.compute_size(values[6])
 
-                 # current speed
+                # current speed
                 download.current_speed = utils.compute_size(values[11])
 
                 if '-' not in values[9]:
@@ -379,7 +380,8 @@ class ManageDownload:
                 tab_name = values_line.split('Filename:')
                 download.name = tab_name[len(tab_name) - 1]
             elif "Waiting" in values[0]:
-                download.theorical_start_datetime = datetime.now() + datetime.timedelta(0, int(values[1]))
+                download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
+                print("download.theorical_start_datetime %s" % download.theorical_start_datetime)
 
             download.infos_plowdown = time.strftime('%d/%m/%y %H:%M:%S',
                                                     time.localtime()) + ': ' + values_line + '\r\n'
@@ -393,7 +395,7 @@ class ManageDownload:
         if not utils.check_pid(download.pid_plowdown):
             # utils.kill_proc_tree(download.pid_python)
             utils.log_debug(u'Process %s for download %s killed for inactivity ...\r\n' % (
-                    str(download.pid_python), download.name))
+                str(download.pid_python), download.name))
 
             download.pid_plowdown = 0
             download.pid_python = 0
