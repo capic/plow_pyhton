@@ -7,6 +7,7 @@ import utils
 
 from bean.downloadBean import Download
 from manage_download import ManageDownload
+import logging
 
 
 class Treatment:
@@ -74,11 +75,15 @@ class Treatment:
             logging.error('Download is none')
 
     def start_multi_downloads(self, file_path):
-        utils.log_debug(u'*** start_file_treatment ***')
-        utils.log_debug(u'file_path %s' % (file_path))
+        # utils.log_debug(u'*** start_file_treatment ***')
+        # utils.log_debug(u'file_path %s' % (file_path))
 
         download = self.manage_download.get_download_to_start(None, file_path)
         while not self.stop_loop_file_treatment and download is not None:
+            logging.basicConfig(filename='/var/www/log/log_download_id_' + str(download.id) + '.log', level=logging.DEBUG,
+                                format='%(asctime)s %(message)s',
+                                datefmt='%d/%m/%Y %H:%M:%S')
+
             utils.log_debug(u'=========> Start new download <=========')
             download = self.manage_download.start_download(download)
 

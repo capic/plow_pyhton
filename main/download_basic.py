@@ -61,10 +61,10 @@ def main(argv):
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'start_multi_downloads':
-            logging.basicConfig(filename='/var/www/log/log_start_multi_downloads.log', level=logging.DEBUG,
-                                format='%(asctime)s %(message)s',
-                                datefmt='%d/%m/%Y %H:%M:%S')
-            utils.log_debug(u"*** Start application ***")
+            # logging.basicConfig(filename='/var/www/log/log_start_multi_downloads.log', level=logging.DEBUG,
+            #                     format='%(asctime)s %(message)s',
+            #                     datefmt='%d/%m/%Y %H:%M:%S')
+            # utils.log_debug(u"*** Start application ***")
             if len(args) > 1:
                 file_path = args[1]
                 treatment.start_multi_downloads(file_path)

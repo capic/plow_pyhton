@@ -381,7 +381,6 @@ class ManageDownload:
                 download.name = tab_name[len(tab_name) - 1]
             elif "Waiting" in values[0]:
                 download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
-                print("download.theorical_start_datetime %s" % download.theorical_start_datetime)
 
             download.infos_plowdown = time.strftime('%d/%m/%y %H:%M:%S',
                                                     time.localtime()) + ': ' + values_line + '\r\n'
