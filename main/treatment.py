@@ -79,10 +79,18 @@ class Treatment:
         # utils.log_debug(u'file_path %s' % (file_path))
 
         download = self.manage_download.get_download_to_start(None, file_path)
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+
         while not self.stop_loop_file_treatment and download is not None:
-            logging.basicConfig(filename='/var/www/log/log_download_id_' + str(download.id) + '.log', level=logging.DEBUG,
-                                format='%(asctime)s %(message)s',
-                                datefmt='%d/%m/%Y %H:%M:%S')
+            if len(logger.handlers) > 0:
+                logger.handlers[0].stream.close()
+                logger.removeHandler(logger.handlers[0])
+
+            file_handler = logging.FileHandler('/var/www/log/log_download_id_' + str(download.id) + '.log')
+            file_handler.setLevel(logging.DEBUG)
+            file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+            logger.addHandler(file_handler)
 
             utils.log_debug(u'=========> Start new download <=========')
             download = self.manage_download.start_download(download)
