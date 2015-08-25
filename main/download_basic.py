@@ -30,10 +30,14 @@ def main(argv):
         if os.path.isfile("/var/www/plow_solution/config.cfg"):
             config = {}
             execfile("/var/www/plow_solution/config.cfg", config)
-            print("config file found")
+            utils.log_debug("config file found")
             utils.DIRECTORY_WEB_LOG = config['repertoire_web_log']
             utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config['repertoire_telechargement_temporaire']
             utils.DIRECTORY_DOWNLOAD_DESTINATION = config['repertoire_telechargement']
+
+        utils.log_debug("Directory web log %s" % utils.DIRECTORY_WEB_LOG)
+        utils.log_debug("Directory download destination temp %s" % utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP)
+        utils.log_debug("Directory download destination %s" % utils.DIRECTORY_DOWNLOAD_DESTINATION)
 
         treatment = Treatment()
 
