@@ -19,7 +19,7 @@ DIRECTORY_DOWNLOAD_DESTINATION_TEMP = '/mnt/HD/HD_a2/telechargement/temp_plowdow
 DIRECTORY_DOWNLOAD_DESTINATION = '/mnt/HD/HD_a2/telechargement/'
 
 LOG_OUTPUT = True
-CONSOLE_OUTPUT = False
+CONSOLE_OUTPUT = True
 
 
 def database_connect():

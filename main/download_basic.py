@@ -26,7 +26,6 @@ def main(argv):
         print(COMMAND_USAGE)
         exit()
     else:
-        config = None
         if os.path.isfile("/var/www/plow_solution/config.cfg"):
             config = {}
             execfile("/var/www/plow_solution/config.cfg", config)
@@ -34,10 +33,17 @@ def main(argv):
             utils.DIRECTORY_WEB_LOG = config['repertoire_web_log']
             utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config['repertoire_telechargement_temporaire']
             utils.DIRECTORY_DOWNLOAD_DESTINATION = config['repertoire_telechargement']
+            utils.LOG_OUTPUT = (
+                config['log_output'] == "True" or config['log_output'] == "true" or config['log_output'] == "1")
+            utils.CONSOLE_OUTPUT = (
+                config['console_output'] == "True" or config['console_output'] == "true" or config[
+                    'console_output'] == "1")
 
         utils.log_debug("Directory web log %s" % utils.DIRECTORY_WEB_LOG)
         utils.log_debug("Directory download destination temp %s" % utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP)
         utils.log_debug("Directory download destination %s" % utils.DIRECTORY_DOWNLOAD_DESTINATION)
+        utils.log_debug("Log output %s" % str(utils.LOG_OUTPUT))
+        utils.log_debug("Console output %s" % str(utils.CONSOLE_OUTPUT))
 
         treatment = Treatment()
 
@@ -65,7 +71,7 @@ def main(argv):
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'start_file_treatment':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG +'log_start_file_treatment.log', level=logging.DEBUG,
+            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'log_start_file_treatment.log', level=logging.DEBUG,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             utils.log_debug(u"*** Start application ***")
@@ -76,8 +82,8 @@ def main(argv):
                 print(COMMAND_USAGE)
         elif args[0] == 'start_multi_downloads':
             # logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG +'log_start_multi_downloads.log', level=logging.DEBUG,
-            #                     format='%(asctime)s %(message)s',
-            #                     datefmt='%d/%m/%Y %H:%M:%S')
+            # format='%(asctime)s %(message)s',
+            # datefmt='%d/%m/%Y %H:%M:%S')
             # utils.log_debug(u"*** Start application ***")
             if len(args) > 1:
                 file_path = args[1]
