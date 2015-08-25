@@ -21,7 +21,7 @@ class ManageDownload:
     DIRECTORY_DOWNLOAD_DESTINATION_TEMP = "/mnt/HD/HD_a2/telechargement/temp_plowdown/"
     DIRECTORY_DOWNLOAD_DESTINATION = "/mnt/HD/HD_a2/telechargement/"
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
-    COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '%%f=$=%%s' %s"
+    COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s' %s"
     MARK_AS_FINISHED = "# FINNISHED "
 
     def __init__(self):
@@ -262,18 +262,19 @@ class ManageDownload:
                     utils.log_debug(u'command : %s' % cmd)
 
                     name, size = utils.get_infos_plowprobe(cmd)
-                    utils.log_debug('Infos get from plowprobe %s' % name)
+                    if name is not None:
+                        utils.log_debug('Infos get from plowprobe %s' % name)
 
-                    download = Download()
-                    download.name = name
-                    download.link = link
-                    download.size = size
-                    download.status = Download.STATUS_WAITING
-                    download.priority = Download.PRIORITY_NORMAL
-                    download.file_path = file_path
-                    download.lifecycle_insert_date = datetime.now()
+                        download = Download()
+                        download.name = name
+                        download.link = link
+                        download.size = size
+                        download.status = Download.STATUS_WAITING
+                        download.priority = Download.PRIORITY_NORMAL
+                        download.file_path = file_path
+                        download.lifecycle_insert_date = datetime.now()
 
-                    self.insert_download(download)
+                        self.insert_download(download)
             else:
                 utils.log_debug(u'Download %s exists -> update' % link)
                 download = self.get_download_by_link_file_path(link, file_path)
