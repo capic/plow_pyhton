@@ -18,8 +18,6 @@ from bean.downloadBean import Download
 
 
 class ManageDownload:
-    DIRECTORY_DOWNLOAD_DESTINATION_TEMP = "/mnt/HD/HD_a2/telechargement/temp_plowdown/"
-    DIRECTORY_DOWNLOAD_DESTINATION = "/mnt/HD/HD_a2/telechargement/"
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s' %s"
     MARK_AS_FINISHED = "# FINNISHED "
@@ -309,7 +307,7 @@ class ManageDownload:
 
         cmd = (
             self.COMMAND_DOWNLOAD % (
-                self.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, self.DIRECTORY_DOWNLOAD_DESTINATION, download.link))
+                utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, utils.DIRECTORY_DOWNLOAD_DESTINATION, download.link))
         utils.log_debug(u'%s command : %s' % (indent_log, cmd))
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
         download.pid_plowdown = p.pid

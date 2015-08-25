@@ -26,7 +26,7 @@ class Treatment:
 
     def stop_download(self, download_id):
         utils.log_debug(u'*** stop_download ***')
-        utils.log_debug(u'download_id %s' % (download_id))
+        utils.log_debug(u'download_id %s' % download_id)
 
         download_to_stop = self.manage_download.get_download_by_id(download_id)
         utils.log_debug(u'download to stop %s' % (download_to_stop.to_string()))
@@ -87,7 +87,7 @@ class Treatment:
                 logger.handlers[0].stream.close()
                 logger.removeHandler(logger.handlers[0])
 
-            file_handler = logging.FileHandler('/var/www/log/log_download_id_' + str(download.id) + '.log')
+            file_handler = logging.FileHandler(utils.DIRECTORY_WEB_LOG + 'log_download_id_' + str(download.id) + '.log')
             file_handler.setLevel(logging.DEBUG)
             file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
             logger.addHandler(file_handler)

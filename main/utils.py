@@ -14,6 +14,10 @@ MYSQL_PASS = 'capic_20_04_1982'
 MYSQL_HOST = '192.168.1.101'
 MYSQL_DATABASE = 'plowshare'
 
+DIRECTORY_WEB_LOG = '.'
+DIRECTORY_DOWNLOAD_DESTINATION_TEMP = '/mnt/HD/HD_a2/telechargement/temp_plowdown/'
+DIRECTORY_DOWNLOAD_DESTINATION = '/mnt/HD/HD_a2/telechargement/'
+
 LOG_OUTPUT = True
 CONSOLE_OUTPUT = False
 
