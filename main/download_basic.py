@@ -27,7 +27,7 @@ def main(argv):
     else:
         config = {}
         execfile("/var/www/plow_solution/config.cfg", config)
-        print("config : " + config[0])
+        print("config : " + config["git_plowhare"])
 
         treatment = Treatment()
 
