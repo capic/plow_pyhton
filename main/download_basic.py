@@ -25,6 +25,9 @@ def main(argv):
         print(COMMAND_USAGE)
         exit()
     else:
+        config = {}
+        execfile("/var/www/plow_solution/config.cfg", config)
+        print("config : " + config)
         treatment = Treatment()
 
         # start a download
