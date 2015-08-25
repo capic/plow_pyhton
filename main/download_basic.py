@@ -28,6 +28,7 @@ def main(argv):
         config = {}
         execfile("/var/www/plow_solution/config.cfg", config)
         print("config : " + config)
+
         treatment = Treatment()
 
         # start a download
