@@ -287,7 +287,7 @@ class ManageDownload:
                     if finished:
                         download.status = Download.STATUS_FINISHED
 
-                    download.infos_plodown = 'updated by insert_update_download method\r\n'
+                    download.infos_plowdown = 'updated by insert_update_download method\r\n'
                     self.update_download(download)
 
     def stop_download(self, download):
@@ -298,7 +298,7 @@ class ManageDownload:
         download.pid_python = 0
         download.pid_plowdown = 0
         download.status = Download.STATUS_WAITING
-        download.infos_plodown = 'updated by stop_download method\r\n'
+        download.infos_plowdown = 'updated by stop_download method\r\n'
         self.update_download(download)
 
     def start_download(self, download):
@@ -313,7 +313,7 @@ class ManageDownload:
         download.pid_plowdown = p.pid
         download.pid_python = os.getpid()
         download.status = Download.STATUS_IN_PROGRESS
-        download.infos_plodown = 'updated by start_download method\r\n'
+        download.infos_plowdown = 'updated by start_download method\r\n'
         self.update_download(download)
 
         line = ''

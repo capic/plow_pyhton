@@ -30,14 +30,27 @@ def main(argv):
             config = {}
             execfile("/var/www/plow_solution/config.cfg", config)
             utils.log_debug("config file found")
-            utils.DIRECTORY_WEB_LOG = config['repertoire_web_log']
-            utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config['repertoire_telechargement_temporaire']
-            utils.DIRECTORY_DOWNLOAD_DESTINATION = config['repertoire_telechargement']
-            utils.LOG_OUTPUT = (
-                config['log_output'] == "True" or config['log_output'] == "true" or config['log_output'] == "1")
-            utils.CONSOLE_OUTPUT = (
-                config['console_output'] == "True" or config['console_output'] == "true" or config[
-                    'console_output'] == "1")
+            if 'mysql_login' in config:
+                utils.MYSQL_LOGIN = config['mysql_login']
+            if 'mysql_pass' in config:
+                utils.MYSQL_PASS = config['mysql_pass']
+            if 'mysql_host' in config:
+                utils.MYSQL_HOST = config['mysql_host']
+            if 'mysql_database' in config:
+                utils.MYSQL_DATABASE = config['mysql_database']
+            if 'repertoire_web_log' in config:
+                utils.DIRECTORY_WEB_LOG = config['repertoire_web_log']
+            if 'repertoire_telechargement_temporaire' in config:
+                utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config['repertoire_telechargement_temporaire']
+            if 'repertoire_telechargement' in config:
+                utils.DIRECTORY_DOWNLOAD_DESTINATION = config['repertoire_telechargement']
+            if 'log_output' in config:
+                utils.LOG_OUTPUT = (
+                    config['log_output'] == "True" or config['log_output'] == "true" or config['log_output'] == "1")
+            if 'console_output' in config:
+                utils.CONSOLE_OUTPUT = (
+                    config['console_output'] == "True" or config['console_output'] == "true" or config[
+                        'console_output'] == "1")
 
         utils.log_debug("Directory web log %s" % utils.DIRECTORY_WEB_LOG)
         utils.log_debug("Directory download destination temp %s" % utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP)

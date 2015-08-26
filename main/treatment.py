@@ -35,7 +35,7 @@ class Treatment:
 
     def start_file_treatment(self, file_path):
         utils.log_debug(u'*** start_file_treatment ***')
-        utils.log_debug(u'file_path %s' % (file_path))
+        utils.log_debug(u'file_path %s' % file_path)
 
         utils.log_debug(u'=========> Insert new links or update old in database <=========')
         # insert links in database
@@ -102,7 +102,7 @@ class Treatment:
                 download.status = Download.STATUS_WAITING
                 download.time_left = 0
                 download.average_speed = 0
-                download.infos_plodown = 'updated by start_file_treatment method\r\n'
+                download.infos_plowdown = 'updated by start_file_treatment method\r\n'
                 self.manage_download.update_download(download)
             utils.log_debug(u'=========< End download >=========')
             # next download
