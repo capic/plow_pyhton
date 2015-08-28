@@ -61,14 +61,14 @@ class ManageDownload:
 
         sql = 'UPDATE download SET name = %s, package = %s, link = %s, size_file = %s, size_part = %s, size_file_downloaded = %s, size_part_downloaded = %s,' \
               'status = %s, progress_part = %s, average_speed = %s, current_speed = %s, time_spent = %s, time_left = %s , pid_plowdown = %s, pid_python = %s, priority = %s, ' \
-              'file_path = %s, infos_plowdown = concat(ifnull(infos_plowdown,""), %s), theorical_start_datetime = %s, lifecycle_update_date = %s WHERE id = %s'
+              'file_path = %s, theorical_start_datetime = %s, lifecycle_update_date = %s WHERE id = %s'
         data = (download.name, download.package, download.link, download.size_file, download.size_part,
                 download.size_file_downloaded, download.size_part_downloaded, download.status, download.progress_part,
                 download.average_speed, download.current_speed, download.time_spent, download.time_left,
                 download.pid_plowdown, download.pid_python, download.priority, download.file_path,
-                download.infos_plowdown, download.theorical_start_datetime, datetime.now(), download.id)
+                download.theorical_start_datetime, datetime.now(), download.id)
         utils.log_debug(
-            u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
+            u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
                 indent_log, sql, download.name, download.package,
                 download.link,
                 str(download.size_file), str(download.size_part),
@@ -79,14 +79,16 @@ class ManageDownload:
                 str(download.pid_plowdown), str(download.pid_python),
                 str(download.priority),
                 download.file_path,
-                download.infos_plowdown,
                 str(download.theorical_start_datetime),
                 str(datetime.now()), str(download.id)))
         cursor.execute(sql, data)
 
-        cursor.close()
+        if download.infos != "":
+            sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, concat(ifnull(logs,""), %s))'
+            data = (download.id, download.infos_plowdown)
+            cursor.execute(sql, data)
 
-        # self.ws.send(download.infos_plowdown)
+        cursor.close()
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
