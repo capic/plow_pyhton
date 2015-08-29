@@ -86,6 +86,11 @@ class ManageDownload:
         if download.logs != "":
             sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, concat(ifnull(logs,""), %s))'
             data = (download.id, download.logs)
+
+            utils.log_debug(
+                u'query : %s | data : (%s, %s)' % (
+                    sql, str(download.id), download.logs))
+
             cursor.execute(sql, data)
 
         cursor.close()
@@ -408,7 +413,7 @@ class ManageDownload:
                 download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
 
             download.logs = time.strftime('%d/%m/%y %H:%M:%S',
-                                                    time.localtime()) + ': ' + values_line + '\r\n'
+                                          time.localtime()) + ': ' + values_line + '\r\n'
             self.update_download(download)
 
         return download
