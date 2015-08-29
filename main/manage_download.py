@@ -102,7 +102,7 @@ class ManageDownload:
                   'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
                   'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
                   'lifecycle_insert_date, lifecycle_update_date, logs ' \
-                  ' FROM download INNER JOIN download_logs ' \
+                  ' FROM download LEFT JOIN download_logs ' \
                   ' ON (download.id = download_logs.id)' \
                   ' WHERE id = %s'
             data = (download_id, )
@@ -138,7 +138,7 @@ class ManageDownload:
                   'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
                   'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
                   'lifecycle_insert_date, lifecycle_update_date, logs ' \
-                  ' FROM download INNER JOIN download_logs ' \
+                  ' FROM download LEFT JOIN download_logs ' \
                   ' ON (download.id = download_logs.id)' \
                   ' WHERE link = %s and file_path = %s'
             data = (link, file_path)
@@ -172,7 +172,7 @@ class ManageDownload:
                   'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
                   'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
                   'lifecycle_insert_date, lifecycle_update_date, logs ' \
-                  ' FROM download INNER JOIN download_logs ' \
+                  ' FROM download LEFT JOIN download_logs ' \
                   ' ON (download.id = download_logs.id)' \
                   ' WHERE status = %s'
             under_sql = 'SELECT MAX(priority) FROM download where status = %s'
@@ -224,7 +224,7 @@ class ManageDownload:
                   'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
                   'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
                   'lifecycle_insert_date, lifecycle_update_date, logs ' \
-                  ' FROM download INNER JOIN download_logs ' \
+                  ' FROM download LEFT JOIN download_logs ' \
                   ' ON (download.id = download_logs.id)' \
                   '  WHERE status = %s'
             data = (Download.STATUS_IN_PROGRESS, )
