@@ -83,6 +83,8 @@ class ManageDownload:
                 str(datetime.now()), str(download.id)))
         cursor.execute(sql, data)
 
+        utils.log_debug("logs: %s" % download.logs)
+
         if download.logs != "":
             sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, concat(ifnull(logs,""), %s))'
             data = (download.id, download.logs)
