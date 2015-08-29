@@ -107,8 +107,8 @@ def cursor_to_download_object(cursor):
                 size_part_downloaded,
                 status, progress_part, current_speed, average_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python,
                 file_path,
-                priority, infos_plowdown, theorical_start_datetime, lifecycle_insert_date,
-                lifecycle_update_date) in cursor:
+                priority, theorical_start_datetime, lifecycle_insert_date,
+                lifecycle_update_date, logs) in cursor:
             download = Download()
             download.id = database_download_id
             download.name = name
@@ -128,10 +128,10 @@ def cursor_to_download_object(cursor):
             download.pid_python = pid_python
             download.file_path = file_path
             download.priority = priority
-            download.infos_plowdown = infos_plowdown
             download.theorical_start_datetime = theorical_start_datetime
             download.lifecycle_insert_date = lifecycle_insert_date
             download.lifecycle_update_date = lifecycle_update_date
+            download.logs = logs
 
             list_downloads.append(download)
 

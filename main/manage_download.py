@@ -83,9 +83,9 @@ class ManageDownload:
                 str(datetime.now()), str(download.id)))
         cursor.execute(sql, data)
 
-        if download.infos != "":
+        if download.logs != "":
             sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, concat(ifnull(logs,""), %s))'
-            data = (download.id, download.infos_plowdown)
+            data = (download.id, download.logs)
             cursor.execute(sql, data)
 
         cursor.close()
@@ -98,7 +98,13 @@ class ManageDownload:
         if id is not None:
             cursor = self.cnx.cursor()
 
-            sql = 'SELECT * FROM download WHERE id = %s'
+            sql = 'SELECT  download.id, name, package, link, size_file, size_part, size_file_downloaded, ' \
+                  'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
+                  'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
+                  'lifecycle_insert_date, lifecycle_update_date, logs ' \
+                  ' FROM download INNER JOIN download_logs ' \
+                  ' ON (download.id = download_logs.id)' \
+                  ' WHERE id = %s'
             data = (download_id, )
             utils.log_debug(u'%s query : %s | data : (%s)' % (indent_log, sql, str(download_id)))
 
@@ -128,7 +134,13 @@ class ManageDownload:
 
         if link is not None and link != '' and file_path is not None and file_path != '':
             cursor = self.cnx.cursor()
-            sql = 'SELECT * FROM download WHERE link = %s and file_path = %s'
+            sql = 'SELECT  download.id, name, package, link, size_file, size_part, size_file_downloaded, ' \
+                  'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
+                  'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
+                  'lifecycle_insert_date, lifecycle_update_date, logs ' \
+                  ' FROM download INNER JOIN download_logs ' \
+                  ' ON (download.id = download_logs.id)' \
+                  ' WHERE link = %s and file_path = %s'
             data = (link, file_path)
             utils.log_debug(u'%s query : %s | data : (%s, %s)' % (indent_log, sql, link, file_path))
 
@@ -156,7 +168,13 @@ class ManageDownload:
         cursor = self.cnx.cursor()
 
         if download_id is None:
-            sql = 'SELECT * FROM download WHERE status = %s'
+            sql = 'SELECT  download.id, name, package, link, size_file, size_part, size_file_downloaded, ' \
+                  'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
+                  'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
+                  'lifecycle_insert_date, lifecycle_update_date, logs ' \
+                  ' FROM download INNER JOIN download_logs ' \
+                  ' ON (download.id = download_logs.id)' \
+                  ' WHERE status = %s'
             under_sql = 'SELECT MAX(priority) FROM download where status = %s'
 
             if file_path is not None:
@@ -202,7 +220,13 @@ class ManageDownload:
         cursor = self.cnx.cursor()
 
         if download_id is None:
-            sql = 'SELECT * FROM download WHERE status = %s'
+            sql = 'SELECT  download.id, name, package, link, size_file, size_part, size_file_downloaded, ' \
+                  'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
+                  'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
+                  'lifecycle_insert_date, lifecycle_update_date, logs ' \
+                  ' FROM download INNER JOIN download_logs ' \
+                  ' ON (download.id = download_logs.id)' \
+                  '  WHERE status = %s'
             data = (Download.STATUS_IN_PROGRESS, )
             utils.log_debug(u'query : %s | data : (%s)' % (sql, str(Download.STATUS_IN_PROGRESS)))
 
@@ -289,7 +313,7 @@ class ManageDownload:
                     if finished:
                         download.status = Download.STATUS_FINISHED
 
-                    download.infos_plowdown = 'updated by insert_update_download method\r\n'
+                    download.logs = 'updated by insert_update_download method\r\n'
                     self.update_download(download)
 
     def stop_download(self, download):
@@ -300,7 +324,7 @@ class ManageDownload:
         download.pid_python = 0
         download.pid_plowdown = 0
         download.status = Download.STATUS_WAITING
-        download.infos_plowdown = 'updated by stop_download method\r\n'
+        download.logs = 'updated by stop_download method\r\n'
         self.update_download(download)
 
     def start_download(self, download):
@@ -315,7 +339,7 @@ class ManageDownload:
         download.pid_plowdown = p.pid
         download.pid_python = os.getpid()
         download.status = Download.STATUS_IN_PROGRESS
-        download.infos_plowdown = 'updated by start_download method\r\n'
+        download.logs = 'updated by start_download method\r\n'
         self.update_download(download)
 
         line = ''
@@ -383,7 +407,7 @@ class ManageDownload:
             elif "Waiting" in values[0]:
                 download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
 
-            download.infos_plowdown = time.strftime('%d/%m/%y %H:%M:%S',
+            download.logs = time.strftime('%d/%m/%y %H:%M:%S',
                                                     time.localtime()) + ': ' + values_line + '\r\n'
             self.update_download(download)
 
@@ -402,7 +426,7 @@ class ManageDownload:
             download.status = Download.STATUS_WAITING
             download.time_left = 0
             download.average_speed = 0
-            download.infos_plowdown = 'updated by check_download_alive_method\r\nProcess killed by inactivity ...\r\n'
+            download.logs = 'updated by check_download_alive_method\r\nProcess killed by inactivity ...\r\n'
 
             self.update_download(download)
 

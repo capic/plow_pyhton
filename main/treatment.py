@@ -102,7 +102,7 @@ class Treatment:
                 download.status = Download.STATUS_WAITING
                 download.time_left = 0
                 download.average_speed = 0
-                download.infos_plowdown = 'updated by start_file_treatment method\r\n'
+                download.logs = 'updated by start_file_treatment method\r\n'
                 self.manage_download.update_download(download)
             utils.log_debug(u'=========< End download >=========')
             # next download

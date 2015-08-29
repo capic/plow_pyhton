@@ -37,7 +37,7 @@ class Download:
         self.pid_python = 0
         self.file_path = ''
         self.priority = 0
-        self.infos_plowdown = ''
+        self.logs = ''
         self.theorical_start_datetime = 0
         self.lifecycle_insert_date = 0
         self.lifecycle_update_date = 0
