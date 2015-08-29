@@ -194,7 +194,7 @@ class ManageDownload:
                 utils.log_debug(u'%s query : %s | data : (%s, %s)' % (indent_log, sql, str(Download.STATUS_WAITING),
                                                                       str(Download.STATUS_WAITING)))
 
-            sql += ' HAVING  MIN(id)'
+            sql += ' HAVING  MIN(download.id)'
 
             cursor.execute(sql, data)
             list_download = utils.cursor_to_download_object(cursor)
