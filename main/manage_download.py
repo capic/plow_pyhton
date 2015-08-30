@@ -49,6 +49,7 @@ class ManageDownload:
 
             cursor.execute(sql, data)
             download.id = cursor.lastrowid
+            self.cnx.commit()
             cursor.close()
 
             cursor = self.cnx.cursor()
@@ -57,10 +58,10 @@ class ManageDownload:
 
             utils.log_debug(
                 u'query : %s | data : (%s, %s)' % (
-                    sql, str(download.id), download.logs))
+                    sql, str(download.id), "Insert !!"))
 
             cursor.execute(sql, data)
-
+            self.cnx.commit()
             cursor.close()
         else:
             logging.error("Download is none")
@@ -94,6 +95,7 @@ class ManageDownload:
                 str(download.theorical_start_datetime),
                 str(datetime.now()), str(download.id)))
         cursor.execute(sql, data)
+        self.cnx.commit()
         cursor.close()
         utils.log_debug("logs: %s" % download.logs)
 
@@ -107,7 +109,7 @@ class ManageDownload:
                     sql, str(download.id), download.logs))
 
             cursor.execute(sql, data)
-
+            self.cnx.commit()
             cursor.close()
 
     def get_download_by_id(self, download_id):
