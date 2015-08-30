@@ -51,18 +51,6 @@ class ManageDownload:
             download.id = cursor.lastrowid
             self.cnx.commit()
             cursor.close()
-
-            cursor = self.cnx.cursor()
-            sql = 'INSERT INTO download_logs (id, logs) VALUES (%s, %s)'
-            data = (download.id, "Insert !!")
-
-            utils.log_debug(
-                u'query : %s | data : (%s, %s)' % (
-                    sql, str(download.id), "Insert !!"))
-
-            cursor.execute(sql, data)
-            self.cnx.commit()
-            cursor.close()
         else:
             logging.error("Download is none")
 
@@ -101,10 +89,8 @@ class ManageDownload:
 
         if download.logs != "":
             cursor = self.cnx.cursor()
-            # sql = 'UPDATE download_logs SET logs = concat(ifnull(logs,""), %s) WHERE id = %s'
-            # data = (download.logs, download.id)
 
-            sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, %s)'
+            sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, concat(ifnull(logs,""), %s))'
             data = (download.id, download.logs)
 
             utils.log_debug(
