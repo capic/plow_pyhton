@@ -82,10 +82,11 @@ class ManageDownload:
                 str(download.theorical_start_datetime),
                 str(datetime.now()), str(download.id)))
         cursor.execute(sql, data)
-
+        cursor.close()
         utils.log_debug("logs: %s" % download.logs)
 
         if download.logs != "":
+            cursor = self.cnx.cursor()
             sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, concat(ifnull(logs,""), %s))'
             data = (download.id, download.logs)
 
@@ -95,7 +96,7 @@ class ManageDownload:
 
             cursor.execute(sql, data)
 
-        cursor.close()
+            cursor.close()
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
