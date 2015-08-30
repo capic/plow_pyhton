@@ -48,7 +48,7 @@ class ManageDownload:
                 str(datetime.now())))
 
             cursor.execute(sql, data)
-
+            download.id = cursor.lastrowid
             cursor.close()
 
             cursor = self.cnx.cursor()
