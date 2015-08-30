@@ -101,8 +101,11 @@ class ManageDownload:
 
         if download.logs != "":
             cursor = self.cnx.cursor()
-            sql = 'UPDATE download_logs SET logs = concat(ifnull(logs,""), %s) WHERE id = %s'
-            data = (download.logs, download.id)
+            # sql = 'UPDATE download_logs SET logs = concat(ifnull(logs,""), %s) WHERE id = %s'
+            # data = (download.logs, download.id)
+
+            sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, %s)'
+            data = (download.id, download.logs)
 
             utils.log_debug(
                 u'query : %s | data : (%s, %s)' % (
