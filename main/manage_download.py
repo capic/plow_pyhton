@@ -50,6 +50,18 @@ class ManageDownload:
             cursor.execute(sql, data)
 
             cursor.close()
+
+            cursor = self.cnx.cursor()
+            sql = 'INSERT INTO download_logs (id, logs) VALUES (%s, %s)'
+            data = (download.id, download.logs)
+
+            utils.log_debug(
+                u'query : %s | data : (%s, %s)' % (
+                    sql, str(download.id), download.logs))
+
+            cursor.execute(sql, data)
+
+            cursor.close()
         else:
             logging.error("Download is none")
 
@@ -87,8 +99,8 @@ class ManageDownload:
 
         if download.logs != "":
             cursor = self.cnx.cursor()
-            sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, concat(ifnull(logs,""), %s))'
-            data = (download.id, download.logs)
+            sql = 'UPDATE download_logs SET logs = concat(ifnull(logs,""), %s) WHERE id = %s'
+            data = (download.logs, download.id)
 
             utils.log_debug(
                 u'query : %s | data : (%s, %s)' % (
