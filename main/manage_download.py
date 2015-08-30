@@ -53,7 +53,7 @@ class ManageDownload:
 
             cursor = self.cnx.cursor()
             sql = 'INSERT INTO download_logs (id, logs) VALUES (%s, %s)'
-            data = (download.id, "")
+            data = (download.id, "Insert !!")
 
             utils.log_debug(
                 u'query : %s | data : (%s, %s)' % (
