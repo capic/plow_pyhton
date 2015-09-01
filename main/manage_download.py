@@ -14,17 +14,10 @@ import unirest
 import utils
 from bean.downloadBean import Download
 
-# from websocket import create_connection
-
-
 class ManageDownload:
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s' %s"
     MARK_AS_FINISHED = "# FINNISHED "
-
-    def __init__(self):
-        # self.ws = create_connection("ws://192.168.1.200:7070/")
-        self.cnx = utils.database_connect()
 
     def insert_download(self, download):
         utils.log_debug(u'  *** insert_download ***')
@@ -32,25 +25,43 @@ class ManageDownload:
         if download is not None:
             download.package = utils.package_name_from_download_name(download.name)
 
-            downloadInserted = unirest.post(utils.REST_ADRESSE + '/downloads', headers={"Accept": "application/json"}, params=download.to_insert_json())
+            response = unirest.post(utils.REST_ADRESSE + '/downloads', headers={"Accept": "application/json"},
+                                            params=download.to_insert_json())
+
+            if response.code != 200:
+                logging.error(u'Error insert')
         else:
             logging.error("Download is none")
 
     def update_download(self, download):
         utils.log_debug(u'  *** update_download ***')
 
-        unirest.put(utils.REST_ADRESSE + '/downloads/' + download.id, headers={"Accept": "application/json"}, params=download.to_json())
+        response = unirest.put(utils.REST_ADRESSE + '/downloads/' + download.id, headers={"Accept": "application/json"},
+                    params=download.to_json())
+
+        if response.code != 200:
+            logging.error(u'Error update')
+            download.logs = u"ERROR DURING DOWNLOAD UPDATE"
 
         if download.logs != "":
-            unirest.put(utils.REST_ADRESSE + '/downloads/logs/' + download.id, headers={"Accept": "application/json"}, params={"id": download.id, "logs": download.logs})
+            response = unirest.put(utils.REST_ADRESSE + '/downloads/logs/' + download.id, headers={"Accept": "application/json"},
+                        params={"id": download.id, "logs": download.logs})
+
+            if response.code != 200:
+                logging.error(u'Error update')
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
-        indent_log = '   '
         download = None
 
         if download_id is not None:
-            download = unirest.get(utils.REST_ADRESSE + '/downloads/' + download, headers={"Accept": "application/json"})
+            response = unirest.get(utils.REST_ADRESSE + '/downloads/' + download_id,
+                                   headers={"Accept": "application/json"})
+
+            if response == 200:
+                download = response.body
+            else:
+                logging.error(u'Error get')
         else:
             logging.error('Id is none')
 
@@ -58,12 +69,17 @@ class ManageDownload:
 
     def get_download_by_link_file_path(self, link, file_path):
         utils.log_debug(u'   *** get_download_by_link_file_path ***')
-        utils.log_debug(u'%s link: %s, file_path: %s' % (indent_log, link, file_path))
+        utils.log_debug(u'link: %s, file_path: %s' % (link, file_path))
 
         download = None
 
         if link is not None and link != '' and file_path is not None and file_path != '':
-            downloads_list = unirest.get(utils.REST_ADRESSE + '/downloads/link/' + link + '/path/' + file_path, headers={"Accept": "application/json"})
+            response = unirest.get(utils.REST_ADRESSE + '/downloads',
+                                   headers={"Accept": "application/json"}, params={"link": link, "file_path": file_path})
+
+            downloads_list = []
+            if response.code == 200:
+                downloads_list = response.body
 
             if len(downloads_list) == 0:
                 logging.info('No download found with link %s and file_path %s' % (link, file_path))
@@ -82,10 +98,17 @@ class ManageDownload:
         download = None
 
         if download_id is None:
+            downloads_list = []
             if file_path is not None:
-                downloads_list = unirest.get(utils.REST_ADRESSE + '/downloads/next/path/' + file_path, headers={"Accept": "application/json"})
+                response = unirest.get(utils.REST_ADRESSE + '/downloads/next/path/' + file_path,
+                                             headers={"Accept": "application/json"})
+                if response.code == 200:
+                    downloads_list = response.body
             else:
-                downloads_list = unirest.get(utils.REST_ADRESSE + '/downloads/next', headers={"Accept": "application/json"})
+                response = unirest.get(utils.REST_ADRESSE + '/downloads/next',
+                                             headers={"Accept": "application/json"})
+                if response.code == 200:
+                    downloads_list = response.body
 
             if len(downloads_list) == 0:
                 logging.info('No download found with file_path %s' % file_path)
@@ -102,7 +125,12 @@ class ManageDownload:
     def get_downloads_in_progress(self):
         utils.log_debug(u'*** get_downloads_in_progress ***')
 
-        downloads_list = unirest.get(utils.REST_ADRESSE + '/downloads/status/' + Download.STATUS_IN_PROGRESS, headers={"Accept": "application/json"})
+        response = unirest.get(utils.REST_ADRESSE + '/downloads',
+                                     headers={"Accept": "application/json"}, params={"status": Download.STATUS_IN_PROGRESS})
+
+        downloads_list = []
+        if response.code == 200:
+            downloads_list = response.body
 
         return downloads_list
 
@@ -111,8 +139,9 @@ class ManageDownload:
 
         exists = False
         if link is not None and link != '':
-            downloads_list = unirest.get(utils.REST_ADRESSE + '/downloads', headers={"Accept": "application/json"}, params={"link": link})
-            exists = len(downloads_list) > 0
+            response = unirest.get(utils.REST_ADRESSE + '/downloads', headers={"Accept": "application/json"},
+                                   params={"link": link})
+            exists = len(response.body) > 0
             utils.log_debug(u'download exists ? %s' % str(exists))
         else:
             logging.error('Link is none')
@@ -124,6 +153,8 @@ class ManageDownload:
 
         # si la ligne n'est pas marque comme termine avec ce programme
         if not link.startswith(self.MARK_AS_FINISHED):
+            link = link.replace('\n', '')
+
             finished = False
             # si la ligne est marque comme termine par le traitement par liste de plowdown
             if link.startswith('#OK'):
