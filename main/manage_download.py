@@ -100,8 +100,8 @@ class ManageDownload:
         if download_id is None:
             downloads_list = []
             if file_path is not None:
-                response = unirest.get(utils.REST_ADRESSE + '/downloads/next/path/' + file_path,
-                                             headers={"Accept": "application/json"})
+                response = unirest.get(utils.REST_ADRESSE + '/downloads/next',
+                                             headers={"Accept": "application/json"}, params={"file_path": file_path})
             else:
                 response = unirest.get(utils.REST_ADRESSE + '/downloads/next',
                                              headers={"Accept": "application/json"})
