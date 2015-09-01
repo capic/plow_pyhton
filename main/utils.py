@@ -8,7 +8,7 @@ from mysql.connector import (connection)
 from bean.downloadBean import Download
 import logging
 
-REST_ADRESSE = 'http://capic.hd.free.fr:8080/plow_solution'
+REST_ADRESSE = 'http://localhost:3000/'
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'

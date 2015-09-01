@@ -111,7 +111,7 @@ class ManageDownload:
 
         exists = False
         if link is not None and link != '':
-            download = unirest.get(utils.REST_ADRESSE + '/downloads/link/' + link, headers={"Accept": "application/json"})
+            download = unirest.get(utils.REST_ADRESSE + '/downloads', headers={"Accept": "application/json"}, params={"link": link})
             exists = download == {}
             utils.log_debug(u'download exists ? %s' % str(exists))
         else:
