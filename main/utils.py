@@ -101,27 +101,27 @@ def get_infos_plowprobe(cmd):
 
 def json_to_download_object(json_object):
     download = Download()
-    download.id = json_object.id
-    download.name = json_object.name
-    download.package = json_object.package
-    download.link = json_object.link
-    download.size_file = json_object.size_file
-    download.size_part = json_object.size_part
-    download.size_file_downloaded = json_object.size_file_downloaded
-    download.size_part_downloaded = json_object.size_part_downloaded
-    download.status = json_object.status
-    download.progress_part = json_object.progress_part
-    download.average_speed = json_object.average_speed
-    download.current_speed = json_object.current_speed
-    download.time_spent = json_object.time_spent
-    download.time_left = json_object.time_left
-    download.pid_plowdown = json_object.pid_plowdown
-    download.pid_python = json_object.pid_python
-    download.file_path = json_object.file_path
-    download.priority = json_object.priority
-    download.theorical_start_datetime = json_object.theorical_start_datetime
-    download.lifecycle_insert_date = json_object.lifecycle_insert_date
-    download.lifecycle_update_date = json_object.lifecycle_update_date
+    download.id = json_object['id']
+    download.name = json_object['name']
+    download.package = json_object['package']
+    download.link = json_object['link']
+    download.size_file = json_object['size_file']
+    download.size_part = json_object['size_part']
+    download.size_file_downloaded = json_object['size_file_downloaded']
+    download.size_part_downloaded = json_object['size_part_downloaded']
+    download.status = json_object['status']
+    download.progress_part = json_object['progress_part']
+    download.average_speed = json_object['average_speed']
+    download.current_speed = json_object['current_speed']
+    download.time_spent = json_object['time_spent']
+    download.time_left = json_object['time_left']
+    download.pid_plowdown = json_object['pid_plowdown']
+    download.pid_python = json_object['pid_python']
+    download.file_path = json_object['file_path']
+    download.priority = json_object['priority']
+    download.theorical_start_datetime = json_object['theorical_start_datetime']
+    download.lifecycle_insert_date = json_object['lifecycle_insert_date']
+    download.lifecycle_update_date = json_object['lifecycle_update_date']
 
     return download
 
