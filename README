@@ -1,6 +1,6 @@
 framework à installer
 pip install psutil
-pip install websocket-client
+pip install unirest
 
 Taches planifiés:
 */15 * * * * sh /mnt/HD/HD_a2/start_download.sh >> log_cron.txt

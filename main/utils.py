@@ -8,6 +8,7 @@ from mysql.connector import (connection)
 from bean.downloadBean import Download
 import logging
 
+REST_ADRESSE = 'http://capic.hd.free.fr:8080/plow_solution'
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
@@ -105,7 +106,8 @@ def cursor_to_download_object(cursor):
         for (
                 database_download_id, name, package, link, size_file, size_part, size_file_downloaded,
                 size_part_downloaded,
-                status, progress_part, current_speed, average_speed, time_spent, time_left, pid_plowdown, pid_curl, pid_python,
+                status, progress_part, current_speed, average_speed, time_spent, time_left, pid_plowdown, pid_curl,
+                pid_python,
                 file_path,
                 priority, theorical_start_datetime, lifecycle_insert_date,
                 lifecycle_update_date, logs) in cursor:

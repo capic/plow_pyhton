@@ -30,6 +30,8 @@ def main(argv):
             config = {}
             execfile("/var/www/plow_solution/config.cfg", config)
             utils.log_debug("config file found")
+            if 'rest_adresse' in config:
+                utils.REST_ADRESSE = config['rest_adresse']
             if 'mysql_login' in config:
                 utils.MYSQL_LOGIN = config['mysql_login']
             if 'mysql_pass' in config:

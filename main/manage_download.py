@@ -10,7 +10,7 @@ import os
 import subprocess
 import time
 from datetime import datetime, timedelta
-
+import unirest
 import utils
 from bean.downloadBean import Download
 
@@ -28,108 +28,29 @@ class ManageDownload:
 
     def insert_download(self, download):
         utils.log_debug(u'  *** insert_download ***')
-        indent_log = '   '
 
         if download is not None:
-            cursor = self.cnx.cursor()
-
             download.package = utils.package_name_from_download_name(download.name)
 
-            sql = 'INSERT INTO download (name, package, link, size_file, status, file_path, priority, lifecycle_insert_date) values (%s, %s, %s, %s, %s, %s, %s, %s)'
-            data = (
-                download.name, download.package, download.link, download.size_file, download.status, download.file_path,
-                download.priority,
-                datetime.now())
-            utils.log_debug(u'%s query: %s | data: (%s, %s, %s, %s, %s, %s, %s, %s)' % (
-                indent_log, sql, download.name, download.package,
-                download.link,
-                str(download.size_file), str(download.status), download.file_path,
-                str(download.priority),
-                str(datetime.now())))
-
-            cursor.execute(sql, data)
-            download.id = cursor.lastrowid
-            self.cnx.commit()
-            cursor.close()
+            downloadInserted = unirest.post(utils.REST_ADRESSE + '/downloads', headers={"Accept": "application/json"}, params=download.to_insert_json())
         else:
             logging.error("Download is none")
 
     def update_download(self, download):
         utils.log_debug(u'  *** update_download ***')
-        indent_log = '   '
 
-        cursor = self.cnx.cursor()
-
-        sql = 'UPDATE download SET name = %s, package = %s, link = %s, size_file = %s, size_part = %s, size_file_downloaded = %s, size_part_downloaded = %s,' \
-              'status = %s, progress_part = %s, average_speed = %s, current_speed = %s, time_spent = %s, time_left = %s , pid_plowdown = %s, pid_python = %s, priority = %s, ' \
-              'file_path = %s, theorical_start_datetime = %s, lifecycle_update_date = %s WHERE id = %s'
-        data = (download.name, download.package, download.link, download.size_file, download.size_part,
-                download.size_file_downloaded, download.size_part_downloaded, download.status, download.progress_part,
-                download.average_speed, download.current_speed, download.time_spent, download.time_left,
-                download.pid_plowdown, download.pid_python, download.priority, download.file_path,
-                download.theorical_start_datetime, datetime.now(), download.id)
-        utils.log_debug(
-            u'%s query : %s | data : (%s, %s, %s, %s, %s, %s,%s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)' % (
-                indent_log, sql, download.name, download.package,
-                download.link,
-                str(download.size_file), str(download.size_part),
-                str(download.size_file_downloaded), str(download.size_part_downloaded),
-                str(download.status), str(download.progress_part),
-                str(download.average_speed), str(download.current_speed), str(download.time_spent),
-                str(download.time_left),
-                str(download.pid_plowdown), str(download.pid_python),
-                str(download.priority),
-                download.file_path,
-                str(download.theorical_start_datetime),
-                str(datetime.now()), str(download.id)))
-        cursor.execute(sql, data)
-        self.cnx.commit()
-        cursor.close()
-        utils.log_debug("logs: %s" % download.logs)
+        unirest.put(utils.REST_ADRESSE + '/downloads/' + download.id, headers={"Accept": "application/json"}, params=download.to_json())
 
         if download.logs != "":
-            cursor = self.cnx.cursor()
-
-            sql = 'REPLACE INTO download_logs (id, logs) VALUES (%s, concat(ifnull(logs,""), %s))'
-            data = (download.id, download.logs)
-
-            utils.log_debug(
-                u'query : %s | data : (%s, %s)' % (
-                    sql, str(download.id), download.logs))
-
-            cursor.execute(sql, data)
-            self.cnx.commit()
-            cursor.close()
+            unirest.put(utils.REST_ADRESSE + '/downloads/logs/' + download.id, headers={"Accept": "application/json"}, params={"id": download.id, "logs": download.logs})
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
         indent_log = '   '
         download = None
 
-        if id is not None:
-            cursor = self.cnx.cursor()
-
-            sql = 'SELECT  download.id, name, package, link, size_file, size_part, size_file_downloaded, ' \
-                  'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
-                  'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
-                  'lifecycle_insert_date, lifecycle_update_date, logs ' \
-                  ' FROM download LEFT JOIN download_logs ' \
-                  ' ON (download.id = download_logs.id)' \
-                  ' WHERE id = %s'
-            data = (download_id, )
-            utils.log_debug(u'%s query : %s | data : (%s)' % (indent_log, sql, str(download_id)))
-
-            cursor.execute(sql, data)
-
-            list_download = utils.cursor_to_download_object(cursor)
-
-            if len(list_download) == 0:
-                logging.info('No download fouud with id %s' % download_id)
-            elif len(list_download) == 1:
-                download = list_download[0]
-                utils.log_debug(u'%s download : %s' % (indent_log, download.to_string()))
-            else:
-                logging.error('Too many download found with id %s' % download_id)
+        if download_id is not None:
+            download = unirest.get(utils.REST_ADRESSE + '/downloads/' + download, headers={"Accept": "application/json"})
         else:
             logging.error('Id is none')
 
@@ -137,33 +58,18 @@ class ManageDownload:
 
     def get_download_by_link_file_path(self, link, file_path):
         utils.log_debug(u'   *** get_download_by_link_file_path ***')
-        indent_log = '   '
-
         utils.log_debug(u'%s link: %s, file_path: %s' % (indent_log, link, file_path))
 
         download = None
 
         if link is not None and link != '' and file_path is not None and file_path != '':
-            cursor = self.cnx.cursor()
-            sql = 'SELECT  download.id, name, package, link, size_file, size_part, size_file_downloaded, ' \
-                  'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
-                  'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
-                  'lifecycle_insert_date, lifecycle_update_date, logs ' \
-                  ' FROM download LEFT JOIN download_logs ' \
-                  ' ON (download.id = download_logs.id)' \
-                  ' WHERE link = %s and file_path = %s'
-            data = (link, file_path)
-            utils.log_debug(u'%s query : %s | data : (%s, %s)' % (indent_log, sql, link, file_path))
+            downloads_list = unirest.get(utils.REST_ADRESSE + '/downloads/link/' + link + '/path/' + file_path, headers={"Accept": "application/json"})
 
-            cursor.execute(sql, data)
-
-            list_download = utils.cursor_to_download_object(cursor)
-
-            if len(list_download) == 0:
-                logging.info('No download fouud with link %s and file_path %s' % (link, file_path))
-            elif len(list_download) == 1:
-                download = list_download[0]
-                utils.log_debug(u'%s download : %s' % (indent_log, download.to_string()))
+            if len(downloads_list) == 0:
+                logging.info('No download found with link %s and file_path %s' % (link, file_path))
+            elif len(downloads_list) == 1:
+                download = downloads_list[0]
+                utils.log_debug(u'%s download : %s' % (download.to_string()))
             else:
                 logging.error('Too many download found with link %s and file_path %s' % (link, file_path))
 
@@ -171,50 +77,21 @@ class ManageDownload:
 
     def get_download_to_start(self, download_id, file_path=None):
         utils.log_debug(u' *** get_download_to_start ***')
-        indent_log = ' '
-        utils.log_debug(u' %s download_id: %s' % (indent_log, str(download_id)))
+        utils.log_debug(u' %s download_id: %s' % str(download_id))
 
         download = None
 
-        cursor = self.cnx.cursor()
-
         if download_id is None:
-            sql = 'SELECT  download.id, name, package, link, size_file, size_part, size_file_downloaded, ' \
-                  'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
-                  'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
-                  'lifecycle_insert_date, lifecycle_update_date, logs ' \
-                  ' FROM download LEFT JOIN download_logs ' \
-                  ' ON (download.id = download_logs.id)' \
-                  ' WHERE status = %s'
-            under_sql = 'SELECT MAX(priority) FROM download where status = %s'
-
             if file_path is not None:
-                sql += ' AND file_path = %s'
-                under_sql += ' AND file_path = %s'
-
-                sql += ' AND priority = (' + under_sql + ')'
-                data = (Download.STATUS_WAITING, file_path, Download.STATUS_WAITING, file_path)
-
-                utils.log_debug(u'%s query : %s | data : (%s, %s, %s, %s)' % (
-                    indent_log, sql, str(Download.STATUS_WAITING), file_path,
-                    str(Download.STATUS_WAITING), file_path))
+                downloads_list = unirest.get(utils.REST_ADRESSE + '/downloads/next/path/' + file_path, headers={"Accept": "application/json"})
             else:
-                sql += ' AND priority = (' + under_sql + ')'
+                downloads_list = unirest.get(utils.REST_ADRESSE + '/downloads/next', headers={"Accept": "application/json"})
 
-                data = (Download.STATUS_WAITING, Download.STATUS_WAITING)
-                utils.log_debug(u'%s query : %s | data : (%s, %s)' % (indent_log, sql, str(Download.STATUS_WAITING),
-                                                                      str(Download.STATUS_WAITING)))
-
-            sql += ' HAVING  MIN(download.id)'
-
-            cursor.execute(sql, data)
-            list_download = utils.cursor_to_download_object(cursor)
-
-            if len(list_download) == 0:
+            if len(downloads_list) == 0:
                 logging.info('No download found with file_path %s' % file_path)
-            elif len(list_download) == 1:
-                download = list_download[0]
-                utils.log_debug(u'%s download : %s' % (indent_log, download.to_string()))
+            elif len(downloads_list) == 1:
+                download = downloads_list[0]
+                utils.log_debug(u'%s download : %s' % download.to_string())
             else:
                 logging.error('Too many download found with file_path %s' % file_path)
         else:
@@ -222,54 +99,20 @@ class ManageDownload:
 
         return download
 
-    def get_downloads_in_progress(self, download_id):
+    def get_downloads_in_progress(self):
         utils.log_debug(u'*** get_downloads_in_progress ***')
-        utils.log_debug(u'download_id: %s' % str(download_id))
 
-        list_downloads = []
+        downloads_list = unirest.get(utils.REST_ADRESSE + '/downloads/status/' + Download.STATUS_IN_PROGRESS, headers={"Accept": "application/json"})
 
-        cursor = self.cnx.cursor()
-
-        if download_id is None:
-            sql = 'SELECT  download.id, name, package, link, size_file, size_part, size_file_downloaded, ' \
-                  'size_part_downloaded, status, progress_part, average_speed, current_speed, time_spent, ' \
-                  'time_left, pid_plowdown, pid_curl, pid_python, file_path, priority, theorical_start_datetime,' \
-                  'lifecycle_insert_date, lifecycle_update_date, logs ' \
-                  ' FROM download LEFT JOIN download_logs ' \
-                  ' ON (download.id = download_logs.id)' \
-                  '  WHERE status = %s'
-            data = (Download.STATUS_IN_PROGRESS, )
-            utils.log_debug(u'query : %s | data : (%s)' % (sql, str(Download.STATUS_IN_PROGRESS)))
-
-            cursor.execute(sql, data)
-
-            list_downloads = utils.cursor_to_download_object(cursor)
-        else:
-            download = self.get_download_by_id(download_id)
-            list_downloads.append(download)
-
-        return list_downloads
+        return downloads_list
 
     def download_already_exists(self, link):
         utils.log_debug(u'*** download_already_exists ***')
 
         exists = False
         if link is not None and link != '':
-            cursor = self.cnx.cursor()
-
-            sql = 'SELECT id FROM download WHERE link = %s'
-            data = (link, )
-
-            utils.log_debug(u'query : %s | data : (%s)' % (sql, link))
-            cursor.execute(sql, data)
-
-            if cursor is not None:
-                for (download_id) in cursor:
-                    utils.log_debug(u'id: %s' % str(download_id))
-                    exists = True
-
-                cursor.close()
-
+            download = unirest.get(utils.REST_ADRESSE + '/downloads/link/' + link, headers={"Accept": "application/json"})
+            exists = download == {}
             utils.log_debug(u'download exists ? %s' % str(exists))
         else:
             logging.error('Link is none')

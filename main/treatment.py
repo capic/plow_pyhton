@@ -123,7 +123,7 @@ class Treatment:
     def check_multi_downloads_alive(self):
         utils.log_debug(u'*** check_multi_downloads_alive ***')
 
-        downloads = self.manage_download.get_downloads_in_progress(None)
+        downloads = self.manage_download.get_downloads_in_progress()
 
         for download_to_check in downloads:
             self.manage_download.check_download_alive(download_to_check)
