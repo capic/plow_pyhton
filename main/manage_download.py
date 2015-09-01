@@ -59,7 +59,7 @@ class ManageDownload:
                                    headers={"Accept": "application/json"})
 
             if response == 200:
-                download = response.body
+                download = utils.json_to_download_object(response.body)
             else:
                 logging.error(u'Error get')
         else:
@@ -79,7 +79,7 @@ class ManageDownload:
 
             downloads_list = []
             if response.code == 200:
-                downloads_list = response.body
+                downloads_list = utils.json_to_download_object_list(response.body)
 
             if len(downloads_list) == 0:
                 logging.info('No download found with link %s and file_path %s' % (link, file_path))
@@ -93,7 +93,7 @@ class ManageDownload:
 
     def get_download_to_start(self, download_id, file_path=None):
         utils.log_debug(u' *** get_download_to_start ***')
-        utils.log_debug(u' %s download_id: %s' % str(download_id))
+        utils.log_debug(u'download_id: %s' % str(download_id))
 
         download = None
 
@@ -102,13 +102,12 @@ class ManageDownload:
             if file_path is not None:
                 response = unirest.get(utils.REST_ADRESSE + '/downloads/next/path/' + file_path,
                                              headers={"Accept": "application/json"})
-                if response.code == 200:
-                    downloads_list = response.body
             else:
                 response = unirest.get(utils.REST_ADRESSE + '/downloads/next',
                                              headers={"Accept": "application/json"})
-                if response.code == 200:
-                    downloads_list = response.body
+
+            if response.code == 200:
+                downloads_list = utils.json_to_download_object_list(response.body)
 
             if len(downloads_list) == 0:
                 logging.info('No download found with file_path %s' % file_path)
@@ -130,7 +129,7 @@ class ManageDownload:
 
         downloads_list = []
         if response.code == 200:
-            downloads_list = response.body
+            downloads_list =  utils.json_to_download_object_list(response.body)
 
         return downloads_list
 
@@ -317,6 +316,3 @@ class ManageDownload:
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')
-
-        self.cnx.close()
-        # self.ws.close()

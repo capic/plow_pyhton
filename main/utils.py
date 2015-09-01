@@ -99,45 +99,38 @@ def get_infos_plowprobe(cmd):
         return [None, None]
 
 
-def cursor_to_download_object(cursor):
+def json_to_download_object(json_object):
+    download = Download()
+    download.id = json_object.id
+    download.name = json_object.name
+    download.package = json_object.package
+    download.link = json_object.link
+    download.size_file = json_object.size_file
+    download.size_part = json_object.size_part
+    download.size_file_downloaded = json_object.size_file_downloaded
+    download.size_part_downloaded = json_object.size_part_downloaded
+    download.status = json_object.status
+    download.progress_part = json_object.progress_part
+    download.average_speed = json_object.average_speed
+    download.current_speed = json_object.current_speed
+    download.time_spent = json_object.time_spent
+    download.time_left = json_object.time_left
+    download.pid_plowdown = json_object.pid_plowdown
+    download.pid_python = json_object.pid_python
+    download.file_path = json_object.file_path
+    download.priority = json_object.priority
+    download.theorical_start_datetime = json_object.theorical_start_datetime
+    download.lifecycle_insert_date = json_object.lifecycle_insert_date
+    download.lifecycle_update_date = json_object.lifecycle_update_date
+
+    return download
+
+def json_to_download_object_list(json_array):
     list_downloads = []
 
-    if cursor is not None:
-        for (
-                database_download_id, name, package, link, size_file, size_part, size_file_downloaded,
-                size_part_downloaded,
-                status, progress_part, current_speed, average_speed, time_spent, time_left, pid_plowdown, pid_curl,
-                pid_python,
-                file_path,
-                priority, theorical_start_datetime, lifecycle_insert_date,
-                lifecycle_update_date, logs) in cursor:
-            download = Download()
-            download.id = database_download_id
-            download.name = name
-            download.package = package
-            download.link = link
-            download.size_file = size_file
-            download.size_part = size_part
-            download.size_file_downloaded = size_file_downloaded
-            download.size_part_downloaded = size_part_downloaded
-            download.status = status
-            download.progress_part = progress_part
-            download.average_speed = average_speed
-            download.current_speed = current_speed
-            download.time_spent = time_spent
-            download.time_left = time_left
-            download.pid_plowdown = pid_plowdown
-            download.pid_python = pid_python
-            download.file_path = file_path
-            download.priority = priority
-            download.theorical_start_datetime = theorical_start_datetime
-            download.lifecycle_insert_date = lifecycle_insert_date
-            download.lifecycle_update_date = lifecycle_update_date
-            download.logs = logs
-
-            list_downloads.append(download)
-
-        cursor.close()
+    for json_object in json_array:
+        download = json_to_download_object(json_object)
+        list_downloads.append(download)
 
     return list_downloads
 
