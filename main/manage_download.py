@@ -25,7 +25,7 @@ class ManageDownload:
         if download is not None:
             download.package = utils.package_name_from_download_name(download.name)
 
-            response = unirest.post(utils.REST_ADRESSE + '/downloads', headers={"Accept": "application/json"},
+            response = unirest.post(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
                                             params=download.to_insert_json())
 
             if response.code != 200:
@@ -36,7 +36,7 @@ class ManageDownload:
     def update_download(self, download):
         utils.log_debug(u'  *** update_download ***')
 
-        response = unirest.put(utils.REST_ADRESSE + '/downloads/' + download.id, headers={"Accept": "application/json"},
+        response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id), headers={"Accept": "application/json"},
                     params=download.to_json())
 
         if response.code != 200:
@@ -44,7 +44,7 @@ class ManageDownload:
             download.logs = u"ERROR DURING DOWNLOAD UPDATE"
 
         if download.logs != "":
-            response = unirest.put(utils.REST_ADRESSE + '/downloads/logs/' + download.id, headers={"Accept": "application/json"},
+            response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id), headers={"Accept": "application/json"},
                         params={"id": download.id, "logs": download.logs})
 
             if response.code != 200:
@@ -55,7 +55,7 @@ class ManageDownload:
         download = None
 
         if download_id is not None:
-            response = unirest.get(utils.REST_ADRESSE + '/downloads/' + download_id,
+            response = unirest.get(utils.REST_ADRESSE + 'downloads/' + download_id,
                                    headers={"Accept": "application/json"})
 
             if response == 200:
@@ -74,7 +74,7 @@ class ManageDownload:
         download = None
 
         if link is not None and link != '' and file_path is not None and file_path != '':
-            response = unirest.get(utils.REST_ADRESSE + '/downloads',
+            response = unirest.get(utils.REST_ADRESSE + 'downloads',
                                    headers={"Accept": "application/json"}, params={"link": link, "file_path": file_path})
 
             downloads_list = []
@@ -100,10 +100,10 @@ class ManageDownload:
         if download_id is None:
             downloads_list = []
             if file_path is not None:
-                response = unirest.get(utils.REST_ADRESSE + '/downloads/next',
+                response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
                                              headers={"Accept": "application/json"}, params={"file_path": file_path})
             else:
-                response = unirest.get(utils.REST_ADRESSE + '/downloads/next',
+                response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
                                              headers={"Accept": "application/json"})
 
             if response.code == 200:
@@ -124,7 +124,7 @@ class ManageDownload:
     def get_downloads_in_progress(self):
         utils.log_debug(u'*** get_downloads_in_progress ***')
 
-        response = unirest.get(utils.REST_ADRESSE + '/downloads',
+        response = unirest.get(utils.REST_ADRESSE + 'downloads',
                                      headers={"Accept": "application/json"}, params={"status": Download.STATUS_IN_PROGRESS})
 
         downloads_list = []
@@ -138,7 +138,7 @@ class ManageDownload:
 
         exists = False
         if link is not None and link != '':
-            response = unirest.get(utils.REST_ADRESSE + '/downloads', headers={"Accept": "application/json"},
+            response = unirest.get(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
                                    params={"link": link})
             exists = len(response.body) > 0
             utils.log_debug(u'download exists ? %s' % str(exists))

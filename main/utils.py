@@ -8,7 +8,7 @@ from mysql.connector import (connection)
 from bean.downloadBean import Download
 import logging
 
-REST_ADRESSE = 'http://localhost:3000'
+REST_ADRESSE = 'http://localhost:3000/'
 
 MYSQL_LOGIN = 'root'
 MYSQL_PASS = 'capic_20_04_1982'
@@ -44,7 +44,7 @@ def compute_size(s):
     else:
         size_number = int(s)
 
-    return size_number
+    return int(size_number)
 
 
 def kill_proc_tree(pid, including_parent=True):
