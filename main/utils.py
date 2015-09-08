@@ -123,8 +123,14 @@ def json_to_download_object(json_object):
         download.theorical_start_datetime = None
     else:
         download.theorical_start_datetime = json_object['theorical_start_datetime']
-    download.lifecycle_insert_date = json_object['lifecycle_insert_date']
-    download.lifecycle_update_date = json_object['lifecycle_update_date']
+    if json_object['lifecycle_insert_date'] == 0:
+        download.lifecycle_insert_date = None
+    else:
+        download.lifecycle_insert_date = json_object['lifecycle_insert_date']
+    if json_object['lifecycle_update_date'] == 0:
+        download.lifecycle_update_date = None
+    else:
+        download.lifecycle_update_date = json_object['lifecycle_update_date']
 
     return download
 
