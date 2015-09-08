@@ -2,7 +2,7 @@
 
 __author__ = 'Vincent'
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class Download:
     STATUS_WAITING = 1
@@ -62,35 +62,35 @@ class Download:
         return {"name": self.name,
                 "package": self.package,
                 "link": self.link,
-                "size_file": self.size_file,
-                "status": self.status,
+                "size_file": str(self.size_file),
+                "status": str(self.status),
                 "file_path": self.file_path,
-                "priority": self.priority,
-                "lifecycle_insert_date": self.lifecycle_insert_date,
-                "lifecycle_update_date": self.lifecycle_update_date,
-                "theorical_start_datetime": self.theorical_start_datetime
+                "priority": str(self.priority),
+                "lifecycle_insert_date": str(self.lifecycle_insert_date),
+                "lifecycle_update_date": str(self.lifecycle_update_date),
+                "theorical_start_datetime": str(self.theorical_start_datetime)
                 }
 
     def to_json(self):
-        return {"id": self.id,
+        return {"id": str(self.id),
                 "name": self.name,
                 "package": self.package,
                 "link": self.link,
-                "size_file": self.size_file,
-                "size_part": self.size_part,
-                "size_file_downloaded": self.size_file_downloaded,
-                "size_part_downloaded": self.size_part_downloaded,
-                "status": self.status,
-                "progress_part": self.progress_part,
-                "average_speed": self.average_speed,
-                "current_speed": self.current_speed,
-                "time_spent": self.time_spent,
-                "time_left": self.time_left,
-                "pid_plowdown": self.pid_plowdown,
-                "pid_python": self.pid_python,
-                "file_path": self.file_path,
-                "priority": self.priority,
-                "theorical_start_datetime": self.theorical_start_datetime,
-                "lifecycle_insert_date": self.lifecycle_insert_date,
-                "lifecycle_update_date": self.lifecycle_update_date,
+                "size_file": str(self.size_file),
+                "size_part": str(self.size_part),
+                "size_file_downloaded": str(self.size_file_downloaded),
+                "size_part_downloaded": str(self.size_part_downloaded),
+                "status": str(self.status),
+                "progress_part": str(self.progress_part),
+                "average_speed": str(self.average_speed),
+                "current_speed": str(self.current_speed),
+                "time_spent": str(self.time_spent),
+                "time_left": str(self.time_left),
+                "pid_plowdown": str(self.pid_plowdown),
+                "pid_python": str(self.pid_python),
+                "file_path": str(self.file_path),
+                "priority": str(self.priority),
+                "theorical_start_datetime": str(self.theorical_start_datetime),
+                "lifecycle_insert_date": str(self.lifecycle_insert_date),
+                "lifecycle_update_date": str(self.lifecycle_update_date),
                 }
