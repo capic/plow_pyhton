@@ -39,7 +39,7 @@ class Download:
         self.file_path = ''
         self.priority = 0
         self.logs = ''
-        self.theorical_start_datetime = 0
+        self.theorical_start_datetime = None
         self.lifecycle_insert_date = 0
         self.lifecycle_update_date = 0
 
@@ -76,7 +76,7 @@ class Download:
                 "link": self.link,
                 "size_file": self.size_file,
                 "size_part": self.size_part,
-                "size_file_selfed": self.size_file_downloaded,
+                "size_file_downloaded": self.size_file_downloaded,
                 "size_part_downloaded": self.size_part_downloaded,
                 "status": self.status,
                 "progress_part": self.progress_part,

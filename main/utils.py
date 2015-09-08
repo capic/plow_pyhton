@@ -119,7 +119,10 @@ def json_to_download_object(json_object):
     download.pid_python = json_object['pid_python']
     download.file_path = json_object['file_path']
     download.priority = json_object['priority']
-    download.theorical_start_datetime = json_object['theorical_start_datetime']
+    if json_object['theorical_start_datetime'] == 0:
+        download.theorical_start_datetime = None
+    else:
+        download.theorical_start_datetime = json_object['theorical_start_datetime']
     download.lifecycle_insert_date = json_object['lifecycle_insert_date']
     download.lifecycle_update_date = json_object['lifecycle_update_date']
 

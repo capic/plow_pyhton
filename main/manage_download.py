@@ -85,7 +85,7 @@ class ManageDownload:
                 logging.info('No download found with link %s and file_path %s' % (link, file_path))
             elif len(downloads_list) == 1:
                 download = downloads_list[0]
-                utils.log_debug(u'%s download : %s' % (download.to_string()))
+                utils.log_debug(u'download : %s' % (download.to_string()))
             else:
                 logging.error('Too many download found with link %s and file_path %s' % (link, file_path))
 
