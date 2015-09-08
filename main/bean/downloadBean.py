@@ -66,7 +66,9 @@ class Download:
                 "status": self.status,
                 "file_path": self.file_path,
                 "priority": self.priority,
-                "lifecycle_insert_date": datetime.now()
+                "lifecycle_insert_date": self.lifecycle_insert_date,
+                "lifecycle_update_date": self.lifecycle_update_date,
+                "theorical_start_datetime": self.theorical_start_datetime
                 }
 
     def to_json(self):

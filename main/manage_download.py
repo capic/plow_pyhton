@@ -24,6 +24,9 @@ class ManageDownload:
 
         if download is not None:
             download.package = utils.package_name_from_download_name(download.name)
+            download.lifecycle_insert_date = datetime.now()
+            download.lifecycle_update_date = datetime.now()
+            download.theorical_start_datetime = datetime.now()
 
             response = unirest.post(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
                                             params=download.to_insert_json())
@@ -35,6 +38,8 @@ class ManageDownload:
 
     def update_download(self, download):
         utils.log_debug(u'  *** update_download ***')
+
+        download.lifecycle_update_date = datetime.now()
 
         response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id), headers={"Accept": "application/json"},
                     params=download.to_json())
