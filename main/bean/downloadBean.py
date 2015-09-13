@@ -23,8 +23,6 @@ class Download:
         # the size downloaded, equal to the size_part_downloaded if the download has not been stop during previous download
         # otherwise the sum of size_file_downloaded and size_part_downloaded
         self.size_file_downloaded = 0
-        # the size of the previous part, used to add the size_part_downloaded to have the size_file_downloaded
-        self.size_previous_part_downloaded = 0
         # the size of the part downloaded
         self.size_part_downloaded = 0
         # the progress of the current part
@@ -45,12 +43,12 @@ class Download:
 
     def to_string(self):
         return 'download : \n id => %s | name => %s | link => %s | size_file => %s | size_part => %s' \
-               ' | size_file_downloaded => %s | size_previous_part_downloaded => %s | size_part_downloaded => %s' \
+               ' | size_file_downloaded => %s | size_part_downloaded => %s' \
                ' | status => %s | progress_part => %s | average_speed => %s | current_speed => %s | time_left => %s ' \
                ' | time_spent => %s | pid_plowdown => %s | pid_python => %s | file_path => %s | priority => %s ' \
                '| package_id => %s ' % (
                    str(self.id), self.name, self.package, self.link, str(self.size_file), str(self.size_part),
-                   str(self.size_file_downloaded), str(self.size_previous_part_downloaded),
+                   str(self.size_file_downloaded),
                    str(self.size_part_downloaded), str(self.status), str(self.progress_part), str(self.average_speed),
                    str(self.current_speed), str(self.time_left), str(self.time_spent), str(self.pid_plowdown),
                    str(self.pid_python), self.file_path, str(self.priority))
@@ -92,5 +90,5 @@ class Download:
                 "priority": str(self.priority),
                 "theorical_start_datetime": str(self.theorical_start_datetime),
                 "lifecycle_insert_date": str(self.lifecycle_insert_date),
-                "lifecycle_update_date": str(self.lifecycle_update_date),
+                "lifecycle_update_date": str(self.lifecycle_update_date)
                 }

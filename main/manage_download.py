@@ -32,7 +32,7 @@ class ManageDownload:
                                             params=download.to_insert_json())
 
             if response.code != 200:
-                logging.error(u'Error insert')
+                utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
         else:
             logging.error("Download is none")
 
@@ -45,7 +45,7 @@ class ManageDownload:
                     params=download.to_json())
 
         if response.code != 200:
-            logging.error(u'Error update')
+            utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             download.logs = u"ERROR DURING DOWNLOAD UPDATE"
 
         if download.logs != "":
@@ -53,7 +53,7 @@ class ManageDownload:
                         params={"id": download.id, "logs": download.logs})
 
             if response.code != 200:
-                logging.error(u'Error update')
+                utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
@@ -66,7 +66,7 @@ class ManageDownload:
             if response == 200:
                 download = utils.json_to_download_object(response.body)
             else:
-                logging.error(u'Error get')
+                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
         else:
             logging.error('Id is none')
 
@@ -85,6 +85,8 @@ class ManageDownload:
             downloads_list = []
             if response.code == 200:
                 downloads_list = utils.json_to_download_object_list(response.body)
+            else:
+                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
 
             if len(downloads_list) == 0:
                 logging.info('No download found with link %s and file_path %s' % (link, file_path))
@@ -113,6 +115,8 @@ class ManageDownload:
 
             if response.code == 200:
                 downloads_list = utils.json_to_download_object_list(response.body)
+            else:
+                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
 
             if len(downloads_list) == 0:
                 logging.info('No download found with file_path %s' % file_path)
@@ -134,7 +138,9 @@ class ManageDownload:
 
         downloads_list = []
         if response.code == 200:
-            downloads_list =  utils.json_to_download_object_list(response.body)
+            downloads_list = utils.json_to_download_object_list(response.body)
+        else:
+            utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
 
         return downloads_list
 
@@ -270,7 +276,10 @@ class ManageDownload:
                 # size part downloaded
                 download.size_part_downloaded = utils.compute_size(values[3])
                 # size file downloaded
-                download.size_file_downloaded = download.size_previous_part_downloaded + download.size_part_downloaded
+                download_size_file_downloaded = download.size_part_downloaded
+                if download.size_file > 0:
+                    download_size_file_downloaded = (download.size_file - download.size_part) + download.size_part_downloaded
+                download.size_file_downloaded = download_size_file_downloaded
 
                 # average speed
                 download.average_speed = utils.compute_size(values[6])
