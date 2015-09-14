@@ -14,6 +14,7 @@ import unirest
 import utils
 from bean.downloadBean import Download
 
+
 class ManageDownload:
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s' %s"
@@ -29,7 +30,7 @@ class ManageDownload:
             download.theorical_start_datetime = datetime.now()
 
             response = unirest.post(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
-                                            params=download.to_insert_json())
+                                    params=download.to_insert_json())
 
             if response.code != 200:
                 utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
@@ -41,16 +42,18 @@ class ManageDownload:
 
         download.lifecycle_update_date = datetime.now()
 
-        response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id), headers={"Accept": "application/json"},
-                    params=download.to_json())
+        response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
+                               headers={"Accept": "application/json"},
+                               params=download.to_json())
 
         if response.code != 200:
             utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             download.logs = u"ERROR DURING DOWNLOAD UPDATE"
 
         if download.logs != "":
-            response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id), headers={"Accept": "application/json"},
-                        params={"id": download.id, "logs": download.logs})
+            response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id),
+                                   headers={"Accept": "application/json"},
+                                   params={"id": download.id, "logs": download.logs})
 
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
@@ -80,7 +83,8 @@ class ManageDownload:
 
         if link is not None and link != '' and file_path is not None and file_path != '':
             response = unirest.get(utils.REST_ADRESSE + 'downloads',
-                                   headers={"Accept": "application/json"}, params={"link": link, "file_path": file_path})
+                                   headers={"Accept": "application/json"},
+                                   params={"link": link, "file_path": file_path})
 
             downloads_list = []
             if response.code == 200:
@@ -108,10 +112,10 @@ class ManageDownload:
             downloads_list = []
             if file_path is not None:
                 response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
-                                             headers={"Accept": "application/json"}, params={"file_path": file_path})
+                                       headers={"Accept": "application/json"}, params={"file_path": file_path})
             else:
                 response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
-                                             headers={"Accept": "application/json"})
+                                       headers={"Accept": "application/json"})
 
             if response.code == 200:
                 downloads_list = utils.json_to_download_object_list(response.body)
@@ -134,7 +138,7 @@ class ManageDownload:
         utils.log_debug(u'*** get_downloads_in_progress ***')
 
         response = unirest.get(utils.REST_ADRESSE + 'downloads',
-                                     headers={"Accept": "application/json"}, params={"status": Download.STATUS_IN_PROGRESS})
+                               headers={"Accept": "application/json"}, params={"status": Download.STATUS_IN_PROGRESS})
 
         downloads_list = []
         if response.code == 200:
@@ -257,6 +261,8 @@ class ManageDownload:
     def get_download_values(self, values_line, download):
         utils.log_debug(u'*** get_download_values ***')
 
+        log = ''
+
         values = values_line.split()
         print(values_line)
 
@@ -278,7 +284,8 @@ class ManageDownload:
                 # size file downloaded
                 download_size_file_downloaded = download.size_part_downloaded
                 if download.size_file > 0:
-                    download_size_file_downloaded = (download.size_file - download.size_part) + download.size_part_downloaded
+                    download_size_file_downloaded = (
+                                                    download.size_file - download.size_part) + download.size_part_downloaded
                 download.size_file_downloaded = download_size_file_downloaded
 
                 # average speed
@@ -304,9 +311,12 @@ class ManageDownload:
                 download.name = tab_name[len(tab_name) - 1]
             elif "Waiting" in values[0]:
                 download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
+                log += 'Theorical start date time %s' % str(download.theorical_start_datetime)
 
-            download.logs = time.strftime('%d/%m/%y %H:%M:%S',
-                                          time.localtime()) + ': ' + values_line + '\r\n'
+            log += time.strftime('%d/%m/%y %H:%M:%S',
+                                 time.localtime()) + ': ' + values_line + '\r\n'
+            download.logs = log
+
             self.update_download(download)
 
         return download
