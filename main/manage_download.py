@@ -199,6 +199,7 @@ class ManageDownload:
 
                         self.insert_download(download)
             else:
+                to_update = False
                 utils.log_debug(u'Download %s exists -> update' % link)
                 download = self.get_download_by_link_file_path(link, file_path)
 
@@ -208,12 +209,15 @@ class ManageDownload:
                         name, size = utils.get_infos_plowprobe(cmd)
                         utils.log_debug(u'Infos get from plowprobe %s,%s' % (
                             name, size))
+                        to_update = True
 
                     if finished:
                         download.status = Download.STATUS_FINISHED
+                        to_update = True
 
-                    download.logs = 'updated by insert_update_download method\r\n'
-                    self.update_download(download)
+                    if to_update:
+                        download.logs = 'updated by insert_update_download method\r\n'
+                        self.update_download(download)
 
     def stop_download(self, download):
         utils.log_debug(u'*** stop_download ***')
