@@ -168,6 +168,7 @@ class ManageDownload:
         # si la ligne n'est pas marque comme termine avec ce programme
         if not link.startswith(self.MARK_AS_FINISHED):
             link = link.replace('\n', '')
+            link = link.replace('\r', '')
 
             finished = False
             # si la ligne est marque comme termine par le traitement par liste de plowdown
