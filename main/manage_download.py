@@ -270,10 +270,9 @@ class ManageDownload:
         log = ''
 
         values = values_line.split()
-        print(values_line)
+        utils.log_debug(values_line)
 
         if len(values) > 0:
-            utils.log_debug(u"values[0]: %s" % str(values[0]))
             if values[0].isdigit():
                 # progress part
                 download.progress_part = int(values[2])
