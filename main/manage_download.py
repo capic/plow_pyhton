@@ -25,6 +25,7 @@ class ManageDownload:
 
         if download is not None:
             download.package = utils.package_name_from_download_name(download.name)
+            download.directory = utils.DIRECTORY_DOWNLOAD_DESTINATION
             download.lifecycle_insert_date = datetime.now()
             download.lifecycle_update_date = datetime.now()
             download.theorical_start_datetime = datetime.now()

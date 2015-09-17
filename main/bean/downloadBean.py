@@ -34,6 +34,7 @@ class Download:
         self.time_left = 0
         self.pid_plowdown = 0
         self.pid_python = 0
+        self.directory = ''
         self.file_path = ''
         self.priority = 0
         self.logs = ''
@@ -64,6 +65,7 @@ class Download:
                 "status": str(self.status),
                 "file_path": self.file_path,
                 "priority": str(self.priority),
+                "directory": self.directory,
                 "lifecycle_insert_date": str(self.lifecycle_insert_date),
                 "lifecycle_update_date": str(self.lifecycle_update_date),
                 "theorical_start_datetime": str(self.theorical_start_datetime)
