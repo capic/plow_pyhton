@@ -8,6 +8,7 @@ import utils
 from bean.downloadBean import Download
 from manage_download import ManageDownload
 import logging
+import shutil
 
 
 class Treatment:
@@ -74,6 +75,16 @@ class Treatment:
         else:
             logging.error('Download is none')
 
+    def move_download(self, download):
+        try:
+            shutil.copy(src, dest)
+        # eg. src and dest are the same file
+        except shutil.Error as e:
+            print('Error: %s' % e)
+        # eg. source or destination doesn't exist
+        except IOError as e:
+            print('Error: %s' % e.strerror)
+
     def start_multi_downloads(self, file_path):
         # utils.log_debug(u'*** start_file_treatment ***')
         # utils.log_debug(u'file_path %s' % (file_path))
@@ -98,6 +109,9 @@ class Treatment:
             # mark link with # in file
             if download.status == Download.STATUS_FINISHED:
                 self.mark_link_finished_in_file(download)
+
+                if download.directory != utils.DIRECTORY_DOWNLOAD_DESTINATION:
+                    self.move_download(download)
             else:
                 download.status = Download.STATUS_WAITING
                 download.time_left = 0

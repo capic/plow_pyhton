@@ -30,11 +30,15 @@ class ManageDownload:
             download.lifecycle_update_date = datetime.now()
             download.theorical_start_datetime = datetime.now()
 
-            response = unirest.post(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
+            try:
+                response = unirest.post(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
                                     params=download.to_insert_json())
 
-            if response.code != 200:
-                utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
+                if response.code != 200:
+                    utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
+            except Exception:
+                import traceback
+                utils.log_debug(traceback.format_exc())
         else:
             logging.error("Download is none")
 
