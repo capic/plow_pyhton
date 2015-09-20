@@ -311,7 +311,7 @@ class ManageDownload:
                     # time left
                     download.time_left = utils.hms_to_seconds(values[10])
 
-                if values[1] == values[3] and values[1] != '0':
+                if download.size_file is not None and download.size_file > 0 and download.size_file == download.size_file_downloaded:
                     utils.log_debug(u'download marked as finished')
                     download.status = Download.STATUS_FINISHED
 
