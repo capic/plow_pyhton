@@ -88,8 +88,11 @@ def get_infos_plowprobe(cmd):
     if output.startswith('==>'):
         tab_infos = output.split('=$=')
         name = tab_infos[0].replace('==>', '')
-        name = name.replace("\033", '')
+        log_debug('name before modification %s' % name)
+        name = name.strip()
         name = name.replace("\033\[[0-9;]+m", '')
+        name = name.replace("\033", '')
+        log_debug('name after modification %s' % name)
 
         size = 0
         if tab_infos[1] is not None and tab_infos[1] != '':
