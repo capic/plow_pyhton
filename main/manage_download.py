@@ -20,6 +20,9 @@ class ManageDownload:
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s' %s"
     MARK_AS_FINISHED = "# FINNISHED "
 
+    def __init__(self):
+        unirest.timeout(15)
+
     def insert_download(self, download):
         utils.log_debug(u'  *** insert_download ***')
 
