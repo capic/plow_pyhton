@@ -47,21 +47,25 @@ class ManageDownload:
 
         download.lifecycle_update_date = datetime.now()
 
-        response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
-                               headers={"Accept": "application/json"},
-                               params=download.to_json())
-
-        if response.code != 200:
-            utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
-            download.logs = u"ERROR DURING DOWNLOAD UPDATE"
-
-        if download.logs != "":
-            response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id),
+        try:
+            response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
                                    headers={"Accept": "application/json"},
-                                   params={"id": download.id, "logs": download.logs})
+                                   params=download.to_json())
 
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
+                download.logs = u"ERROR DURING DOWNLOAD UPDATE"
+
+            if download.logs != "":
+                response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id),
+                                       headers={"Accept": "application/json"},
+                                       params={"id": download.id, "logs": download.logs})
+
+                if response.code != 200:
+                    utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
+        except Exception:
+            import traceback
+            utils.log_debug(traceback.format_exc())
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
