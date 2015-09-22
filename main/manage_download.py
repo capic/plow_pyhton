@@ -177,6 +177,8 @@ class ManageDownload:
     def insert_update_download(self, link, file_path):
         utils.log_debug(u'*** insert_update_download ***')
 
+        download = None
+
         # si la ligne n'est pas marque comme termine avec ce programme
         if not link.startswith(self.MARK_AS_FINISHED):
             link = link.replace('\n', '')
@@ -231,6 +233,8 @@ class ManageDownload:
                     if to_update:
                         download.logs = 'updated by insert_update_download method\r\n'
                         self.update_download(download)
+
+        return download
 
     def stop_download(self, download):
         utils.log_debug(u'*** stop_download ***')
