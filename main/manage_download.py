@@ -329,7 +329,7 @@ class ManageDownload:
 
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
-                download.name = tab_name[len(tab_name) - 1]
+                download.name = utils.clean_string_console(tab_name[len(tab_name) - 1])
             elif "Waiting" in values[0]:
                 download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
                 log += 'Theorical start date time %s' % str(download.theorical_start_datetime)
