@@ -36,7 +36,7 @@ class ManageDownload:
 
             try:
                 response = unirest.post(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
-                                    params=download.to_insert_json())
+                                        params=download.to_insert_json())
 
                 if response.code != 200:
                     utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
@@ -204,6 +204,8 @@ class ManageDownload:
     def insert_update_download(self, link, file_path):
         utils.log_debug(u'*** insert_update_download ***')
 
+        download = None
+
         # si la ligne n'est pas marque comme termine avec ce programme
         if not link.startswith(self.MARK_AS_FINISHED):
             link = link.replace('\n', '')
@@ -243,21 +245,24 @@ class ManageDownload:
                 utils.log_debug(u'Download %s exists -> update' % link)
                 download = self.get_download_by_link_file_path(link, file_path)
 
-                if download is not None and download.status != Download.STATUS_FINISHED:
-                    if download.name is None or download.name == '':
-                        utils.log_debug(u'command : %s' % cmd)
-                        name, size = utils.get_infos_plowprobe(cmd)
-                        utils.log_debug(u'Infos get from plowprobe %s,%s' % (
-                            name, size))
-                        to_update = True
+                if download is not None:
+                    if download.status != Download.STATUS_FINISHED:
+                        if download.name is None or download.name == '':
+                            utils.log_debug(u'command : %s' % cmd)
+                            name, size = utils.get_infos_plowprobe(cmd)
+                            utils.log_debug(u'Infos get from plowprobe %s,%s' % (
+                                name, size))
+                            to_update = True
 
-                    if finished:
-                        download.status = Download.STATUS_FINISHED
-                        to_update = True
+                        if finished:
+                            download.status = Download.STATUS_FINISHED
+                            to_update = True
 
-                    if to_update:
-                        download.logs = 'updated by insert_update_download method\r\n'
-                        self.update_download(download)
+                        if to_update:
+                            download.logs = 'updated by insert_update_download method\r\n'
+                            self.update_download(download)
+
+        return download
 
     def stop_download(self, download):
         utils.log_debug(u'*** stop_download ***')
@@ -328,7 +333,7 @@ class ManageDownload:
                 download_size_file_downloaded = download.size_part_downloaded
                 if download.size_file > 0:
                     download_size_file_downloaded = (
-                                                    download.size_file - download.size_part) + download.size_part_downloaded
+                                                        download.size_file - download.size_part) + download.size_part_downloaded
                 download.size_file_downloaded = download_size_file_downloaded
 
                 # average speed
@@ -351,7 +356,7 @@ class ManageDownload:
 
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
-                download.name = tab_name[len(tab_name) - 1]
+                download.name = utils.clean_string_console(tab_name[len(tab_name) - 1])
             elif "Waiting" in values[0]:
                 download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
                 log += 'Theorical start date time %s' % str(download.theorical_start_datetime)
@@ -380,6 +385,13 @@ class ManageDownload:
             download.logs = 'updated by check_download_alive_method\r\nProcess killed by inactivity ...\r\n'
 
             self.update_download(download)
+
+    def move_download(self, download):
+        response = unirest.post(utils.REST_ADRESSE + 'downloads/move', headers={"Accept": "application/json"},
+                                params={'id': download.id, 'directory': download.directory})
+
+        if response != 200:
+            utils.log_debug(u'Error during moving file operation')
 
     def unrar(self, download):
         download.logs(u'===== UNRAR =====')

@@ -1,5 +1,5 @@
 # coding: utf8
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 __author__ = 'Vincent'
 
@@ -45,8 +45,16 @@ class Treatment:
             line = line.decode("utf-8")
             if 'http' in line:
                 utils.log_debug(u'Line %s contains http' % line)
-                self.manage_download.insert_update_download(line, file_path)
+                download = self.manage_download.insert_update_download(line, file_path)
+
         file.close()
+
+        if download is not None:
+            if download.status == Download.STATUS_FINISHED:
+                utils.log_debug(
+                    u'Download id %s already finished in database but not marked in file => mark as finished')
+                self.mark_link_finished_in_file(download)
+
         utils.log_debug(u'%s =========< End insert new links or update old in database >=========')
 
     def mark_link_finished_in_file(self, download):
@@ -76,14 +84,15 @@ class Treatment:
             logging.error('Download is none')
 
     def move_download(self, download):
-        try:
-            shutil.copy(src, dest)
-        # eg. src and dest are the same file
-        except shutil.Error as e:
-            print('Error: %s' % e)
-        # eg. source or destination doesn't exist
-        except IOError as e:
-            print('Error: %s' % e.strerror)
+        # try:
+        #     shutil.copy(src, dest)
+        # # eg. src and dest are the same file
+        # except shutil.Error as e:
+        #     print('Error: %s' % e)
+        # # eg. source or destination doesn't exist
+        # except IOError as e:
+        #     print('Error: %s' % e.strerror)
+        self.manage_download.move(download)
 
     def start_multi_downloads(self, file_path):
         # utils.log_debug(u'*** start_file_treatment ***')

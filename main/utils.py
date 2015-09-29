@@ -89,10 +89,7 @@ def get_infos_plowprobe(cmd):
         tab_infos = output.split('=$=')
         name = tab_infos[0].replace('==>', '')
         log_debug('name before modification %s' % name)
-        name = name.strip()
-        name = name.replace("\x1b", '')
-        name = name.replace("\033\[[0-9;]+m", '')
-        name = name.replace("\033", '')
+        name = clean_string_console(name)
         log_debug('name after modification %s' % name)
 
         size = 0
@@ -103,6 +100,14 @@ def get_infos_plowprobe(cmd):
         return [name, size]
     else:
         return [None, None]
+
+
+def clean_string_console(string):
+    string = string.strip()
+    string = string.replace("\033\[[0-9;]+m", '')
+    string = string.replace("\033", '')
+
+    return string
 
 
 def json_to_download_object(json_object):
