@@ -9,7 +9,7 @@ from bean.downloadBean import Download
 from manage_download import ManageDownload
 import logging
 import shutil
-
+import os
 
 class Treatment:
     def __init__(self):
@@ -141,6 +141,29 @@ class Treatment:
 
         for download_to_check in downloads:
             self.manage_download.check_download_alive(download_to_check)
+
+    def unrar(self, download_id):
+        utils.log_debug(u'*** unrar ***')
+
+        download = self.manage_download.get_download_by_id(download_id)
+
+        if download is not None:
+            filename, file_extension = os.path.splitext(download.name)
+
+            if file_extension == '.rar':
+                downloads_list = self.manage_download.get_downloads_by_package(download.package)
+
+                if downloads_list is not None and len(downloads_list) > 0:
+                    def getKey(d):
+                        return d.name
+
+                    downloads_list = sorted(downloads_list, key=getKey)
+                    self.manage_download.unrar(downloads_list[0])
+
+                else:
+                    utils.log_debug(u'No downloads')
+            else:
+                utils.log_debug(u'download %s is not a rar file' % download.id)
 
     def disconnect(self):
         self.manage_download.disconnect()

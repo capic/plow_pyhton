@@ -18,6 +18,7 @@ from bean.downloadBean import Download
 class ManageDownload:
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s' %s"
+    COMMAND_UNRAR = "cd %s && unrar x %s"
     MARK_AS_FINISHED = "# FINNISHED "
 
     def __init__(self):
@@ -59,16 +60,20 @@ class ManageDownload:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
                 download.logs = u"ERROR DURING DOWNLOAD UPDATE"
 
-            if download.logs != "":
-                response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id),
-                                       headers={"Accept": "application/json"},
-                                       params={"id": download.id, "logs": download.logs})
+                self.update_download_log(download)
 
-                if response.code != 200:
-                    utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
         except Exception:
             import traceback
             utils.log_debug(traceback.format_exc())
+
+    def update_download_log(self, download):
+        if download.logs != "":
+            response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id),
+                                   headers={"Accept": "application/json"},
+                                   params={"id": download.id, "logs": download.logs})
+
+            if response.code != 200:
+                utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
@@ -113,6 +118,28 @@ class ManageDownload:
                 logging.error('Too many download found with link %s and file_path %s' % (link, file_path))
 
         return download
+
+    def get_downloads_by_package(self, package):
+        utils.log_debug(u'   *** get_downloads_by_package ***')
+        utils.log_debug(u'package: %s' % package)
+
+        downloads_list = None
+
+        if package is not None and package != '':
+            response = unirest.get(utils.REST_ADRESSE + 'downloads',
+                                   headers={"Accept": "application/json"},
+                                   params={"package": package})
+
+            downloads_list = []
+            if response.code == 200:
+                downloads_list = utils.json_to_download_object_list(response.body)
+            else:
+                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+
+            if len(downloads_list) == 0:
+                logging.info('No download found with package %s' % package)
+
+        return downloads_list
 
     def get_download_to_start(self, download_id, file_path=None):
         utils.log_debug(u' *** get_download_to_start ***')
@@ -353,6 +380,28 @@ class ManageDownload:
             download.logs = 'updated by check_download_alive_method\r\nProcess killed by inactivity ...\r\n'
 
             self.update_download(download)
+
+    def unrar(self, download):
+        download.logs(u'===== UNRAR =====')
+        self.update_download_log(download)
+
+        cmd = (
+            self.COMMAND_UNRAR % (
+                download.directory, download.name))
+        utils.log_debug(u'command : %s' % cmd)
+        p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
+
+        line = ''
+        while True:
+            out = p.stderr.read(1)
+            if out == '' and p.poll() is not None:
+                break
+            if out != '':
+                if out != '\n' and out != '\r':
+                    line += out
+                else:
+                    download.logs(line)
+                    self.update_download_log(download)
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')

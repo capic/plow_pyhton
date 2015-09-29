@@ -90,6 +90,7 @@ def get_infos_plowprobe(cmd):
         name = tab_infos[0].replace('==>', '')
         log_debug('name before modification %s' % name)
         name = name.strip()
+        name = name.replace("\x1b", '')
         name = name.replace("\033\[[0-9;]+m", '')
         name = name.replace("\033", '')
         log_debug('name after modification %s' % name)
