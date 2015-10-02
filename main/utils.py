@@ -6,6 +6,7 @@ import re
 import psutil
 from mysql.connector import (connection)
 from bean.downloadBean import Download
+from bean.downloadPackageBean import DownloadPackage
 import logging
 
 REST_ADRESSE = 'http://localhost:3000/'
@@ -114,7 +115,14 @@ def json_to_download_object(json_object):
     download = Download()
     download.id = json_object['id']
     download.name = json_object['name']
-    download.package = json_object['package']
+    if json_object['download_package'] != 'null':
+        download_package = DownloadPackage()
+        download_package.id = json_object['download_package']['id']
+        download_package.name = json_object['download_package']['name']
+        download_package.unrar_progress = json_object['download_package']['unrar_progress']
+        download.package = download_package
+    else:
+        download.package = None
     download.link = json_object['link']
     download.size_file = json_object['size_file']
     download.size_part = json_object['size_part']
@@ -155,13 +163,21 @@ def json_to_download_object_list(json_array):
     return list_downloads
 
 
+def json_to_download_package_object(json_object):
+    download_package = DownloadPackage()
+    download_package.id = json_object['id']
+    download_package.name = json_object['name']
+    download_package.unrar_percent = json_object['unrar_percent']
+
+    return download
+
 def package_name_from_download_name(download_name):
     ext = download_name.split(".")[-1]
 
     if ext == 'rar':
         return download_name.split(".part")[0]
     else:
-        return download_name
+        return None
 
 
 def log_debug(value):

@@ -3,6 +3,7 @@
 __author__ = 'Vincent'
 
 from datetime import datetime
+import downloadPackageBean
 
 class Download:
     STATUS_WAITING = 1
@@ -14,7 +15,7 @@ class Download:
     def __init__(self):
         self.id = -1
         self.name = ''
-        self.package = ''
+        self.package_id = -1
         self.link = ''
         # the size of the file (values[1] gives by plowprobe or by the first rows of plowdown)
         self.size_file = 0
@@ -43,12 +44,12 @@ class Download:
         self.lifecycle_update_date = 0
 
     def to_string(self):
-        return 'download : \n id => %s | name => %s | link => %s | size_file => %s | size_part => %s' \
+        return 'download : \n id => %s | name => %s | package => %s | link => %s | size_file => %s | size_part => %s' \
                ' | size_file_downloaded => %s | size_part_downloaded => %s' \
                ' | status => %s | progress_part => %s | average_speed => %s | current_speed => %s | time_left => %s ' \
                ' | time_spent => %s | pid_plowdown => %s | pid_python => %s | file_path => %s | priority => %s ' \
                '| package_id => %s ' % (
-                   str(self.id), self.name, self.package, self.link, str(self.size_file), str(self.size_part),
+                   str(self.id), self.name, self.package_id, self.link, str(self.size_file), str(self.size_part),
                    str(self.size_file_downloaded),
                    str(self.size_part_downloaded), str(self.status), str(self.progress_part), str(self.average_speed),
                    str(self.current_speed), str(self.time_left), str(self.time_spent), str(self.pid_plowdown),
@@ -59,7 +60,6 @@ class Download:
 
     def to_insert_json(self):
         return {"name": self.name,
-                "package": self.package,
                 "link": self.link,
                 "size_file": str(self.size_file),
                 "status": str(self.status),
@@ -74,7 +74,7 @@ class Download:
     def to_json(self):
         return {"id": str(self.id),
                 "name": self.name,
-                "package": self.package,
+                "package_id": self.package_id,
                 "link": self.link,
                 "size_file": str(self.size_file),
                 "size_part": str(self.size_part),

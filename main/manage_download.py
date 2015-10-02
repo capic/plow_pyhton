@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import unirest
 import utils
 from bean.downloadBean import Download
+from bean.downloadPackageBean import DownloadPackage
 
 
 class ManageDownload:
@@ -28,7 +29,24 @@ class ManageDownload:
         utils.log_debug(u'  *** insert_download ***')
 
         if download is not None:
-            download.package = utils.package_name_from_download_name(download.name)
+            download.package = None
+            if utils.package_name_from_download_name(download.name) is not None:
+                download_package = DownloadPackageBean()
+                download_package.name = utils.package_name_from_download_name(download.name)
+
+                try:
+                    response = unirest.post(utils.REST_ADRESSE + 'downloads/package', headers={"Accept": "application/json"},
+                                        params=download.to_insert_json())
+
+                    if response.code != 200:
+                        utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
+
+                    download_package = response.data
+                except Exception:
+                    import traceback
+                    utils.log_debug(traceback.format_exc())
+
+            download.package = download_package
             download.directory = utils.DIRECTORY_DOWNLOAD_DESTINATION
             download.lifecycle_insert_date = datetime.now()
             download.lifecycle_update_date = datetime.now()
