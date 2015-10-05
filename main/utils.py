@@ -115,14 +115,13 @@ def json_to_download_object(json_object):
     download = Download()
     download.id = json_object['id']
     download.name = json_object['name']
+    download_package = DownloadPackage()
     if json_object['package_id']:
-        download_package = DownloadPackage()
         download_package.id = json_object['download_package']['id']
         download_package.name = json_object['download_package']['name']
         download_package.unrar_progress = json_object['download_package']['unrar_progress']
-        download.package = download_package
-    else:
-        download.package = None
+
+    download.package = download_package
     download.link = json_object['link']
     download.size_file = json_object['size_file']
     download.size_part = json_object['size_part']
