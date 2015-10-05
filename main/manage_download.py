@@ -29,7 +29,7 @@ class ManageDownload:
         utils.log_debug(u'  *** insert_download ***')
 
         if download is not None:
-            download.package = None
+            download_package = None
             if utils.package_name_from_download_name(download.name) is not None:
                 download_package = DownloadPackage()
                 download_package.name = utils.package_name_from_download_name(download.name)
