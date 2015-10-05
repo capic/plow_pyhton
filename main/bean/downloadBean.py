@@ -59,6 +59,7 @@ class Download:
 
     def to_insert_json(self):
         return {"name": self.name,
+                "package_id": self.package.id,
                 "link": self.link,
                 "size_file": str(self.size_file),
                 "status": str(self.status),
