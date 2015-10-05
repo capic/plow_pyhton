@@ -172,7 +172,7 @@ def json_to_download_package_object(json_object):
 
 def package_name_from_download_name(download_name):
     ext = download_name.split(".")[-1]
-
+    log_debug('Extensions %s ' % ext)
     if ext == 'rar':
         return download_name.split(".part")[0]
     else:
