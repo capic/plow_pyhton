@@ -6,7 +6,7 @@ __author__ = 'Vincent'
 class DownloadPackage:
 
     def __init__(self):
-        self.id = -1
+        self.id = None
         self.name = ''
         self.unrar_progress = 0
 
