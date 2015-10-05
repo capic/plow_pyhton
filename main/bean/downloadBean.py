@@ -15,7 +15,7 @@ class Download:
     def __init__(self):
         self.id = -1
         self.name = ''
-        self.package_id = -1
+        self.package = None
         self.link = ''
         # the size of the file (values[1] gives by plowprobe or by the first rows of plowdown)
         self.size_file = 0
@@ -49,7 +49,7 @@ class Download:
                ' | status => %s | progress_part => %s | average_speed => %s | current_speed => %s | time_left => %s ' \
                ' | time_spent => %s | pid_plowdown => %s | pid_python => %s | file_path => %s | priority => %s ' \
                '| package_id => %s ' % (
-                   str(self.id), self.name, self.package_id, self.link, str(self.size_file), str(self.size_part),
+                   str(self.id), self.name, self.package.to_string(), self.link, str(self.size_file), str(self.size_part),
                    str(self.size_file_downloaded),
                    str(self.size_part_downloaded), str(self.status), str(self.progress_part), str(self.average_speed),
                    str(self.current_speed), str(self.time_left), str(self.time_spent), str(self.pid_plowdown),
@@ -74,7 +74,7 @@ class Download:
     def to_json(self):
         return {"id": str(self.id),
                 "name": self.name,
-                "package_id": self.package_id,
+                "package": self.package.to_json(),
                 "link": self.link,
                 "size_file": str(self.size_file),
                 "size_part": str(self.size_part),
