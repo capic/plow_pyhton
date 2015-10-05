@@ -31,7 +31,7 @@ class ManageDownload:
         if download is not None:
             download.package = None
             if utils.package_name_from_download_name(download.name) is not None:
-                download_package = DownloadPackageBean()
+                download_package = DownloadPackage()
                 download_package.name = utils.package_name_from_download_name(download.name)
 
                 try:
