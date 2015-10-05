@@ -115,7 +115,7 @@ def json_to_download_object(json_object):
     download = Download()
     download.id = json_object['id']
     download.name = json_object['name']
-    if json_object['download_id'] != 'null':
+    if json_object['package_id'] != 'null':
         download_package = DownloadPackage()
         download_package.id = json_object['download_package']['id']
         download_package.name = json_object['download_package']['name']
