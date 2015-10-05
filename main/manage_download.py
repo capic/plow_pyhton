@@ -41,7 +41,7 @@ class ManageDownload:
                     if response.code != 200:
                         utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
 
-                    download_package = response.data
+                    download_package = response.body
                 except Exception:
                     import traceback
                     utils.log_debug(traceback.format_exc())
