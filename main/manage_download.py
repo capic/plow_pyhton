@@ -36,7 +36,7 @@ class ManageDownload:
 
                 try:
                     response = unirest.post(utils.REST_ADRESSE + 'downloads/package', headers={"Accept": "application/json"},
-                                        params=download.to_insert_json())
+                                        params=download8package.to_insert_json())
 
                     if response.code != 200:
                         utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
