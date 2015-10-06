@@ -59,16 +59,16 @@ class Download:
 
     def to_insert_json(self):
         return {"name": self.name,
-                "package_id": self.package.id if self.package is not None else 'null',
+                "package_id": self.package.id if self.package is not None else None,
                 "link": self.link,
-                "size_file": str(self.size_file),
-                "status": str(self.status),
+                "size_file": self.size_file,
+                "status": self.status,
                 "file_path": self.file_path,
-                "priority": str(self.priority),
+                "priority": self.priority,
                 "directory": self.directory,
-                "lifecycle_insert_date": str(self.lifecycle_insert_date),
-                "lifecycle_update_date": str(self.lifecycle_update_date),
-                "theorical_start_datetime": str(self.theorical_start_datetime)
+                "lifecycle_insert_date": self.lifecycle_insert_date,
+                "lifecycle_update_date": self.lifecycle_update_date,
+                "theorical_start_datetime": self.theorical_start_datetime
                 }
 
     def to_json(self):
