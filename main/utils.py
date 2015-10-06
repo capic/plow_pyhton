@@ -166,7 +166,7 @@ def json_to_download_package_object(json_object):
     download_package = DownloadPackage()
     download_package.id = json_object['id']
     download_package.name = json_object['name']
-    download_package.unrar_percent = json_object['unrar_percent']
+    download_package.unrar_percent = json_object['unrar_progress']
 
     return download
 
