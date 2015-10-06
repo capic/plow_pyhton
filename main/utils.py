@@ -168,7 +168,7 @@ def json_to_download_package_object(json_object):
     download_package.name = json_object['name']
     download_package.unrar_percent = json_object['unrar_progress']
 
-    return download
+    return download_package
 
 def package_name_from_download_name(download_name):
     ext = download_name.split(".")[-1]
