@@ -44,7 +44,7 @@ class Download:
         self.lifecycle_update_date = 0
 
     def to_string(self):
-        return 'download : \n id => %s | name => %s | package => %s | link => %s | size_file => %s | size_part => %s' \
+        return 'download : \n id => %s | name => %s | package => {%s} | link => %s | size_file => %s | size_part => %s' \
                ' | size_file_downloaded => %s | size_part_downloaded => %s' \
                ' | status => %s | progress_part => %s | average_speed => %s | current_speed => %s | time_left => %s ' \
                ' | time_spent => %s | pid_plowdown => %s | pid_python => %s | file_path => %s | priority => %s ' % (
