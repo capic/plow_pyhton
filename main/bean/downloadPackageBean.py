@@ -14,4 +14,7 @@ class DownloadPackage:
         return 'id: %s | name: %s | unrar_progress: %s' % (str(self.id), self.name, str(self.unrar_progress))
 
     def to_json(self):
-        return {"id": self.id, "name": self.name, "unrar_progress": self.unrar_progress }
+        return {"id": self.id, "name": self.name, "unrar_progress": self.unrar_progress}
+
+    def to_insert_json(self):
+        return {"name": self.name, "unrar_progress": self.unrar_progress}
