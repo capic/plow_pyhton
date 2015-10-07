@@ -166,7 +166,6 @@ class ManageDownload:
         download = None
 
         if download_id is None:
-            downloads_list = []
             if file_path is not None:
                 response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
                                        headers={"Accept": "application/json"}, params={"file_path": file_path})
@@ -175,17 +174,10 @@ class ManageDownload:
                                        headers={"Accept": "application/json"})
 
             if response.code == 200:
-                downloads_list = utils.json_to_download_object_list(response.body)
+                download = utils.json_to_download_object(response.body)
             else:
                 utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
 
-            if len(downloads_list) == 0:
-                logging.info('No download found with file_path %s' % file_path)
-            elif len(downloads_list) == 1:
-                download = downloads_list[0]
-                utils.log_debug(u'download : %s' % download.to_string())
-            else:
-                logging.error('Too many download found with file_path %s' % file_path)
         else:
             download = self.get_download_by_id(download_id)
 
