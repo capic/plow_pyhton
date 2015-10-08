@@ -78,7 +78,7 @@ class ManageDownload:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
                 download.logs = u"ERROR DURING DOWNLOAD UPDATE"
 
-                self.update_download_log(download)
+            self.update_download_log(download)
 
         except Exception:
             import traceback
