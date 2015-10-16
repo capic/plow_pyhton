@@ -166,17 +166,32 @@ class ManageDownload:
         download = None
 
         if download_id is None:
-            if file_path is not None:
-                response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
-                                       headers={"Accept": "application/json"}, params={"file_path": file_path})
-            else:
-                response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
-                                       headers={"Accept": "application/json"})
+            try:
+                if file_path is not None:
+                    response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
+                                           headers={"Accept": "application/json"}, params={"file_path": file_path})
+                else:
+                    response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
+                                           headers={"Accept": "application/json"})
 
-            if response.code == 200:
-                download = utils.json_to_download_object(response.body)
-            else:
-                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+                if response.code == 200:
+                    download = utils.json_to_download_object(response.body)
+                else:
+                    utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+            except Exception:
+                utils.log_debug(u'no database connection => use rescue mode')
+                file = open(file_path, 'r')
+                for line in file:
+                    line = line.decode("utf-8")
+                    if 'http' in line:
+                        utils.log_debug(u'Line %s contains http' % line)
+                        if not line.startswith('#'):
+                            line = line.replace('\n', '')
+                            line = line.replace('\r', '')
+                            download = Download()
+                            download.link = line
+
+                file.close()
 
         else:
             download = self.get_download_by_id(download_id)
