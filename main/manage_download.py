@@ -326,6 +326,7 @@ class ManageDownload:
                     line += out
                 else:
                     line = utils.clean_plowdown_line(line)
+                    utils.log_debug(line)
                     if download.id != -1:
                         download = self.get_download_values(line, download)
                     line = ''
@@ -340,7 +341,6 @@ class ManageDownload:
         log = ''
 
         values = values_line.split()
-        utils.log_debug(values_line)
 
         if len(values) > 0:
             if values[0].isdigit():
