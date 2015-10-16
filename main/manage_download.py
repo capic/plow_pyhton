@@ -326,7 +326,8 @@ class ManageDownload:
                     line += out
                 else:
                     line = utils.clean_plowdown_line(line)
-                    download = self.get_download_values(line, download)
+                    if download.id != -1:
+                        download = self.get_download_values(line, download)
                     line = ''
 
         return download
