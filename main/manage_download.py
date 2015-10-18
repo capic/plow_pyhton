@@ -391,7 +391,8 @@ class ManageDownload:
                                  time.localtime()) + ': ' + values_line + '\r\n'
             download.logs = log
 
-            self.update_download(download)
+            if download.id != -1:
+                self.update_download(download)
 
         return download
 
