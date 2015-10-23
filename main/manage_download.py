@@ -190,6 +190,7 @@ class ManageDownload:
                             line = line.replace('\r', '')
                             download = Download()
                             download.link = line
+                            download.file_path = file_path
                             break
 
                 file.close()
