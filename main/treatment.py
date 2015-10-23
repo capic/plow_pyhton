@@ -119,7 +119,7 @@ class Treatment:
             if download.status == Download.STATUS_FINISHED:
                 self.mark_link_finished_in_file(download)
 
-                if download.directory != utils.DIRECTORY_DOWNLOAD_DESTINATION:
+                if download.directory is not None and download.directory != '' and download.directory != utils.DIRECTORY_DOWNLOAD_DESTINATION:
                     self.move_download(download)
             else:
                 download.status = Download.STATUS_WAITING
