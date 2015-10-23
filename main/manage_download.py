@@ -388,7 +388,7 @@ class ManageDownload:
             elif "Waiting" in values[0]:
                 download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
                 log += 'Theorical start date time %s' % str(download.theorical_start_datetime)
-            elif "Link is not alive" in values[0]:
+            elif "Link" in values[0] and "is" in values[1] and "not" in values[2] and "alive" in values[3]:
                 log += 'Theorical start date time Link is not alive'
                 download.status = Download.STATUS_ERROR
 
