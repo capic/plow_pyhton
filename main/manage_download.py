@@ -389,6 +389,7 @@ class ManageDownload:
                 download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
                 log += 'Theorical start date time %s' % str(download.theorical_start_datetime)
             elif "Link is not alive" in values[0]:
+                log += 'Theorical start date time Link is not alive'
                 download.status = Download.STATUS_ERROR
 
             log += time.strftime('%d/%m/%y %H:%M:%S',
