@@ -57,7 +57,7 @@ class Treatment:
 
         utils.log_debug(u'%s =========< End insert new links or update old in database >=========')
 
-    def mark_link_finished_in_file(self, download):
+    def mark_link_in_file(self, download, mark):
         utils.log_debug(u'*** mark_link_finished_in_file ***')
 
         if download is not None:
@@ -70,7 +70,7 @@ class Treatment:
 
             new_data = file_data.replace(download.link,
                                          '# %s \r\n%s %s' % (download.name,
-                                                             self.manage_download.MARK_AS_FINISHED,
+                                                             mark,
                                                              download.link))
 
             utils.log_debug(u'=========> Open file %s to write <=========' % download.file_path)
@@ -82,6 +82,14 @@ class Treatment:
             # logging.error('Unexpected error:', sys.exc_info()[0])
         else:
             logging.error('Download is none')
+
+    def mark_link_error_in_file(self, download):
+        utils.log_debug(u'*** mark_link_error_in_file ***')
+        self.mark_link_in_file(download, self.manage_download.MARK_AS_ERROR)
+
+    def mark_link_finished_in_file(self, download):
+        utils.log_debug(u'*** mark_link_finished_in_file ***')
+        self.mark_link_in_file(download, self.manage_download.MARK_AS_FINISHED)
 
     def move_download(self, download):
         # try:
@@ -122,9 +130,14 @@ class Treatment:
                 if download.directory is not None and download.directory != '' and download.directory != utils.DIRECTORY_DOWNLOAD_DESTINATION:
                     self.move_download(download)
             else:
-                download.status = Download.STATUS_WAITING
+                if download.status == Download.STATUS_ERROR:
+                    self.mark_link_error_in_file(download)
+                else:
+                    download.status = Download.STATUS_WAITING
+
                 download.time_left = 0
                 download.average_speed = 0
+
                 download.logs = 'updated by start_file_treatment method\r\n'
                 self.manage_download.update_download(download)
             utils.log_debug(u'=========< End download >=========')

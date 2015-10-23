@@ -9,6 +9,7 @@ class Download:
     STATUS_WAITING = 1
     STATUS_IN_PROGRESS = 2
     STATUS_FINISHED = 3
+    STATUS_ERROR = 4
 
     PRIORITY_NORMAL = 1
 

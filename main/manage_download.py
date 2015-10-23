@@ -21,6 +21,7 @@ class ManageDownload:
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s' %s"
     COMMAND_UNRAR = "cd %s && unrar x %s"
     MARK_AS_FINISHED = "# FINNISHED "
+    MARK_AS_ERROR = "# ERROR"
 
     def __init__(self):
         unirest.timeout(15)
@@ -387,6 +388,8 @@ class ManageDownload:
             elif "Waiting" in values[0]:
                 download.theorical_start_datetime = datetime.now() + timedelta(0, int(values[1]))
                 log += 'Theorical start date time %s' % str(download.theorical_start_datetime)
+            elif "Link is not alive" in values[0]:
+                download.status = Download.STATUS_ERROR
 
             log += time.strftime('%d/%m/%y %H:%M:%S',
                                  time.localtime()) + ': ' + values_line + '\r\n'
