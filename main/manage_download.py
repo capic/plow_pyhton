@@ -44,8 +44,7 @@ class ManageDownload:
 
                     download_package = utils.json_to_download_package_object(response.body)
                 except Exception:
-                    import traceback
-                    utils.log_debug(traceback.format_exc())
+                    utils.log_debug("Insert download: No database connection")
 
             download.package = download_package
             download.directory = utils.DIRECTORY_DOWNLOAD_DESTINATION
@@ -60,8 +59,7 @@ class ManageDownload:
                 if response.code != 200:
                     utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
             except Exception:
-                import traceback
-                utils.log_debug(traceback.format_exc())
+               utils.log_debug("Insert download package: No database connection")
         else:
             logging.error("Download is none")
 
@@ -82,17 +80,19 @@ class ManageDownload:
             self.update_download_log(download)
 
         except Exception:
-            import traceback
-            utils.log_debug(traceback.format_exc())
+            utils.log_debug("Update download: No database connection")
 
     def update_download_log(self, download):
         if download.logs != "":
-            response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id),
-                                   headers={"Accept": "application/json"},
-                                   params={"id": download.id, "logs": download.logs})
+            try:
+                response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id),
+                                       headers={"Accept": "application/json"},
+                                       params={"id": download.id, "logs": download.logs})
 
-            if response.code != 200:
-                utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
+                if response.code != 200:
+                    utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
+            except Exception:
+                utils.log_debug("Update download log: No database connection")
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')

@@ -58,7 +58,7 @@ class Treatment:
         utils.log_debug(u'%s =========< End insert new links or update old in database >=========')
 
     def mark_link_in_file(self, download, mark):
-        utils.log_debug(u'*** mark_link_finished_in_file ***')
+        utils.log_debug(u'*** mark_link_in_file ***')
 
         if download is not None:
             # try:
