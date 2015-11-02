@@ -422,8 +422,8 @@ class ManageDownload:
         response = unirest.post(utils.REST_ADRESSE + 'downloads/move', headers={"Accept": "application/json"},
                                 params={'id': download.id, 'directory': download.directory})
 
-        if response != 200:
-            utils.log_debug(u'Error during moving file operation')
+        if response.code != 200:
+            utils.log_debug(u'Error during moving file operation %s => %s' % (response.code, response.body))
 
     def unrar(self, download):
         download.logs(u'===== UNRAR =====')
