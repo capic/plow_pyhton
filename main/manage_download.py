@@ -58,7 +58,7 @@ class ManageDownload:
                     utils.log_debug(u'Error insert directory %s => %s' % (response.code, response.body))
                     raise Exception(u'Error insert directory %s => %s' % (response.code, response.body))
 
-                download.directory = utils.json_to_download_directory(response.body)
+                download.directory = utils.json_to_download_directory_object(response.body)
                 download.lifecycle_insert_date = datetime.utcnow()
                 download.lifecycle_update_date = datetime.utcnow()
                 download.theorical_start_datetime = datetime.utcnow()
