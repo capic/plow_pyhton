@@ -7,6 +7,7 @@ import psutil
 from mysql.connector import (connection)
 from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
+from bean.downloadDirectoryBean import DownloadDirectory
 import logging
 
 REST_ADRESSE = 'http://localhost:3000/'
