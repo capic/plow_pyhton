@@ -92,14 +92,6 @@ class Treatment:
         self.mark_link_in_file(download, self.manage_download.MARK_AS_FINISHED)
 
     def move_download(self, download):
-        # try:
-        #     shutil.copy(src, dest)
-        # # eg. src and dest are the same file
-        # except shutil.Error as e:
-        #     print('Error: %s' % e)
-        # # eg. source or destination doesn't exist
-        # except IOError as e:
-        #     print('Error: %s' % e.strerror)
         self.manage_download.move(download)
 
     def start_multi_downloads(self, file_path):
@@ -128,6 +120,7 @@ class Treatment:
                 self.mark_link_finished_in_file(download)
 
                 if download.directory is not None and download.directory != '' and download.directory != utils.DIRECTORY_DOWNLOAD_DESTINATION:
+                    utils.log_debug(u'File will be moved...............')
                     self.move_download(download)
             else:
                 if download.status == Download.STATUS_ERROR:
