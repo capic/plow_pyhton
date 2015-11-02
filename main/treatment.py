@@ -92,7 +92,7 @@ class Treatment:
         self.mark_link_in_file(download, self.manage_download.MARK_AS_FINISHED)
 
     def move_download(self, download):
-        self.manage_download.move(download)
+        self.manage_download.move_download(download)
 
     def start_multi_downloads(self, file_path):
         # utils.log_debug(u'*** start_file_treatment ***')
