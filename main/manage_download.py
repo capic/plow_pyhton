@@ -438,7 +438,7 @@ class ManageDownload:
     def move_download(self, download):
         utils.log_debug(u'*** move_download ***')
         response = unirest.post(utils.REST_ADRESSE + 'downloads/move', headers={"Accept": "application/json"},
-                                params={'id': download.id, 'directory': download.directory})
+                                params={'id': download.id, 'directory': download.directory.path})
         utils.log_debug(u'apres deplacement')
 
         if response.code != 200:
