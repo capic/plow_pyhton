@@ -179,7 +179,7 @@ def json_to_download_directory_object(json_object):
     download_directory.id = json_object['id']
     download_directory.path = json_object['path']
 
-    return download_package
+    return download_directory
 
 def package_name_from_download_name(download_name):
     ext = download_name.split(".")[-1]
