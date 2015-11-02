@@ -3,8 +3,7 @@
 __author__ = 'Vincent'
 
 from datetime import datetime
-import downloadPackageBean
-import downloadDirectoryBean
+from bean.downloadDirectoryBean import DownloadDirectory
 
 class Download:
     STATUS_WAITING = 1
