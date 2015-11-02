@@ -4,6 +4,7 @@ __author__ = 'Vincent'
 
 from datetime import datetime
 import downloadPackageBean
+import downloadDirectoryBean
 
 class Download:
     STATUS_WAITING = 1
@@ -36,7 +37,7 @@ class Download:
         self.time_left = 0
         self.pid_plowdown = 0
         self.pid_python = 0
-        self.directory = None
+        self.directory = DownloadDirectory()
         self.file_path = ''
         self.priority = 0
         self.logs = ''
