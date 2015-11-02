@@ -12,7 +12,7 @@ class DownloadDirectory:
         self.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
 
     def to_string(self):
-        return 'id: %s | path: %s | unrar_progress: %s' % (str(self.id), self.path)
+        return 'id: %s | path: %s' % (str(self.id), self.path)
 
     def to_json(self):
         return {"id": self.id, "path": self.path}
