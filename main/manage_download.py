@@ -47,6 +47,7 @@ class ManageDownload:
                         raise Exception(u'Error insert package %s => %s' % (response.code, response.body))
 
                     download_package = utils.json_to_download_package_object(response.body)
+                    utils.log_debug(u'package inserted: ' + download_package.to_string())
 
                 download.package = download_package
 
@@ -59,6 +60,8 @@ class ManageDownload:
                     raise Exception(u'Error insert directory %s => %s' % (response.code, response.body))
 
                 download.directory = utils.json_to_download_directory_object(response.body)
+                utils.log_debug(u'directory inserted: ' + download.directory.to_string())
+
                 download.lifecycle_insert_date = datetime.utcnow()
                 download.lifecycle_update_date = datetime.utcnow()
                 download.theorical_start_datetime = datetime.utcnow()
