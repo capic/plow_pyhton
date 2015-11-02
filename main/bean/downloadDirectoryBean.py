@@ -1,0 +1,21 @@
+# coding: utf8
+
+__author__ = 'Vincent'
+
+import utils
+
+
+class DownloadDirectory:
+
+    def __init__(self):
+        self.id = None
+        self.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
+
+    def to_string(self):
+        return 'id: %s | path: %s | unrar_progress: %s' % (str(self.id), self.path)
+
+    def to_json(self):
+        return {"id": self.id, "path": self.path}
+
+    def to_insert_json(self):
+        return {"path": self.path}

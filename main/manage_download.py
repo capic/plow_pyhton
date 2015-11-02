@@ -31,6 +31,7 @@ class ManageDownload:
 
         if download is not None:
             download_package = None
+            download_directory = None
             if utils.package_name_from_download_name(download.name) is not None:
                 download_package = DownloadPackage()
                 download_package.name = utils.package_name_from_download_name(download.name)
@@ -40,14 +41,24 @@ class ManageDownload:
                                         params=download_package.to_insert_json())
 
                     if response.code != 200:
-                        utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
+                        utils.log_debug(u'Error insert package %s => %s' % (response.code, response.body))
+                        raise Exception(u'Error insert package %s => %s' % (response.code, response.body))
 
                     download_package = utils.json_to_download_package_object(response.body)
+
+                    response = unirest.post(utils.REST_ADRESSE + 'downloadDirectories', headers={"Accept": "application/json"},
+                                        params=download_directory.to_insert_json())
+
+                    if response.code != 200:
+                        utils.log_debug(u'Error insert directory %s => %s' % (response.code, response.body))
+                        raise Exception(u'Error insert directory %s => %s' % (response.code, response.body))
+
+                    download_directory = utils.json_to_download_directory(response.body)
                 except Exception:
                     utils.log_debug("Insert download: No database connection")
 
             download.package = download_package
-            download.directory = utils.DIRECTORY_DOWNLOAD_DESTINATION
+            download.directory = download_directory
             download.lifecycle_insert_date = datetime.utcnow()
             download.lifecycle_update_date = datetime.utcnow()
             download.theorical_start_datetime = datetime.utcnow()

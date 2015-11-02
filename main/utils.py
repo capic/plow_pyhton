@@ -153,6 +153,7 @@ def json_to_download_object(json_object):
 
     return download
 
+
 def json_to_download_object_list(json_array):
     list_downloads = []
 
@@ -168,6 +169,14 @@ def json_to_download_package_object(json_object):
     download_package.id = json_object['id']
     download_package.name = json_object['name']
     download_package.unrar_percent = json_object['unrar_progress']
+
+    return download_package
+
+
+def json_to_download_directory_object(json_object):
+    download_directory = DownloadDirectory()
+    download_directory.id = json_object['id']
+    download_directory.path = json_object['path']
 
     return download_package
 
