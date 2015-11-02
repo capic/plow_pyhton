@@ -14,6 +14,7 @@ import unirest
 import utils
 from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
+from bean.downloadDirectoryBean import DownloadDirectory
 
 
 class ManageDownload:
@@ -31,7 +32,7 @@ class ManageDownload:
 
         if download is not None:
             download_package = None
-            download_directory = None
+
             if utils.package_name_from_download_name(download.name) is not None:
                 download_package = DownloadPackage()
                 download_package.name = utils.package_name_from_download_name(download.name)
@@ -46,31 +47,33 @@ class ManageDownload:
 
                     download_package = utils.json_to_download_package_object(response.body)
 
-                    response = unirest.post(utils.REST_ADRESSE + 'downloadDirectories', headers={"Accept": "application/json"},
-                                        params=download_directory.to_insert_json())
-
-                    if response.code != 200:
-                        utils.log_debug(u'Error insert directory %s => %s' % (response.code, response.body))
-                        raise Exception(u'Error insert directory %s => %s' % (response.code, response.body))
-
-                    download_directory = utils.json_to_download_directory(response.body)
                 except Exception:
-                    utils.log_debug("Insert download: No database connection")
+                    utils.log_debug("Insert download package: No database connection")
 
             download.package = download_package
-            download.directory = download_directory
-            download.lifecycle_insert_date = datetime.utcnow()
-            download.lifecycle_update_date = datetime.utcnow()
-            download.theorical_start_datetime = datetime.utcnow()
 
             try:
+                response = unirest.post(utils.REST_ADRESSE + 'downloadDirectories', headers={"Accept": "application/json"},
+                                        params=download_directory.to_insert_json())
+
+                if response.code != 200:
+                    utils.log_debug(u'Error insert directory %s => %s' % (response.code, response.body))
+                    raise Exception(u'Error insert directory %s => %s' % (response.code, response.body))
+
+                download.directory = utils.json_to_download_directory(response.body)
+                download.lifecycle_insert_date = datetime.utcnow()
+                download.lifecycle_update_date = datetime.utcnow()
+                download.theorical_start_datetime = datetime.utcnow()
+
                 response = unirest.post(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
-                                        params=download.to_insert_json())
+                                            params=download.to_insert_json())
 
                 if response.code != 200:
                     utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
+                    raise Exception(u'Error insert %s => %s' % (response.code, response.body))
+
             except Exception:
-               utils.log_debug("Insert download package: No database connection")
+                utils.log_debug("Insert download: No database connection")
         else:
             logging.error("Download is none")
 
