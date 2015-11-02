@@ -59,6 +59,7 @@ class ManageDownload:
                     utils.log_debug(u'Error insert directory %s => %s' % (response.code, response.body))
                     raise Exception(u'Error insert directory %s => %s' % (response.code, response.body))
 
+                utils.log_debug(u'body: ' + response.body)
                 download_directory = utils.json_to_download_directory_object(response.body)
                 utils.log_debug(u'directory inserted: ' + download_directory.to_string())
 
