@@ -54,14 +54,11 @@ class ManageDownload:
                 utils.log_debug("Insert directory ....")
                 response = unirest.post(utils.REST_ADRESSE + 'downloadDirectories', headers={"Accept": "application/json"},
                                         params=download.directory.to_insert_json())
-                utils.log_debug("Directory inserted")
+
                 if response.code != 200:
                     utils.log_debug(u'Error insert directory %s => %s' % (response.code, response.body))
                     raise Exception(u'Error insert directory %s => %s' % (response.code, response.body))
 
-                utils.log_debug(u'aaaaaaaa')
-                utils.log_debug(u'body: %s' % response.body)
-                utils.log_debug(u'bbbbbbbb')
                 download_directory = utils.json_to_download_directory_object(response.body)
                 utils.log_debug(u'directory inserted: ' + download_directory.to_string())
 
