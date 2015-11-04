@@ -120,7 +120,7 @@ class Treatment:
                 self.mark_link_finished_in_file(download)
 
                 utils.log_debug(u'Directory => %s' % download.directory)
-                if download.directory is not None and download.directory != '' and download.directory != utils.DIRECTORY_DOWNLOAD_DESTINATION:
+                if download.directory is not None and download.directory != '' and download.directory.path != utils.DIRECTORY_DOWNLOAD_DESTINATION:
                     utils.log_debug(u'File will be moved...............')
                     self.move_download(download)
             else:
