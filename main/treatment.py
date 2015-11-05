@@ -119,8 +119,8 @@ class Treatment:
             if download.status == Download.STATUS_FINISHED:
                 self.mark_link_finished_in_file(download)
 
-                utils.log_debug(u'Directory => %s' % download.directory)
-                if download.directory is not None and download.directory != '' and download.directory.path != utils.DIRECTORY_DOWNLOAD_DESTINATION:
+                utils.log_debug(u'Directory => %s' % download.directory.path)
+                if download.directory is not None and download.directory.path != '' and download.directory.path != utils.DIRECTORY_DOWNLOAD_DESTINATION:
                     utils.log_debug(u'File will be moved...............')
                     self.move_download(download)
             else:
