@@ -117,6 +117,7 @@ class Treatment:
 
             # mark link with # in file
             if download.status == Download.STATUS_FINISHED:
+                download = self.manage_download.get_download_by_id(download.id)
                 self.mark_link_finished_in_file(download)
 
                 utils.log_debug(u'Directory => %s' % download.directory.path)
