@@ -452,7 +452,7 @@ class ManageDownload:
 
         cmd = (
             self.COMMAND_UNRAR % (
-                download.directory, download.name))
+                download.directory.path, download.name))
         utils.log_debug(u'command : %s' % cmd)
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
 
