@@ -35,6 +35,14 @@ class Treatment:
         self.manage_download.stop_download(download_to_stop)
 
     def start_file_treatment(self, file_path):
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+
+        file_handler = logging.FileHandler(utils.DIRECTORY_WEB_LOG + 'start_file_treatement.log')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+        logger.addHandler(file_handler)
+
         utils.log_debug(u'*** start_file_treatment ***')
         utils.log_debug(u'file_path %s' % file_path)
 
