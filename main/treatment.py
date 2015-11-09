@@ -56,7 +56,7 @@ class Treatment:
                 utils.log_debug(u'Line %s contains http' % line)
                 download = self.manage_download.insert_update_download(line, file_path)
 
-                if download.status == Download.STATUS_FINISHED:
+                if download is not None and download.status == Download.STATUS_FINISHED:
                     utils.log_debug(
                         u'Download id %s already finished in database but not marked in file => mark as finished')
                     downloads_to_mark_as_finished_in_file.append(download)
