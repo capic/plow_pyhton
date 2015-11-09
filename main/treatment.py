@@ -47,6 +47,7 @@ class Treatment:
         utils.log_debug(u'file_path %s' % file_path)
 
         utils.log_debug(u'=========> Insert new links or update old in database <=========')
+        downloads_to_mark_as_finished_in_file = []
         # insert links in database
         file = open(file_path, 'r')
         for line in file:
@@ -55,13 +56,15 @@ class Treatment:
                 utils.log_debug(u'Line %s contains http' % line)
                 download = self.manage_download.insert_update_download(line, file_path)
 
+                if download.status == Download.STATUS_FINISHED:
+                    utils.log_debug(
+                        u'Download id %s already finished in database but not marked in file => mark as finished')
+                    downloads_to_mark_as_finished_in_file.append(download)
+
         file.close()
 
-        if download is not None:
-            if download.status == Download.STATUS_FINISHED:
-                utils.log_debug(
-                    u'Download id %s already finished in database but not marked in file => mark as finished')
-                self.mark_link_finished_in_file(download)
+        for to_mark_as_finished in downloads_to_mark_as_finished_in_file:
+            self.mark_link_finished_in_file(to_mark_as_finished)
 
         utils.log_debug(u'%s =========< End insert new links or update old in database >=========')
 
