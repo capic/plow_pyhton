@@ -117,7 +117,7 @@ class ManageDownload:
 
         if download_id is not None:
             try:
-                response = unirest.get(utils.REST_ADRESSE + 'downloads/' + download_id,
+                response = unirest.get(utils.REST_ADRESSE + 'downloads/' + str(download_id),
                                        headers={"Accept": "application/json"})
 
                 if response == 200:
