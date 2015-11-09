@@ -126,6 +126,8 @@ class ManageDownload:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
             except Exception:
                 utils.log_debug("Get download by id: No database connection")
+                import traceback
+                utils.log_debug(traceback.format_exc())
         else:
             logging.error('Id is none')
 
