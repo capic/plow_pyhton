@@ -34,9 +34,16 @@ def hms_to_seconds(t):
         h, m, s = [int(i) for i in t.split(':')]
         d = 0
     elif 'd' in t:
+        log_debug()
         m = 0
         s = 0
+        log_debug(t.split())
+        log_debug(t.split()[1])
+        log_debug(t.split()[1].replace('h', ''))
         h = int(t.split()[1].replace('h', ''))
+        log_debug(t.split())
+        log_debug(t.split()[0])
+        log_debug(t.split()[0].replace('d', ''))
         d = int(t.split()[0].replace('d', ''))
 
     return int(d * 24 * 3600 + 3600 * h + 60 * m + s)
