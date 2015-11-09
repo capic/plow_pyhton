@@ -30,11 +30,12 @@ def database_connect():
 
 
 def hms_to_seconds(t):
+    log_debug(u'*** hms_to_seconds ***')
+
     if ':' in t:
         h, m, s = [int(i) for i in t.split(':')]
         d = 0
     elif 'd' in t:
-        log_debug()
         m = 0
         s = 0
         log_debug(t.split())
