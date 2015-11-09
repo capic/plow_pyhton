@@ -117,17 +117,15 @@ class ManageDownload:
 
         if download_id is not None:
             try:
-                response = unirest.get(utils.REST_ADRESSE + 'downloads/' + str(download_id),
+                response = unirest.get(utils.REST_ADRESSE + 'downloads/' + download_id,
                                        headers={"Accept": "application/json"})
 
-                if response == 200:
+                if response.code == 200:
                     download = utils.json_to_download_object(response.body)
                 else:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
             except Exception:
                 utils.log_debug("Get download by id: No database connection")
-                import traceback
-                utils.log_debug(traceback.format_exc())
         else:
             logging.error('Id is none')
 
