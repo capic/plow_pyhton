@@ -25,7 +25,7 @@ class ManageDownload:
     MARK_AS_ERROR = "# ERROR"
 
     def __init__(self):
-        unirest.timeout(15)
+        unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
 
     def insert_download(self, download):
         utils.log_debug(u'  *** insert_download ***')
@@ -444,9 +444,11 @@ class ManageDownload:
         utils.log_debug(u'*** move_download ***')
 
         try:
+            unirest.timeout(0)
             response = unirest.post(utils.REST_ADRESSE + 'downloads/move', headers={"Accept": "application/json"},
                                     params={'id': download.id, 'directory': download.directory.path,
                                             'withPackage': False})
+            unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
             utils.log_debug(u'apres deplacement')
 
             if response.code != 200:

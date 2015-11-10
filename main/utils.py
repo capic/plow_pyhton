@@ -24,6 +24,8 @@ DIRECTORY_DOWNLOAD_DESTINATION = '/mnt/HD/HD_a2/telechargement/'
 LOG_OUTPUT = True
 CONSOLE_OUTPUT = True
 
+DEFAULT_UNIREST_TIMEOUT = 15
+
 
 def database_connect():
     return connection.MySQLConnection(user=MYSQL_LOGIN, password=MYSQL_PASS, host=MYSQL_HOST, database=MYSQL_DATABASE)
