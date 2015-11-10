@@ -154,10 +154,11 @@ def json_to_download_object(json_object):
     download.time_left = json_object['time_left']
     download.pid_plowdown = json_object['pid_plowdown']
     download.pid_python = json_object['pid_python']
-    download.directory = DownloadDirectory()
+    download_directory = DownloadDirectory()
     if json_object['directory_id']:
-        download_package.id = json_object['download_directory']['id']
-        download_package.name = json_object['download_directory']['path']
+        download_directory.id = json_object['download_directory']['id']
+        download_directory.name = json_object['download_directory']['path']
+    download.directory = download_directory
     download.file_path = json_object['file_path']
     download.priority = json_object['priority']
     if json_object['theorical_start_datetime'] == 0:

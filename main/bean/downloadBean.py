@@ -48,12 +48,12 @@ class Download:
         return 'download : \n id => %s | name => %s | package => {%s} | link => %s | size_file => %s | size_part => %s' \
                ' | size_file_downloaded => %s | size_part_downloaded => %s' \
                ' | status => %s | progress_part => %s | average_speed => %s | current_speed => %s | time_left => %s ' \
-               ' | time_spent => %s | pid_plowdown => %s | pid_python => %s  | file_path => %s | priority => %s ' % (
+               ' | time_spent => %s | pid_plowdown => %s | pid_python => %s  | directory => {%s} | file_path => %s | priority => %s ' % (
                    str(self.id), self.name, self.package.to_string() if self.package is not None else 'null', self.link, str(self.size_file), str(self.size_part),
                    str(self.size_file_downloaded),
                    str(self.size_part_downloaded), str(self.status), str(self.progress_part), str(self.average_speed),
                    str(self.current_speed), str(self.time_left), str(self.time_spent), str(self.pid_plowdown),
-                   str(self.pid_python), self.file_path, str(self.priority))
+                   str(self.pid_python), self.directory.to_string(), self.file_path, str(self.priority))
 
         # + ' | lifecycle_insert_date => ' + str(self.lifecycle_insert_date)
         # + ' | lifecycle_update_date => ' + str(self.lifecycle_update_date)
