@@ -131,7 +131,7 @@ class Treatment:
                 download = self.manage_download.get_download_by_id(download.id)
                 self.mark_link_finished_in_file(download)
 
-                utils.log_debug(u'Directory => %s' % download.directory.path)
+                utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
                 if download.directory is not None and download.directory.path != '' and download.directory.path != utils.DIRECTORY_DOWNLOAD_DESTINATION:
                     utils.log_debug(u'File will be moved...............')
                     self.move_download(download)
