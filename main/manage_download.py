@@ -39,8 +39,9 @@ class ManageDownload:
                     download_package.name = utils.package_name_from_download_name(download.name)
 
                     utils.log_debug("Insert package ....")
-                    response = unirest.post(utils.REST_ADRESSE + 'downloads/package', headers={"Accept": "application/json"},
-                                        params=download_package.to_insert_json())
+                    response = unirest.post(utils.REST_ADRESSE + 'downloads/package',
+                                            headers={"Accept": "application/json"},
+                                            params=download_package.to_insert_json())
 
                     if response.code != 200:
                         utils.log_debug(u'Error insert package %s => %s' % (response.code, response.body))
@@ -52,7 +53,8 @@ class ManageDownload:
                 download.package = download_package
 
                 utils.log_debug("Insert directory ....")
-                response = unirest.post(utils.REST_ADRESSE + 'downloadDirectories', headers={"Accept": "application/json"},
+                response = unirest.post(utils.REST_ADRESSE + 'downloadDirectories',
+                                        headers={"Accept": "application/json"},
                                         params=download.directory.to_insert_json())
 
                 if response.code != 200:
@@ -69,7 +71,7 @@ class ManageDownload:
 
                 utils.log_debug("Insert download ....")
                 response = unirest.post(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
-                                            params=download.to_insert_json())
+                                        params=download.to_insert_json())
 
                 if response.code != 200:
                     utils.log_debug(u'Error insert %s => %s' % (response.code, response.body))
@@ -443,7 +445,8 @@ class ManageDownload:
 
         try:
             response = unirest.post(utils.REST_ADRESSE + 'downloads/move', headers={"Accept": "application/json"},
-                                    params={'id': str(download.id), 'directory': download.directory.path})
+                                    params={'id': download.id, 'directory': download.directory.path,
+                                            'withPackage': False})
             utils.log_debug(u'apres deplacement')
 
             if response.code != 200:
