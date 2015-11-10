@@ -440,14 +440,19 @@ class ManageDownload:
 
     def move_download(self, download):
         utils.log_debug(u'*** move_download ***')
-        response = unirest.post(utils.REST_ADRESSE + 'downloads/move', headers={"Accept": "application/json"},
-                                params={'id': str(download.id), 'directory': download.directory.path})
-        utils.log_debug(u'apres deplacement')
 
-        if response.code != 200:
-            utils.log_debug(u'Error during moving file operation %s => %s' % (response.code, response.body))
-        else:
-            utils.log_debug(u'Moving OK %s => %s' % (response.code, response.body))
+        try:
+            response = unirest.post(utils.REST_ADRESSE + 'downloads/move', headers={"Accept": "application/json"},
+                                    params={'id': str(download.id), 'directory': download.directory.path})
+            utils.log_debug(u'apres deplacement')
+
+            if response.code != 200:
+                utils.log_debug(u'Error during moving file operation %s => %s' % (response.code, response.body))
+            else:
+                utils.log_debug(u'Moving OK %s => %s' % (response.code, response.body))
+        except Exception:
+            import traceback
+            utils.log_debug(traceback.format_exc())
 
     def unrar(self, download):
         download.logs(u'===== UNRAR =====')
