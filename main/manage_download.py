@@ -444,7 +444,7 @@ class ManageDownload:
         utils.log_debug(u'*** move_download ***')
 
         try:
-            unirest.timeout(0)
+            unirest.timeout(36000)
             response = unirest.post(utils.REST_ADRESSE + 'downloads/move', headers={"Accept": "application/json"},
                                     params={'id': download.id, 'directory_id': download.directory.path,
                                             'withPackage': False})
