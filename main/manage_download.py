@@ -139,24 +139,28 @@ class ManageDownload:
 
         download = None
 
-        if link is not None and link != '' and file_path is not None and file_path != '':
-            response = unirest.get(utils.REST_ADRESSE + 'downloads',
-                                   headers={"Accept": "application/json"},
-                                   params={"link": link, "file_path": file_path})
+        try:
+            if link is not None and link != '' and file_path is not None and file_path != '':
+                response = unirest.get(utils.REST_ADRESSE + 'downloads',
+                                       headers={"Accept": "application/json"},
+                                       params={"link": link, "file_path": file_path})
 
-            downloads_list = []
-            if response.code == 200:
-                downloads_list = utils.json_to_download_object_list(response.body)
-            else:
-                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+                downloads_list = []
+                if response.code == 200:
+                    downloads_list = utils.json_to_download_object_list(response.body)
+                else:
+                    utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
 
-            if len(downloads_list) == 0:
-                logging.info('No download found with link %s and file_path %s' % (link, file_path))
-            elif len(downloads_list) == 1:
-                download = downloads_list[0]
-                utils.log_debug(u'download : %s' % (download.to_string()))
-            else:
-                logging.error('Too many download found with link %s and file_path %s' % (link, file_path))
+                if len(downloads_list) == 0:
+                    logging.info('No download found with link %s and file_path %s' % (link, file_path))
+                elif len(downloads_list) == 1:
+                    download = downloads_list[0]
+                    utils.log_debug(u'download : %s' % (download.to_string()))
+                else:
+                    logging.error('Too many download found with link %s and file_path %s' % (link, file_path))
+
+        except Exception:
+            utils.log_debug("Get download by link file path: No database connection")
 
         return download
 
@@ -166,19 +170,22 @@ class ManageDownload:
 
         downloads_list = None
 
-        if package is not None and package != '':
-            response = unirest.get(utils.REST_ADRESSE + 'downloads',
-                                   headers={"Accept": "application/json"},
-                                   params={"package": package})
+        try:
+            if package is not None and package != '':
+                response = unirest.get(utils.REST_ADRESSE + 'downloads',
+                                       headers={"Accept": "application/json"},
+                                       params={"package_id": package.id})
 
-            downloads_list = []
-            if response.code == 200:
-                downloads_list = utils.json_to_download_object_list(response.body)
-            else:
-                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+                downloads_list = []
+                if response.code == 200:
+                    downloads_list = utils.json_to_download_object_list(response.body)
+                else:
+                    utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
 
-            if len(downloads_list) == 0:
-                logging.info('No download found with package %s' % package)
+                if len(downloads_list) == 0:
+                    logging.info('No download found with package %s' % package)
+        except Exception:
+            utils.log_debug("Get download by package: No database connection")
 
         return downloads_list
 
@@ -226,14 +233,17 @@ class ManageDownload:
     def get_downloads_in_progress(self):
         utils.log_debug(u'*** get_downloads_in_progress ***')
 
-        response = unirest.get(utils.REST_ADRESSE + 'downloads',
-                               headers={"Accept": "application/json"}, params={"status": Download.STATUS_IN_PROGRESS})
+        try:
+            response = unirest.get(utils.REST_ADRESSE + 'downloads',
+                                   headers={"Accept": "application/json"}, params={"status": Download.STATUS_IN_PROGRESS})
 
-        downloads_list = []
-        if response.code == 200:
-            downloads_list = utils.json_to_download_object_list(response.body)
-        else:
-            utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+            downloads_list = []
+            if response.code == 200:
+                downloads_list = utils.json_to_download_object_list(response.body)
+            else:
+                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+        except Exception:
+            utils.log_debug("Get download in progress: No database connection")
 
         return downloads_list
 
@@ -241,13 +251,17 @@ class ManageDownload:
         utils.log_debug(u'*** download_already_exists ***')
 
         exists = False
-        if link is not None and link != '':
-            response = unirest.get(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
-                                   params={"link": link})
-            exists = len(response.body) > 0
-            utils.log_debug(u'download exists ? %s' % str(exists))
-        else:
-            logging.error('Link is none')
+
+        try:
+            if link is not None and link != '':
+                response = unirest.get(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
+                                       params={"link": link})
+                exists = len(response.body) > 0
+                utils.log_debug(u'download exists ? %s' % str(exists))
+            else:
+                logging.error('Link is none')
+        except Exception:
+            utils.log_debug("Download already exists: No database connection")
 
         return exists
 

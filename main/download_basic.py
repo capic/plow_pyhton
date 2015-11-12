@@ -121,6 +121,15 @@ def main(argv):
                 treatment.check_download_alive(download_id)
             else:
                 treatment.check_multi_downloads_alive()
+        elif args[0] == 'move':
+            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'move.log', level=logging.DEBUG,
+                                format='%(asctime)s %(message)s',
+                                datefmt='%d/%m/%Y %H:%M:%S')
+            if len(args) > 1:
+                download_id = args[1]
+                treatment.move(download_id)
+            else:
+                print(COMMAND_USAGE)
         elif args[0] == 'unrar':
             logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'unrar.log', level=logging.DEBUG,
                                 format='%(asctime)s %(message)s',

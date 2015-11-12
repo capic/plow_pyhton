@@ -102,7 +102,8 @@ class Treatment:
         utils.log_debug(u'*** mark_link_finished_in_file ***')
         self.mark_link_in_file(download, self.manage_download.MARK_AS_FINISHED)
 
-    def move_download(self, download):
+    def move_download(self, download_id):
+        download = self.manage_download.get_download_by_id(download_id)
         self.manage_download.move_download(download)
 
     def start_multi_downloads(self, file_path):
@@ -134,7 +135,7 @@ class Treatment:
                 utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
                 if download.directory is not None and download.directory.path != '' and download.directory.path != utils.DIRECTORY_DOWNLOAD_DESTINATION:
                     utils.log_debug(u'File will be moved...............')
-                    self.move_download(download)
+                    self.manage_download.move_download(download)
             else:
                 if download.status == Download.STATUS_ERROR:
                     self.mark_link_error_in_file(download)
