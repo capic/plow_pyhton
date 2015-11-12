@@ -474,7 +474,7 @@ class ManageDownload:
             utils.log_debug(traceback.format_exc())
 
     def unrar(self, download):
-        download.logs(u'===== UNRAR =====')
+        download.logs(u'*** unrar ***')
         self.update_download_log(download)
 
         cmd = (
