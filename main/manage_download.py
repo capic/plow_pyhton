@@ -468,7 +468,7 @@ class ManageDownload:
             if response.code != 200:
                 utils.log_debug(u'Error during moving file operation %s => %s' % (response.code, response.body))
             else:
-                utils.log_debug(u'Moving OK %s => %s' % (response.code, response.body))
+                utils.log_debug(u'Moving OK %s => %s' % (str(response.code), response.body))
         except Exception:
             import traceback
             utils.log_debug(traceback.format_exc())
