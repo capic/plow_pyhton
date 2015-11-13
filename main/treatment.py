@@ -89,6 +89,9 @@ class Treatment:
             f.write(new_data)
             f.close()
             utils.log_debug(u'=========> Close file %s <=========' % download.file_path)
+
+            download.logs += 'Link marked as %s in file' % mark
+            self.manage_download.update_download_log(download)
             # except:
             # logging.error('Unexpected error:', sys.exc_info()[0])
         else:
