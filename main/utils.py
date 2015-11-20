@@ -119,7 +119,9 @@ def get_infos_plowprobe(cmd):
             size = int(tab_infos[1])
             log_debug(u'Size %s' % str(size))
 
-        return [name, size]
+        host = tab_infos[2]
+
+        return [name, size, host]
     else:
         return [None, None]
 
@@ -204,6 +206,16 @@ def json_to_download_directory_object(json_object):
     download_directory.path = json_object['path']
 
     return download_directory
+
+
+def json_to_download_host_object(json_object):
+    download_host = DownloadHost()
+    download_host.id = json_object['id']
+    download_host.name = json_object['name']
+    download_host.logo = json_object['logo']
+
+    return download_host
+
 
 def package_name_from_download_name(download_name):
     ext = download_name.split(".")[-1]

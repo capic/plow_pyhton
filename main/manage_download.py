@@ -15,11 +15,12 @@ import utils
 from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
+from bean.downloadHostBean import DownloadHost
 
 
 class ManageDownload:
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
-    COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s' %s"
+    COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s=$=%%m' %s"
     COMMAND_UNRAR = "cd %s && unrar x %s"
     MARK_AS_FINISHED = "# FINNISHED "
     MARK_AS_ERROR = "# ERROR"
@@ -34,6 +35,17 @@ class ManageDownload:
             download_package = None
 
             try:
+                utils.log_debug("Insert host ....")
+                response = unirest.post(utils.REST_ADRESSE + 'downloadHosts',
+                                            headers={"Accept": "application/json"},
+                                            params=download.host.to_insert_json())
+
+                if response.code != 200:
+                    utils.log_debug(u'Error insert host %s => %s' % (response.code, response.body))
+                    raise Exception(u'Error insert host %s => %s' % (response.code, response.body))
+
+                download.host = utils.json_to_download_host_object(response.body)
+
                 if utils.package_name_from_download_name(download.name) is not None:
                     download_package = DownloadPackage()
                     download_package.name = utils.package_name_from_download_name(download.name)
@@ -290,12 +302,16 @@ class ManageDownload:
                     utils.log_debug(u'Download %s doesn''t exist -> insert' % link)
                     utils.log_debug(u'command : %s' % cmd)
 
-                    name, size = utils.get_infos_plowprobe(cmd)
+                    name, size, host = utils.get_infos_plowprobe(cmd)
                     if name is not None:
                         utils.log_debug('Infos get from plowprobe %s' % name)
 
+                        download_host = DownloadHost()
+                        download_host.name = host
+
                         download = Download()
                         download.name = name
+                        download.host = download_host
                         download.link = link
                         download.size = size
                         download.status = Download.STATUS_WAITING

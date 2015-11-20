@@ -4,6 +4,7 @@ __author__ = 'Vincent'
 
 from datetime import datetime
 from downloadDirectoryBean import DownloadDirectory
+from downloadHostBean import DownloadHost
 
 class Download:
     STATUS_WAITING = 1
@@ -16,6 +17,7 @@ class Download:
     def __init__(self):
         self.id = -1
         self.name = ''
+        self.host = DownloadHost()
         self.package = None
         self.link = ''
         # the size of the file (values[1] gives by plowprobe or by the first rows of plowdown)
@@ -45,11 +47,11 @@ class Download:
         self.lifecycle_update_date = 0
 
     def to_string(self):
-        return 'download : \n id => %s | name => %s | package => {%s} | link => %s | size_file => %s | size_part => %s' \
+        return 'download : \n id => %s | name => %s | host => %s | package => {%s} | link => %s | size_file => %s | size_part => %s' \
                ' | size_file_downloaded => %s | size_part_downloaded => %s' \
                ' | status => %s | progress_part => %s | average_speed => %s | current_speed => %s | time_left => %s ' \
                ' | time_spent => %s | pid_plowdown => %s | pid_python => %s  | directory => {%s} | file_path => %s | priority => %s ' % (
-                   str(self.id), self.name, self.package.to_string() if self.package is not None else 'null', self.link, str(self.size_file), str(self.size_part),
+                   str(self.id), self.name, self.host.to_string(), self.package.to_string() if self.package is not None else 'null', self.link, str(self.size_file), str(self.size_part),
                    str(self.size_file_downloaded),
                    str(self.size_part_downloaded), str(self.status), str(self.progress_part), str(self.average_speed),
                    str(self.current_speed), str(self.time_left), str(self.time_spent), str(self.pid_plowdown),
@@ -60,6 +62,7 @@ class Download:
 
     def to_insert_json(self):
         return {"name": self.name,
+                "host_id": self.host.id,
                 "package_id": self.package.id if self.package is not None else None,
                 "link": self.link,
                 "size_file": self.size_file,
@@ -75,6 +78,7 @@ class Download:
     def to_json(self):
         return {"id": str(self.id),
                 "name": self.name,
+                "host": self.host.to_json(),
                 "package": self.package.to_json() if self.package is not None else None,
                 "link": self.link,
                 "size_file": str(self.size_file),
