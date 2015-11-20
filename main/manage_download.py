@@ -36,6 +36,7 @@ class ManageDownload:
 
             try:
                 utils.log_debug("Insert host ....")
+                utils.log_debug("Host %s" % download.host.to_insert_json())
                 response = unirest.post(utils.REST_ADRESSE + 'downloadHosts',
                                             headers={"Accept": "application/json"},
                                             params=download.host.to_insert_json())
