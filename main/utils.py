@@ -213,7 +213,6 @@ def json_to_download_host_object(json_object):
     download_host = DownloadHost()
     download_host.id = json_object['id']
     download_host.name = json_object['name']
-    download_host.logo = json_object['logo']
 
     return download_host
 
