@@ -113,6 +113,8 @@ class ManageDownload:
 
         except Exception:
             utils.log_debug("Update download: No database connection")
+            import traceback
+            utils.log_debug(traceback.format_exc())
 
     def update_download_log(self, download):
         if download.logs != "":
@@ -309,6 +311,7 @@ class ManageDownload:
 
                         download_host = DownloadHost()
                         download_host.name = host
+                        # download_host.logo = "%s.png" % host
 
                         download = Download()
                         download.name = name

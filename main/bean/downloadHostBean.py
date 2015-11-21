@@ -8,10 +8,10 @@ class DownloadHost:
     def __init__(self):
         self.id = None
         self.name = ''
-        self.logo = ''
+        self.logo = None
 
     def to_string(self):
-        return 'id: %s | name: %s | logo: %s' % (str(self.id), self.name, str(self.logo))
+        return 'id: %s | name: %s' % (str(self.id), self.name)
 
     def to_json(self):
         return {"id": self.id, "name": self.name, "logo": self.logo}
