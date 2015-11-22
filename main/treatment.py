@@ -204,7 +204,7 @@ class Treatment:
         download = self.manage_download.get_download_by_id(download_id)
 
         if download is not None:
-            self.manage_download.reset_link_finished_in_file(download)
+            self.reset_link_finished_in_file(download)
         else:
             utils.log_debug(u'Download is None')
 
