@@ -87,7 +87,7 @@ class Treatment:
             f.close()
             utils.log_debug(u'=========> Close file %s <=========' % download.file_path)
 
-            download.logs += 'Link marked as %s in file %s' % (mark, download.file_path)
+            download.logs += 'Text %s replaced by %s in file %s' % (to_replace, replace_by, download.file_path)
             self.manage_download.update_download_log(download)
             # except:
             # logging.error('Unexpected error:', sys.exc_info()[0])
