@@ -139,6 +139,15 @@ def main(argv):
                 treatment.unrar(download_id)
             else:
                 print(COMMAND_USAGE)
+        elif args[0] == 'reset':
+            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'reset.log', level=logging.DEBUG,
+                                format='%(asctime)s %(message)s',
+                                datefmt='%d/%m/%Y %H:%M:%S')
+            if len(args) > 1:
+                download_id = args[1]
+                treatment.reset(download_id)
+            else:
+                print(COMMAND_USAGE)
         else:
             print(COMMAND_USAGE)
 

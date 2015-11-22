@@ -16,3 +16,4 @@ TODO:
         22/07/15 09:17:43: Failed inside uptobox_download() [1])
 - certain process plodown tourne en fond ... pourquoi ? => lorsqu'on kill le python ?
 - ajouter un flag au telechargement pour lui dire qu'il sera le prochain téléchargement => à utiliser lorsqu'on clique sur démarrer un téléchargement
+- lorsqu'on reinitialise un téléchargement il faut enlever le commentaire dans le fichier

@@ -68,7 +68,7 @@ class Treatment:
 
         utils.log_debug(u'%s =========< End insert new links or update old in database >=========')
 
-    def mark_link_in_file(self, download, mark):
+    def mark_link_in_file(self, download, to_replace, replace_by):
         utils.log_debug(u'*** mark_link_in_file ***')
 
         if download is not None:
@@ -79,10 +79,7 @@ class Treatment:
             f.close()
             utils.log_debug(u'=========> Close file %s <=========' % download.file_path)
 
-            new_data = file_data.replace(download.link,
-                                         '# %s \r\n%s %s' % (download.name,
-                                                             mark,
-                                                             download.link))
+            new_data = file_data.replace(to_replace, replace_by)
 
             utils.log_debug(u'=========> Open file %s to write <=========' % download.file_path)
             f = open(download.file_path, 'w')
@@ -99,11 +96,15 @@ class Treatment:
 
     def mark_link_error_in_file(self, download):
         utils.log_debug(u'*** mark_link_error_in_file ***')
-        self.mark_link_in_file(download, self.manage_download.MARK_AS_ERROR)
+        self.mark_link_in_file(download, download.link, '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_ERROR, download.link))
 
     def mark_link_finished_in_file(self, download):
         utils.log_debug(u'*** mark_link_finished_in_file ***')
-        self.mark_link_in_file(download, self.manage_download.MARK_AS_FINISHED)
+        self.mark_link_in_file(download, download.link, '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link))
+
+    def reset_link_finished_in_file(self, download):
+        utils.log_debug(u'*** reset_link_finished_in_file ***')
+        self.mark_link_in_file(download, '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link), download.link)
 
     def move_download(self, download_id):
         download = self.manage_download.get_download_by_id(download_id)
@@ -196,6 +197,16 @@ class Treatment:
                     utils.log_debug(u'No downloads')
             else:
                 utils.log_debug(u'download %s is not a rar file' % download.id)
+
+    def reset(self, download_id):
+        utils.log_debug(u'*** reset ***')
+
+        download = self.manage_download.get_download_by_id(download_id)
+
+        if download is not None:
+            self.manage_download.reset_link_finished_in_file(download)
+        else:
+            utils.log_debug(u'Download is None')
 
     def disconnect(self):
         self.manage_download.disconnect()
