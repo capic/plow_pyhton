@@ -235,7 +235,7 @@ def log_debug(value):
 
 
 def find_this_process(process_name):
-    ps = subprocess.Popen("ps -eaf | grep " + process_name, shell=True, stdout=subprocess.PIPE)
+    ps = subprocess.Popen("ps -eaf | grep \'" + process_name + "\'", shell=True, stdout=subprocess.PIPE)
     output = ps.stdout.read()
     ps.stdout.close()
     ps.wait()
