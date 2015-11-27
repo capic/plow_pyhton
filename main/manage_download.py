@@ -547,7 +547,9 @@ def unrar(self, download):
                 download.logs = line
                 values = line.split()
                 if 'stdo' in values[0]:
-                    percent = values[1].replace('%', '')
+                    percent = int(values[1].replace('%', ''))
+                    if not percent.isdigit():
+                        percent = 100
                     self.update_download_directory_unrar_percent(download.directory.id, percent)
 
                 self.update_download_log(download)
