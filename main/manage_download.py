@@ -526,38 +526,39 @@ class ManageDownload:
 
     def unrar(self, download):
         utils.log_debug(u'*** unrar ***')
-        self.update_download_log(download)
+        if not utils.is_this_running("unrar x \"%s\"" % download.name):
+            self.update_download_log(download)
 
-        cmd = (
-            self.COMMAND_UNRAR % (
-                download.directory.path, download.name))
-        utils.log_debug(u'command : %s' % cmd)
-        p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
+            cmd = (
+                self.COMMAND_UNRAR % (
+                    download.directory.path, download.name))
+            utils.log_debug(u'command : %s' % cmd)
+            p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
 
-        line = ''
-        while True:
-            print('debut de boucle')
-            out = p.stderr.read(1)
-            if out == '' and p.poll() is not None:
-                break
-            if out != '':
-                if out != '\n' and out != '\r':
-                    line += out
-                else:
-                    download.logs = line
-                    if line != '':
-                        print('1) line %s' % line)
-                        values = line.split()
-                        if len(values) > 1:
-                            print('2) values[0] %s' % values[0])
-                            if 'stdo' in values[0]:
-                                percent = int(values[1].replace('%', ''))
-                                print('3) percent %s' % percent)
-                                if not percent.isdigit():
-                                    percent = 100
-                                self.update_download_directory_unrar_percent(download.directory.id, percent)
+            line = ''
+            while True:
+                print('debut de boucle')
+                out = p.stderr.read(1)
+                if out == '' and p.poll() is not None:
+                    break
+                if out != '':
+                    if out != '\n' and out != '\r':
+                        line += out
+                    else:
+                        download.logs = line
+                        if line != '':
+                            print('1) line %s' % line)
+                            values = line.split()
+                            if len(values) > 1:
+                                print('2) values[0] %s' % values[0])
+                                if 'stdo' in values[0]:
+                                    percent = int(values[1].replace('%', ''))
+                                    print('3) percent %s' % percent)
+                                    if not percent.isdigit():
+                                        percent = 100
+                                    self.update_download_directory_unrar_percent(download.directory.id, percent)
 
-                    self.update_download_log(download)
+                        self.update_download_log(download)
 
 
     def disconnect(self):

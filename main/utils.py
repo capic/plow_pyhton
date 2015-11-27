@@ -232,3 +232,20 @@ def log_debug(value):
 
     if CONSOLE_OUTPUT:
         print(value)
+
+
+def find_this_process(process_name):
+    ps = subprocess.Popen("ps -eaf | grep " + process_name, shell=True, stdout=subprocess.PIPE)
+    output = ps.stdout.read()
+    ps.stdout.close()
+    ps.wait()
+    return output
+
+
+def is_this_running(process_name):
+    output = find_this_process(process_name)
+
+    if re.search(process_name, output) is None:
+        return False
+    else:
+        return True
