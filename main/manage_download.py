@@ -136,7 +136,7 @@ class ManageDownload:
             response = unirest.post(
                 utils.REST_ADRESSE + 'package/unrarPercent',
                 headers={"Accept": "application/json"},
-                params={"id": download_directory_id, "percent": download_directory_unrar_percent})
+                params={"id": download_directory_id, "unrar_progress": download_directory_unrar_percent})
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             else:
