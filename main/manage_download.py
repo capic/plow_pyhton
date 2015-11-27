@@ -133,7 +133,7 @@ class ManageDownload:
         download_directory_returned = None
 
         try:
-            response = unirest.put(
+            response = unirest.post(
                 utils.REST_ADRESSE + 'package/unrarPercent',
                 headers={"Accept": "application/json"},
                 params={"id": download_directory_id, "percent": download_directory_unrar_percent})
