@@ -511,7 +511,7 @@ class ManageDownload:
                 if out != '\n' and out != '\r':
                     line += out
                 else:
-                    download.logs(line)
+                    download.logs = line
                     self.update_download_log(download)
 
     def disconnect(self):
