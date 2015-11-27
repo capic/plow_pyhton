@@ -134,7 +134,7 @@ class ManageDownload:
 
         try:
             response = unirest.put(
-                utils.REST_ADRESSE + 'downloadDirectories/' + str(download_directory_id) + '/unrarPercent',
+                utils.REST_ADRESSE + 'package/unrarPercent',
                 headers={"Accept": "application/json"},
                 params={"id": download_directory_id, "percent": download_directory_unrar_percent})
             if response.code != 200:
