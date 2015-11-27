@@ -537,7 +537,7 @@ class ManageDownload:
         line = ''
         while True:
             out = p.stderr.read(1)
-            if out == '' and p.poll() is not None:
+            if out == '' and p.poll() i s not None:
                 break
             if out != '':
                 if out != '\n' and out != '\r':
@@ -545,13 +545,13 @@ class ManageDownload:
                 else:
                     download.logs = line
                     if line != '':
-                        utils.log_debug('1) line %s' % line)
+                        print('1) line %s' % line)
                         values = line.split()
                         if len(values) > 1:
-                            utils.log_debug('2) values[0] %s' % values[0])
+                            print('2) values[0] %s' % values[0])
                             if 'stdo' in values[0]:
                                 percent = int(values[1].replace('%', ''))
-                                utils.log_debug('3) percent %s' % percent)
+                                print('3) percent %s' % percent)
                                 if not percent.isdigit():
                                     percent = 100
                                 self.update_download_directory_unrar_percent(download.directory.id, percent)
