@@ -244,7 +244,7 @@ def find_this_process(process_name):
 
 def is_this_running(process_name):
     output = find_this_process(process_name)
-    print(re.search(process_name, output))
+    print(len(re.search(process_name, output)))
     if re.search(process_name, output) is None:
         return False
     else:
