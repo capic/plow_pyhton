@@ -536,6 +536,7 @@ class ManageDownload:
 
         line = ''
         while True:
+            print('debut de boucle')
             out = p.stderr.read(1)
             if out == '' and p.poll() i s not None:
                 break
