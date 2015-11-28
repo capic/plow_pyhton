@@ -171,9 +171,9 @@ class ManageDownload:
         utils.log_debug(u'*** get_download_by_id ***')
         directory = None
 
-        if ddrectory_id is not None:
+        if directory_id is not None:
             try:
-                response = unirest.get(utils.REST_ADRESSE + 'downloadDirectories/' + str(download_id),
+                response = unirest.get(utils.REST_ADRESSE + 'downloadDirectories/' + str(directory_id),
                                        headers={"Accept": "application/json"})
 
                 if response.code == 200:
