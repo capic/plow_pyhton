@@ -551,12 +551,11 @@ class ManageDownload:
             dest_download_directory = dest_directory.path.replace(' ', '\ ')
             download_name = download.name.replace(' ', '\ ')
             src_file_path = src_download_directory + download_name
-            dest_file_path = dest_download_directory + download_name
 
             if os.path.isfile(src_file_path):
                 utils.log_debug(u'downloaded file exists')
                 try:
-                    shutil.copy(src_file_path, dest_file_path)
+                    shutil.move(src_file_path, dest_download_directory)
 
                     print("#OK")
                 except IOError as err:
