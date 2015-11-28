@@ -168,7 +168,7 @@ class ManageDownload:
         return download
 
     def get_download_directory_by_id(self, directory_id):
-        utils.log_debug(u'*** get_download_by_id ***')
+        utils.log_debug(u'*** get_download_directory_by_id ***')
         directory = None
 
         if directory_id is not None:
@@ -551,11 +551,12 @@ class ManageDownload:
             dest_download_directory = dest_directory.path.replace(' ', '\ ')
             download_name = download.name.replace(' ', '\ ')
             src_file_path = src_download_directory + download_name
+            dest_file_path = dest_download_directory + download_name
 
             if os.path.isfile(src_file_path):
                 utils.log_debug(u'downloaded file exists')
                 try:
-                    shutil.copy(src_file_path, dest_download_directory)
+                    shutil.copy(src_file_path, dest_file_path)
 
                     print("#OK")
                 except IOError as err:
