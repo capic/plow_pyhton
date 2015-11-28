@@ -201,7 +201,7 @@ class ManageDownload:
 
     def get_downloads_by_package(self, package):
         utils.log_debug(u'   *** get_downloads_by_package ***')
-        utils.log_debug(u'package: %s' % package)
+        utils.log_debug(u'package: %s' % package.to_string())
 
         downloads_list = None
 
@@ -537,7 +537,6 @@ class ManageDownload:
 
             line = ''
             while True:
-                utils.log_debug('debut de boucle')
                 out = p.stderr.read(1)
                 if out == '' and p.poll() is not None:
                     break
@@ -545,6 +544,7 @@ class ManageDownload:
                     if out != '\n' and out != '\r':
                         line += out
                     else:
+                        utils.log_debug('Line %s' % line)
                         download.logs = line
                         if line != '':
                             utils.log_debug('1) line %s' % line)
