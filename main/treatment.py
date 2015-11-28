@@ -178,6 +178,14 @@ class Treatment:
     def unrar(self, download_id):
         utils.log_debug(u'*** unrar ***')
 
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+
+        file_handler = logging.FileHandler(utils.DIRECTORY_WEB_LOG + 'log_unrar_id_' + str(download.id) + '.log')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+        logger.addHandler(file_handler)
+
         download = self.manage_download.get_download_by_id(download_id)
 
         if download is not None:
