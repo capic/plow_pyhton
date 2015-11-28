@@ -526,7 +526,7 @@ class ManageDownload:
 
     def unrar(self, download):
         utils.log_debug(u'*** unrar ***')
-        if not utils.is_this_running("[u]nrar x '%s'" % download.name):
+        if not utils.is_this_running("[u]nrar x %s" % download.name):
             self.update_download_log(download)
 
             cmd = (
