@@ -547,15 +547,15 @@ class ManageDownload:
         utils.log_debug(u'*** move_file ***')
 
         if download is not None and dest_directory is not None:
-            src_download_directory = download.directory.path.replace(' ', '\ ')
-            dest_download_directory = dest_directory.path.replace(' ', '\ ')
+            #src_download_directory = download.directory.path.replace(' ', '\ ')
+            #dest_download_directory = dest_directory.path.replace(' ', '\ ')
             download_name = download.name.replace(' ', '\ ')
-            src_file_path = src_download_directory + download_name
+            src_file_path = os.path.join(download.directory.path, download_name)
 
             if os.path.isfile(src_file_path):
                 utils.log_debug(u'downloaded file exists')
                 try:
-                    shutil.move(src_file_path, dest_download_directory)
+                    shutil.move(src_file_path, dest_directory.path)
 
                     print("#OK")
                 except IOError as err:
