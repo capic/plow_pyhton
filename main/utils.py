@@ -235,7 +235,11 @@ def log_debug(value):
 
 
 def find_this_process(process_name):
-    ps = subprocess.Popen("ps -eaf | grep \"" + process_name + "\"", shell=True, stdout=subprocess.PIPE)
+    log_debug(u'*** find_this_process ***')
+
+    command = "ps -eaf | grep \"" + process_name + "\""
+    log_debug(u'command: %s' % command)
+    ps = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     output = ps.stdout.read()
     ps.stdout.close()
     ps.wait()
@@ -243,9 +247,12 @@ def find_this_process(process_name):
 
 
 def is_this_running(process_name):
+    log_debug(u'*** is_this_running ***')
     output = find_this_process(process_name)
 
     if re.search(process_name, output) is None:
+        log_debug(u' ===> False')
         return False
     else:
+        log_debug(u' ===> True')
         return True
