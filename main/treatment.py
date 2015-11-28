@@ -110,6 +110,11 @@ class Treatment:
         download = self.manage_download.get_download_by_id(download_id)
         self.manage_download.move_download(download)
 
+    def move_file(self, download_id, dest_directory_id):
+        download = self.manage_download.get_download_by_id(download_id)
+        dest_directory = self.manage_download.get_download_directory_by_id(dest_directory_id)
+        self.manage_download.move_file(download, dest_directory)
+
     def start_multi_downloads(self, file_path):
         # utils.log_debug(u'*** start_file_treatment ***')
         # utils.log_debug(u'file_path %s' % (file_path))

@@ -12,6 +12,7 @@ import time
 from datetime import datetime, timedelta
 import unirest
 import utils
+import shutil
 from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
@@ -165,6 +166,26 @@ class ManageDownload:
             logging.error('Id is none')
 
         return download
+
+    def get_download_directory_by_id(self, directory_id):
+        utils.log_debug(u'*** get_download_by_id ***')
+        directory = None
+
+        if ddrectory_id is not None:
+            try:
+                response = unirest.get(utils.REST_ADRESSE + 'downloadDirectories/' + str(download_id),
+                                       headers={"Accept": "application/json"})
+
+                if response.code == 200:
+                    directory = utils.json_to_download_directory_object(response.body)
+                else:
+                    utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+            except Exception:
+                utils.log_debug("Get download directory by id: No database connection")
+        else:
+            logging.error('Id is none')
+
+        return directory
 
 
     def get_download_by_link_file_path(self, link, file_path):
@@ -503,7 +524,6 @@ class ManageDownload:
 
             self.update_download(download)
 
-
     def move_download(self, download):
         utils.log_debug(u'*** move_download ***')
 
@@ -522,6 +542,28 @@ class ManageDownload:
             import traceback
 
             utils.log_debug(traceback.format_exc())
+
+    def move_file(self, download, dest_directory):
+        utils.log_debug(u'*** move_file ***')
+
+        if download is not None and dest_directory is not None:
+            src_download_directory = download.directory.path.replace(' ', '\ ')
+            dest_download_directory = dest_directory.path.replace(' ', '\ ')
+            download_name = download.name.replace(' ', '\ ')
+            src_file_path = src_download_directory + download_name
+
+            if os.path.isfile(src_file_path):
+                utils.log_debug(u'downloaded file exists')
+                try:
+                    shutil.copy(src_file_path, dest_download_directory)
+
+                    print("#OK")
+                except IOError as err:
+                    print("#Error: %s" % err)
+            else:
+                print("#ERROR: File does not exists")
+        else:
+            print("#ERROR: download or directory are None")
 
 
     def unrar(self, download):
