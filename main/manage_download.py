@@ -130,22 +130,22 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Update download log: No database connection")
 
-    def update_download_directory_unrar_percent(self, download_directory_id, download_directory_unrar_percent):
-        download_directory_returned = None
+    def update_download_package_unrar_percent(self, download_package_id, download_package_unrar_percent):
+        download_package_returned = None
 
         try:
             response = unirest.post(
                 utils.REST_ADRESSE + 'package/unrarPercent',
                 headers={"Accept": "application/json"},
-                params={"id": download_directory_id, "unrar_progress": download_directory_unrar_percent})
+                params={"id": download_package_id, "unrar_progress": download_package_unrar_percent})
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             else:
-                download_directory_returned = utils.json_to_download_directory_object(response.body)
+                download_package_returned = utils.json_to_download_package_object(response.body)
         except Exception:
-            utils.log_debug("Update download directory: No database connection")
+            utils.log_debug("Update download package unrar percent: No database connection")
 
-        return download_directory_returned
+        return download_package_returned
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
@@ -582,10 +582,9 @@ class ManageDownload:
                                     utils.log_debug('3) percent %s' % percent)
                                     if not percent.isdigit():
                                         percent = 100
-                                    self.update_download_directory_unrar_percent(download.directory.id, percent)
+                                    self.update_download_package_unrar_percent(download.package.id, percent)
 
                         self.update_download_log(download)
-
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')
