@@ -44,6 +44,8 @@ def main(argv):
                 utils.DIRECTORY_WEB_LOG = config['repertoire_web_log']
             if 'repertoire_telechargement_temporaire' in config:
                 utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config['repertoire_telechargement_temporaire']
+            if 'repertoire_telechargement_id' in config:
+                utils.DIRECTORY_DOWNLOAD_DESTINATION_ID = config['repertoire_telechargement_id']
             if 'repertoire_telechargement' in config:
                 utils.DIRECTORY_DOWNLOAD_DESTINATION = config['repertoire_telechargement']
             if 'log_output' in config:

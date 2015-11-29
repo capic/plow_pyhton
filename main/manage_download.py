@@ -367,7 +367,7 @@ class ManageDownload:
                         download.priority = Download.PRIORITY_NORMAL
                         download.file_path = file_path
                         download.lifecycle_insert_date = datetime.utcnow()
-                        download.to_move_directory.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
+                        download.to_move_directory.path = utils.DIRECTORY_DOWNLOAD_DESTINATION_ID
 
                         self.insert_download(download)
             else:
