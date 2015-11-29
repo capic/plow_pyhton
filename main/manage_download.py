@@ -490,6 +490,7 @@ class ManageDownload:
                     utils.log_debug(u'download marked as finished')
                     download.status = Download.STATUS_FINISHED
                     download.directory = download.to_move_directory
+                    download.to_move_directory = None
 
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
