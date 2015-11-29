@@ -367,6 +367,7 @@ class ManageDownload:
                         download.priority = Download.PRIORITY_NORMAL
                         download.file_path = file_path
                         download.lifecycle_insert_date = datetime.utcnow()
+                        download.to_move_directory.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
 
                         self.insert_download(download)
             else:
@@ -485,6 +486,7 @@ class ManageDownload:
                 if values[1] == values[3] and values[1] != '0':
                     utils.log_debug(u'download marked as finished')
                     download.status = Download.STATUS_FINISHED
+                    download.directory = download.to_move_directory
 
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')

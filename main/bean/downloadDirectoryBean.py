@@ -9,7 +9,7 @@ class DownloadDirectory:
 
     def __init__(self):
         self.id = None
-        self.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
+        self.path = ''
 
     def to_string(self):
         return 'id: %s | path: %s' % (str(self.id), self.path)
