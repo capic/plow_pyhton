@@ -127,8 +127,9 @@ def main(argv):
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 2:
                 download_id = args[1]
-                dest_directory_id = args[2]
-                treatment.move_file(download_id, dest_directory_id)
+                src_directory_id = args[2]
+                dest_directory_id = args[3]
+                treatment.move_file(download_id, src_directory_id, dest_directory_id)
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'unrar':

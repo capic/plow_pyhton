@@ -110,15 +110,16 @@ class Treatment:
         download = self.manage_download.get_download_by_id(download_id)
         self.manage_download.move_download(download)
 
-    def move_file(self, download_id, dest_directory_id):
+    def move_file(self, download_id, src_directory_id, dest_directory_id):
         utils.log_debug(u'*** move_file ***')
 
         download = self.manage_download.get_download_by_id(download_id)
+        src_directory = self.manage_download.get_download_directory_by_id(src_directory_id)
         dest_directory = self.manage_download.get_download_directory_by_id(dest_directory_id)
 
-        if download is not None and dest_directory is not None:
+        if download is not None and src_directory is not None and dest_directory is not None:
             download_name = download.name.replace(' ', '\ ')
-            src_file_path = os.path.join(download.directory.path, download_name)
+            src_file_path = os.path.join(src_directory.path, download_name)
 
             if os.path.isfile(src_file_path):
                 utils.log_debug(u'downloaded file exists')
