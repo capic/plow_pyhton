@@ -552,7 +552,7 @@ class ManageDownload:
         utils.log_debug(u'*** unrar ***')
 
         download.logs = 'Unrar in progress ... \r\n'
-        if not utils.is_this_running("[u]nrar x %s" % download.name):
+        if not utils.is_this_running("[u]nrar x \"%s\"" % download.name):
             cmd = (
                 self.COMMAND_UNRAR % (
                     download.directory.path, download.name))
