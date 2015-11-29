@@ -543,31 +543,6 @@ class ManageDownload:
 
             utils.log_debug(traceback.format_exc())
 
-    def move_file(self, download, dest_directory):
-        utils.log_debug(u'*** move_file ***')
-
-        if download is not None and dest_directory is not None:
-            download_name = download.name.replace(' ', '\ ')
-            src_file_path = os.path.join(download.directory.path, download_name)
-
-            if os.path.isfile(src_file_path):
-                utils.log_debug(u'downloaded file exists')
-                try:
-                    utils.log_debug(u'Moving file')
-                    shutil.move(src_file_path, dest_directory.path)
-
-                    utils.log_debug(u'OK')
-                    print("#OK#")
-                except IOError as err:
-                    utils.log_debug(u"Error: %s" % err)
-                    print("#Error: %s#" % err)
-            else:
-                utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
-                print("#ERROR: File %s does not exists#" % src_file_path)
-        else:
-            utils.log_debug(u"ERROR: download or directory are None")
-            print("#ERROR: download or directory are None#")
-
     def unrar(self, download):
         utils.log_debug(u'*** unrar ***')
         if not utils.is_this_running("[u]nrar x %s" % download.name):

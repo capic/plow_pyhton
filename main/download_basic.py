@@ -144,9 +144,10 @@ def main(argv):
             logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'reset.log', level=logging.DEBUG,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            if len(args) > 1:
+            if len(args) > 2:
                 download_id = args[1]
-                treatment.reset(download_id)
+                file_to_delete = (args[2] == "true")
+                treatment.reset(download_id, file_to_delete)
             else:
                 print(COMMAND_USAGE)
         else:

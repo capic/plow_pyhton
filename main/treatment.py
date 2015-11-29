@@ -111,9 +111,32 @@ class Treatment:
         self.manage_download.move_download(download)
 
     def move_file(self, download_id, dest_directory_id):
+        utils.log_debug(u'*** move_file ***')
+
         download = self.manage_download.get_download_by_id(download_id)
         dest_directory = self.manage_download.get_download_directory_by_id(dest_directory_id)
-        self.manage_download.move_file(download, dest_directory)
+
+        if download is not None and dest_directory is not None:
+            download_name = download.name.replace(' ', '\ ')
+            src_file_path = os.path.join(download.directory.path, download_name)
+
+            if os.path.isfile(src_file_path):
+                utils.log_debug(u'downloaded file exists')
+                try:
+                    utils.log_debug(u'Moving file')
+                    shutil.move(src_file_path, dest_directory.path)
+
+                    utils.log_debug(u'OK')
+                    print("#OK#")
+                except IOError as err:
+                    utils.log_debug(u"Error: %s" % err)
+                    print("#Error: %s#" % err)
+            else:
+                utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
+                print("#ERROR: File %s does not exists#" % src_file_path)
+        else:
+            utils.log_debug(u"ERROR: download or directory are None")
+            print("#ERROR: download or directory are None#")
 
     def start_multi_downloads(self, file_path):
         # utils.log_debug(u'*** start_file_treatment ***')
@@ -211,12 +234,16 @@ class Treatment:
             else:
                 utils.log_debug(u'download %s is not a rar file' % download.id)
 
-    def reset(self, download_id):
+    def reset(self, download_id, file_to_delete):
         utils.log_debug(u'*** reset ***')
 
         download = self.manage_download.get_download_by_id(download_id)
 
         if download is not None:
+            if file_to_delete:
+                file_path = os.path.join(download.directory.path, download.name)
+                os.remove(file_path)
+
             self.reset_link_finished_in_file(download)
         else:
             utils.log_debug(u'Download is None')
