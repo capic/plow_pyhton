@@ -69,7 +69,7 @@ class ManageDownload:
                 utils.log_debug("Insert directory ....")
                 response = unirest.post(utils.REST_ADRESSE + 'downloadDirectories',
                                         headers={"Accept": "application/json"},
-                                        params=download.directory.to_insert_json())
+                                        params=download.to_move_directory.to_insert_json())
 
                 if response.code != 200:
                     utils.log_debug(u'Error insert directory %s => %s' % (response.code, response.body))
@@ -78,7 +78,7 @@ class ManageDownload:
                 download_directory = utils.json_to_download_directory_object(response.body)
                 utils.log_debug(u'directory inserted: ' + download_directory.to_string())
 
-                download.directory = download_directory
+                download.to_move_directory = download_directory
                 download.lifecycle_insert_date = datetime.utcnow()
                 download.lifecycle_update_date = datetime.utcnow()
                 download.theorical_start_datetime = datetime.utcnow()
@@ -325,7 +325,6 @@ class ManageDownload:
 
         return exists
 
-
     def insert_update_download(self, link, file_path):
         utils.log_debug(u'*** insert_update_download ***')
 
@@ -358,6 +357,10 @@ class ManageDownload:
                         download_host = DownloadHost()
                         download_host.name = host
 
+                        download_directory = DownloadDirectory()
+                        download_directory.id = utils.DIRECTORY_DOWNLOAD_DESTINATION_ID
+                        download_directory.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
+
                         download = Download()
                         download.name = name
                         download.host = download_host
@@ -367,8 +370,7 @@ class ManageDownload:
                         download.priority = Download.PRIORITY_NORMAL
                         download.file_path = file_path
                         download.lifecycle_insert_date = datetime.utcnow()
-                        download.to_move_directory.id = utils.DIRECTORY_DOWNLOAD_DESTINATION_ID
-                        download.to_move_directory.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
+                        download.to_move_directory = download_directory
 
                         self.insert_download(download)
             else:
