@@ -547,8 +547,6 @@ class ManageDownload:
         utils.log_debug(u'*** move_file ***')
 
         if download is not None and dest_directory is not None:
-            #src_download_directory = download.directory.path.replace(' ', '\ ')
-            #dest_download_directory = dest_directory.path.replace(' ', '\ ')
             download_name = download.name.replace(' ', '\ ')
             src_file_path = os.path.join(download.directory.path, download_name)
 
@@ -564,8 +562,8 @@ class ManageDownload:
                     utils.log_debug(u"Error: %s" % err)
                     print("#Error: %s#" % err)
             else:
-                utils.log_debug(u"ERROR: File does not exists")
-                print("#ERROR: File does not exists#")
+                utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
+                print("#ERROR: File %s does not exists#" % src_file_path)
         else:
             utils.log_debug(u"ERROR: download or directory are None")
             print("#ERROR: download or directory are None#")
