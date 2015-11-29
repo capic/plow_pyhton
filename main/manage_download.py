@@ -545,12 +545,14 @@ class ManageDownload:
 
     def unrar(self, download):
         utils.log_debug(u'*** unrar ***')
-        if not utils.is_this_running("[u]nrar x %s" % download.name):
-            self.update_download_log(download)
 
+        download.logs = 'Unrar in progress ... \r\n'
+        if not utils.is_this_running("[u]nrar x %s" % download.name):
             cmd = (
                 self.COMMAND_UNRAR % (
                     download.directory.path, download.name))
+            download.logs += 'Command: %s\r\n' % cmd
+            self.update_download_log(download)
             utils.log_debug(u'command : %s' % cmd)
             p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
 
