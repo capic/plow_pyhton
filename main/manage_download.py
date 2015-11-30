@@ -12,7 +12,7 @@ import time
 from datetime import datetime, timedelta
 import unirest
 import utils
-import shutil
+import copy
 from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
@@ -489,7 +489,7 @@ class ManageDownload:
                 if values[1] == values[3] and values[1] != '0':
                     utils.log_debug(u'download marked as finished')
                     download.status = Download.STATUS_FINISHED
-                    download.directory = download.to_move_directory
+                    download.directory = copy.copy(download.to_move_directory)
                     download.to_move_directory = None
 
             elif "Filename" in values[0]:
