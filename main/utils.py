@@ -164,6 +164,9 @@ def json_to_download_object(json_object):
     if json_object['directory_id']:
         download_directory.id = json_object['download_directory']['id']
         download_directory.path = json_object['download_directory']['path']
+    if json_object['to_move_directory_id']:
+        download_directory.id = json_object['to_move_download_directory']['id']
+        download_directory.path = json_object['to_move_download_directory']['path']
     download.directory = download_directory
     download.file_path = json_object['file_path']
     download.priority = json_object['priority']
