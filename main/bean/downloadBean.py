@@ -5,7 +5,7 @@ __author__ = 'Vincent'
 from datetime import datetime
 from downloadDirectoryBean import DownloadDirectory
 from downloadHostBean import DownloadHost
-import json
+
 
 class Download:
     STATUS_WAITING = 1
@@ -78,31 +78,30 @@ class Download:
                 }
 
     def to_json(self):
-        # return {"id": self.id,
-        #         "name": self.name,
-        #         "host": self.host.to_json(),
-        #         "package": self.package.to_json() if self.package is not None else None,
-        #         "link": self.link,
-        #         "size_file": self.size_file,
-        #         "size_part": self.size_part,
-        #         "size_file_downloaded": self.size_file_downloaded,
-        #         "size_part_downloaded": self.size_part_downloaded,
-        #         "status": self.status,
-        #         "progress_part": self.progress_part,
-        #         "average_speed": self.average_speed,
-        #         "current_speed": self.current_speed,
-        #         "time_spent": self.time_spent,
-        #         "time_left": self.time_left,
-        #         "pid_plowdown": self.pid_plowdown,
-        #         "pid_python": self.pid_python,
-        #         "file_path": self.file_path,
-        #         "directory_id": self.directory.id if self.directory is not None else None,
-        #         "directory": self.directory.to_json() if self.directory is not None else None,
-        #         "to_move_directory_id": self.to_move_directory.id if self.to_move_directory is not None else None,
-        #         "to_move_directory": self.to_move_directory.to_json() if self.to_move_directory is not None else None,
-        #         "priority": self.priority,
-        #         "theorical_start_datetime": self.theorical_start_datetime,
-        #         "lifecycle_insert_date": self.lifecycle_insert_date,
-        #         "lifecycle_update_date": self.lifecycle_update_date
-        #         }
-        return json.dumps(self)
+        return {"id": self.id,
+                "name": None,
+                "host": self.host.to_json(),
+                "package": self.package.to_json() if self.package is not None else None,
+                "link": self.link,
+                "size_file": self.size_file,
+                "size_part": self.size_part,
+                "size_file_downloaded": self.size_file_downloaded,
+                "size_part_downloaded": self.size_part_downloaded,
+                "status": self.status,
+                "progress_part": self.progress_part,
+                "average_speed": self.average_speed,
+                "current_speed": self.current_speed,
+                "time_spent": self.time_spent,
+                "time_left": self.time_left,
+                "pid_plowdown": self.pid_plowdown,
+                "pid_python": self.pid_python,
+                "file_path": self.file_path,
+                "directory_id": self.directory.id if self.directory is not None else None,
+                "directory": self.directory.to_json() if self.directory is not None else None,
+                "to_move_directory_id": self.to_move_directory.id if self.to_move_directory is not None else None,
+                "to_move_directory": self.to_move_directory.to_json() if self.to_move_directory is not None else None,
+                "priority": self.priority,
+                "theorical_start_datetime": self.theorical_start_datetime,
+                "lifecycle_insert_date": self.lifecycle_insert_date,
+                "lifecycle_update_date": self.lifecycle_update_date
+                }
