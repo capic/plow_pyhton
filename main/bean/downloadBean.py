@@ -79,7 +79,7 @@ class Download:
 
     def to_json(self):
         return {"id": self.id,
-                "name": None,
+                "name": self.name,
                 "host": self.host.to_json(),
                 "package": self.package.to_json() if self.package is not None else None,
                 "link": self.link,
