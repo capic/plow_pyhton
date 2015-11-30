@@ -164,10 +164,11 @@ def json_to_download_object(json_object):
     if json_object['directory_id']:
         download_directory.id = json_object['download_directory']['id']
         download_directory.path = json_object['download_directory']['path']
+    download.directory = download_directory
     if json_object['to_move_directory_id']:
         download_directory.id = json_object['to_move_download_directory']['id']
         download_directory.path = json_object['to_move_download_directory']['path']
-    download.directory = download_directory
+    download.to_move_directory = download_directory
     download.file_path = json_object['file_path']
     download.priority = json_object['priority']
     if json_object['theorical_start_datetime'] == 0:
