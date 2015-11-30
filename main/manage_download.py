@@ -486,7 +486,7 @@ class ManageDownload:
                     # time left
                     download.time_left = utils.hms_to_seconds(values[10])
 
-                if values[1] == values[3] and values[1] != '0':
+                if values[1] == values[3] and values[1] != '0' and download.status == Download.STATUS_IN_PROGRESS:
                     utils.log_debug(u'download marked as finished')
                     download.status = Download.STATUS_FINISHED
                     download.directory = copy.copy(download.to_move_directory)
