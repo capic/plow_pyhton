@@ -517,7 +517,7 @@ class ManageDownload:
                 tab_name = values_line.split('Filename:')
                 download.name = utils.clean_string_console(tab_name[len(tab_name) - 1])
             elif "Waiting" in values[0]:
-                download.theorical_start_datetime = datetime.utcnow().isoformat() + timedelta(0, int(values[1]))
+                download.theorical_start_datetime = (datetime.utcnow() + timedelta(0, int(values[1]))).isoformat()
                 log += 'Theorical start date time %s \r\n' % str(download.theorical_start_datetime)
             elif "Link" in values[0] and "is" in values[1] and "not" in values[2] and "alive" in values[3]:
                 log += 'Theorical start date time Link is not alive'
