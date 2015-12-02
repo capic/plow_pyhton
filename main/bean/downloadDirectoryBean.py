@@ -2,11 +2,10 @@
 
 __author__ = 'Vincent'
 
-import utils
+import json
 
 
 class DownloadDirectory:
-
     def __init__(self):
         self.id = None
         self.path = ''
@@ -14,15 +13,17 @@ class DownloadDirectory:
     def to_string(self):
         return 'id: %s | path: %s' % (str(self.id), self.path)
 
-    def to_json(self):
-        return '{' \
-               '"id": %s, ' \
-               '"path": "%s"' \
-               '}' \
-               % (self.id, self.path)
+    def to_update_json(self):
+        return {
+            "directory":
+                json.dumps({
+                    "id": self.id,
+                    "path": self.path})
+        }
 
     def to_insert_json(self):
-        return '{' \
-               '"path": "%s"' \
-               '}' \
-               % self.path
+        return {
+            "directory":
+                json.dumps({
+                    "path": self.path})
+        }

@@ -107,7 +107,7 @@ class ManageDownload:
         try:
             response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
                                    headers={"Accept": "application/json"},
-                                   params={"download": json.dumps(download.to_update_object())})
+                                   params=download.to_update_object())
 
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))

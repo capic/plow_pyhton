@@ -2,6 +2,7 @@
 
 __author__ = 'Vincent'
 
+import json
 
 class DownloadHost:
 
@@ -12,15 +13,14 @@ class DownloadHost:
     def to_string(self):
         return 'id: %s | name: %s' % (str(self.id), self.name)
 
-    def to_json(self):
-        return '{' \
-               '"id": %s, ' \
-               '"name": "%s"' \
-               '}' \
-               % (self.id, self.name)
+    def to_update_json(self):
+        return {
+            "host": json.dumps({
+                "id": self.id, "name": self.name})
+        }
 
     def to_insert_json(self):
-        return '{' \
-               '"name": "%s"' \
-               '}' \
-               % self.name
+        return {
+            "host": json.dumps({
+                "name": self.name})
+        }
