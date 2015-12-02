@@ -93,6 +93,8 @@ class ManageDownload:
 
             except Exception:
                 utils.log_debug("Insert download: No database connection")
+                import traceback
+                print(traceback.format_exc())
         else:
             logging.error("Download is none")
 
@@ -115,8 +117,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Update download: No database connection")
             import traceback
-
-            utils.log_debug(traceback.format_exc())
+            print(traceback.format_exc())
 
     def update_download_log(self, download):
         if download.logs != "":
@@ -129,6 +130,8 @@ class ManageDownload:
                     utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             except Exception:
                 utils.log_debug("Update download log: No database connection")
+                import traceback
+                print(traceback.format_exc())
 
     def update_download_package_unrar_percent(self, download_package_id, download_package_unrar_percent):
         download_package_returned = None
@@ -144,6 +147,8 @@ class ManageDownload:
                 download_package_returned = utils.json_to_download_package_object(response.body)
         except Exception:
             utils.log_debug("Update download package unrar percent: No database connection")
+            import traceback
+            print(traceback.format_exc())
 
         return download_package_returned
 
@@ -162,6 +167,8 @@ class ManageDownload:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
             except Exception:
                 utils.log_debug("Get download by id: No database connection")
+                import traceback
+                print(traceback.format_exc())
         else:
             logging.error('Id is none')
 
@@ -182,6 +189,8 @@ class ManageDownload:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
             except Exception:
                 utils.log_debug("Get download directory by id: No database connection")
+                import traceback
+                print(traceback.format_exc())
         else:
             logging.error('Id is none')
 
@@ -216,6 +225,8 @@ class ManageDownload:
 
         except Exception:
             utils.log_debug("Get download by link file path: No database connection")
+            import traceback
+            print(traceback.format_exc())
 
         return download
 
@@ -242,6 +253,8 @@ class ManageDownload:
                     logging.info('No download found with package %s' % package)
         except Exception:
             utils.log_debug("Get download by package: No database connection")
+            import traceback
+            print(traceback.format_exc())
 
         return downloads_list
 
@@ -267,6 +280,8 @@ class ManageDownload:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
             except Exception:
                 utils.log_debug(u'no database connection => use rescue mode')
+                import traceback
+                print(traceback.format_exc())
                 file = open(file_path, 'r')
                 for line in file:
                     line = line.decode("utf-8")
@@ -303,6 +318,8 @@ class ManageDownload:
                 utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
         except Exception:
             utils.log_debug("Get download in progress: No database connection")
+            import traceback
+            print(traceback.format_exc())
 
         return downloads_list
 
@@ -322,6 +339,8 @@ class ManageDownload:
                 logging.error('Link is none')
         except Exception:
             utils.log_debug("Download already exists: No database connection")
+            import traceback
+            print(traceback.format_exc())
 
         return exists
 
@@ -396,7 +415,6 @@ class ManageDownload:
                             self.update_download(download)
 
         return download
-
 
     def stop_download(self, download):
         utils.log_debug(u'*** stop_download ***')
