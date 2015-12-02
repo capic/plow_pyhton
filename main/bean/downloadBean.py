@@ -18,7 +18,7 @@ class Download:
     def __init__(self):
         self.id = -1
         self.name = ''
-        self.host = DownloadHost()
+        self.host = None
         self.package = None
         self.link = ''
         # the size of the file (values[1] gives by plowprobe or by the first rows of plowdown)
@@ -39,14 +39,14 @@ class Download:
         self.time_left = 0
         self.pid_plowdown = 0
         self.pid_python = 0
-        self.directory = DownloadDirectory()
-        self.to_move_directory = DownloadDirectory()
+        self.directory = None
+        self.to_move_directory = None
         self.file_path = ''
         self.priority = 0
         self.logs = ''
         self.theorical_start_datetime = None
-        self.lifecycle_insert_date = 0
-        self.lifecycle_update_date = 0
+        self.lifecycle_insert_date = None
+        self.lifecycle_update_date = None
 
     def to_string(self):
         return 'download : \n id => %s | name => %s | host => %s | package => {%s} | link => %s | size_file => %s | size_part => %s' \
