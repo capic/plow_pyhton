@@ -101,14 +101,14 @@ class ManageDownload:
 
     def update_download(self, download):
         utils.log_debug(u'  *** update_download ***')
-        print(json.dumps(download))
+
         download.lifecycle_update_date = datetime.utcnow().isoformat()
         print('download json: %s' % download.to_update_json())
 
         try:
             response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
                                    headers={"Accept": "application/json"},
-                                   params=json.loads(download.to_update_json()))
+                                   params=json.dumps(download.to_update_object()))
 
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
