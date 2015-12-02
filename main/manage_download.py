@@ -106,8 +106,7 @@ class ManageDownload:
         download.lifecycle_update_date = datetime.utcnow().isoformat()
         print(json.dumps(download.to_update_object()))
         try:
-            response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
-                                   headers={"Accept": "application/json"},
+            response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id), headers={ "Accept": "application/json" },
                                    params=json.dumps({"parameter": "value","foo": "bar"}))
 
             if response.code != 200:
