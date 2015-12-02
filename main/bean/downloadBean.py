@@ -53,13 +53,13 @@ class Download:
                ' | size_file_downloaded => %s | size_part_downloaded => %s' \
                ' | status => %s | progress_part => %s | average_speed => %s | current_speed => %s | time_left => %s ' \
                ' | time_spent => %s | pid_plowdown => %s | pid_python => %s  | directory => {%s} | | to_move_directory => {%s} | file_path => %s | priority => %s ' % (
-                   str(self.id), self.name, self.host.to_string(),
+                   str(self.id), self.name, self.host.to_string() if self.host is not None else 'null',
                    self.package.to_string() if self.package is not None else 'null', self.link, str(self.size_file),
                    str(self.size_part),
                    str(self.size_file_downloaded),
                    str(self.size_part_downloaded), str(self.status), str(self.progress_part), str(self.average_speed),
                    str(self.current_speed), str(self.time_left), str(self.time_spent), str(self.pid_plowdown),
-                   str(self.pid_python), self.directory.to_string(), self.to_move_directory.to_string(), self.file_path,
+                   str(self.pid_python), self.directory.to_string() if self.directory is not None else 'null', self.to_move_directory.to_string() if self.to_move_directory is not None else 'null', self.file_path,
                    str(self.priority))
 
         # + ' | lifecycle_insert_date => ' + str(self.lifecycle_insert_date)
