@@ -79,9 +79,9 @@ class ManageDownload:
                 utils.log_debug(u'directory inserted: ' + download_directory.to_string())
 
                 download.to_move_directory = download_directory
-                download.lifecycle_insert_date = datetime.utcnow()
-                download.lifecycle_update_date = datetime.utcnow()
-                download.theorical_start_datetime = datetime.utcnow()
+                download.lifecycle_insert_date = datetime.utcnow().isoformat()
+                download.lifecycle_update_date = datetime.utcnow().isoformat()
+                download.theorical_start_datetime = datetime.utcnow().isoformat()
 
                 utils.log_debug("Insert download ....")
                 response = unirest.post(utils.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
@@ -101,7 +101,7 @@ class ManageDownload:
     def update_download(self, download):
         utils.log_debug(u'  *** update_download ***')
 
-        download.lifecycle_update_date = datetime.utcnow()
+        download.lifecycle_update_date = datetime.utcnow().isoformat()
         utils.log_debug(u'download json: %s' % download.to_json())
         try:
             response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
@@ -390,7 +390,7 @@ class ManageDownload:
                         download.status = Download.STATUS_WAITING
                         download.priority = Download.PRIORITY_NORMAL
                         download.file_path = file_path
-                        download.lifecycle_insert_date = datetime.utcnow()
+                        download.lifecycle_insert_date = datetime.utcnow().isoformat()
                         download.to_move_directory = download_directory
 
                         self.insert_download(download)
@@ -516,7 +516,7 @@ class ManageDownload:
                 tab_name = values_line.split('Filename:')
                 download.name = utils.clean_string_console(tab_name[len(tab_name) - 1])
             elif "Waiting" in values[0]:
-                download.theorical_start_datetime = datetime.utcnow() + timedelta(0, int(values[1]))
+                download.theorical_start_datetime = datetime.utcnow().isoformat() + timedelta(0, int(values[1]))
                 log += 'Theorical start date time %s \r\n' % str(download.theorical_start_datetime)
             elif "Link" in values[0] and "is" in values[1] and "not" in values[2] and "alive" in values[3]:
                 log += 'Theorical start date time Link is not alive'
