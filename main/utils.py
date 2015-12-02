@@ -140,12 +140,13 @@ def json_to_download_object(json_object):
     download = Download()
     download.id = json_object['id']
     download.name = json_object['name']
-    download_package = DownloadPackage()
     if json_object['package_id']:
+        download_package = DownloadPackage()
         download_package.id = json_object['download_package']['id']
         download_package.name = json_object['download_package']['name']
         download_package.unrar_progress = json_object['download_package']['unrar_progress']
-
+    else:
+        download_package = None
     download.package = download_package
     download.link = json_object['link']
     download.size_file = json_object['size_file']
@@ -160,15 +161,19 @@ def json_to_download_object(json_object):
     download.time_left = json_object['time_left']
     download.pid_plowdown = json_object['pid_plowdown']
     download.pid_python = json_object['pid_python']
-    download_directory = DownloadDirectory()
     if json_object['directory_id']:
+        download_directory = DownloadDirectory()
         download_directory.id = json_object['download_directory']['id']
         download_directory.path = json_object['download_directory']['path']
+    else:
+        download_directory = None
     download.directory = download_directory
-    to_move_download_directory = DownloadDirectory()
     if json_object['to_move_directory_id']:
+        to_move_download_directory = DownloadDirectory()
         to_move_download_directory.id = json_object['to_move_download_directory']['id']
         to_move_download_directory.path = json_object['to_move_download_directory']['path']
+    else:
+        to_move_download_directory = None
     download.to_move_directory = to_move_download_directory
     download.file_path = json_object['file_path']
     download.priority = json_object['priority']
