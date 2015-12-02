@@ -102,7 +102,7 @@ class ManageDownload:
         utils.log_debug(u'  *** update_download ***')
 
         download.lifecycle_update_date = datetime.utcnow().isoformat()
-        utils.log_debug(u'download json: %s' % download.to_json())
+        print('download json: %s' % download.to_insert_json())
         try:
             response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
                                    headers={"Accept": "application/json"},
