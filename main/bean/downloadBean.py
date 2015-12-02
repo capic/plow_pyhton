@@ -96,7 +96,7 @@ class Download:
                )
 
     def to_update_json(self):
-        return {"download": '"id": %s, '
+        return {"download": '{"id": %s, '
                             '"name": "%s", '
                             '"host_id": %s, '
                             '"package_id": %s, '
@@ -119,7 +119,7 @@ class Download:
                             '"priority": %s, '
                             '"theorical_start_datetime": "%s", '
                             '"lifecycle_insert_date": "%s", '
-                            '"lifecycle_update_date": "%s"'
+                            '"lifecycle_update_date": "%s"}'
                             % (
                                 self.id,
                                 self.name,
