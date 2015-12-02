@@ -95,8 +95,7 @@ class Download:
                )
 
     def to_update_json(self):
-        return '{' \
-               '"id": %s, ' \
+        return '"id": %s, ' \
                '"name": "%s", ' \
                '"host_id": %s, ' \
                '"package_id": %s, ' \
@@ -120,7 +119,7 @@ class Download:
                '"theorical_start_datetime": "%s", ' \
                '"lifecycle_insert_date": "%s", ' \
                '"lifecycle_update_date": "%s"' \
-               '}' % (
+               % (
                    self.id,
                    self.name,
                    self.host.id if self.host is not None else "null",
