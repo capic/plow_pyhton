@@ -15,7 +15,14 @@ class DownloadDirectory:
         return 'id: %s | path: %s' % (str(self.id), self.path)
 
     def to_json(self):
-        return {"id": self.id, "path": self.path}
+        return '{' \
+               '"id": %d, ' \
+               '"path": "%s"' \
+               '}' \
+               % (self.id, self.path)
 
     def to_insert_json(self):
-        return {"path": self.path}
+        return '{' \
+               '"path": "%s"' \
+               '}' \
+               % self.path

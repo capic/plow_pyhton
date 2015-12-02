@@ -13,7 +13,14 @@ class DownloadHost:
         return 'id: %s | name: %s' % (str(self.id), self.name)
 
     def to_json(self):
-        return {"id": self.id, "name": self.name}
+        return '{' \
+               '"id": %d, ' \
+               '"name": "%s"' \
+               '}' \
+               % (self.id, self.name)
 
     def to_insert_json(self):
-        return {"name": self.name}
+        return '{' \
+               '"name": "%s"' \
+               '}' \
+               % self.name
