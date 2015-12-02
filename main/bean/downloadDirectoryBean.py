@@ -16,7 +16,7 @@ class DownloadDirectory:
 
     def to_json(self):
         return '{' \
-               '"id": %d, ' \
+               '"id": %s, ' \
                '"path": "%s"' \
                '}' \
                % (self.id, self.path)

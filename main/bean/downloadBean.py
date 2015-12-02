@@ -67,14 +67,14 @@ class Download:
 
     def to_insert_json(self):
         return '{' \
-               '"name": %s, ' \
+               '"name": "%s", ' \
                '"host_id": %s, ' \
                '"package_id": %s, ' \
                '"link": "%s", ' \
-               '"size_file": %d, ' \
-               '"status": %d, ' \
+               '"size_file": %s, ' \
+               '"status": %s, ' \
                '"file_path": "%s", ' \
-               '"priority": %d, ' \
+               '"priority": %s, ' \
                '"to_move_directory_id": %s, ' \
                '"lifecycle_insert_date": "%s", ' \
                '"lifecycle_update_date": "%s", ' \
@@ -96,27 +96,27 @@ class Download:
 
     def to_update_json(self):
         return '{' \
-               '"id": %d, ' \
+               '"id": %s, ' \
                '"name": "%s", ' \
-               '"host_id": %d, ' \
-               '"package_id": %d, ' \
+               '"host_id": %s, ' \
+               '"package_id": %s, ' \
                '"link": "%s",' \
-               '"size_file": %d, ' \
-               '"size_part": %d, ' \
-               '"size_file_downloaded": %d, ' \
-               '"size_part_downloaded": %d, ' \
-               '"status": %d, ' \
-               '"progress_part": %d, ' \
-               '"average_speed": %d, ' \
-               '"current_speed": %d, ' \
-               '"time_spent": %d, ' \
-               '"time_left": %d, ' \
-               '"pid_plowdown": %d, ' \
-               '"pid_python": %d, ' \
+               '"size_file": %s, ' \
+               '"size_part": %s, ' \
+               '"size_file_downloaded": %s, ' \
+               '"size_part_downloaded": %s, ' \
+               '"status": %s, ' \
+               '"progress_part": %s, ' \
+               '"average_speed": %s, ' \
+               '"current_speed": %s, ' \
+               '"time_spent": %s, ' \
+               '"time_left": %s, ' \
+               '"pid_plowdown": %s, ' \
+               '"pid_python": %s, ' \
                '"file_path": "%s", ' \
-               '"directory_id": %d, ' \
-               '"to_move_directory": %d, ' \
-               '"priority": %d, ' \
+               '"directory_id": %s, ' \
+               '"to_move_directory": %s, ' \
+               '"priority": %s, ' \
                '"theorical_start_datetime": "%s", ' \
                '"lifecycle_insert_date": "%s", ' \
                '"lifecycle_update_date": "%s"' \
@@ -149,27 +149,27 @@ class Download:
 
     def to_json(self):
         return '{' \
-               '"id": %d, ' \
+               '"id": %s, ' \
                '"name": "%s", ' \
                '"host": %s, ' \
                '"package": %s, ' \
                '"link": "%s", ' \
-               '"size_file": %d, ' \
-               '"size_part": %d, ' \
-               '"size_file_downloaded": %d, ' \
-               '"size_part_downloaded": %d, ' \
-               '"status": %d, ' \
-               '"progress_part": %d, ' \
-               '"average_speed": %d, ' \
-               '"current_speed": %d, ' \
-               '"time_spent": %d, ' \
-               '"time_left": %d, ' \
-               '"pid_plowdown": %d, ' \
-               '"pid_python": %d, ' \
+               '"size_file": %s, ' \
+               '"size_part": %s, ' \
+               '"size_file_downloaded": %s, ' \
+               '"size_part_downloaded": %s, ' \
+               '"status": %s, ' \
+               '"progress_part": %s, ' \
+               '"average_speed": %s, ' \
+               '"current_speed": %s, ' \
+               '"time_spent": %s, ' \
+               '"time_left": %s, ' \
+               '"pid_plowdown": %s, ' \
+               '"pid_python": %s, ' \
                '"file_path": "%s", ' \
                '"directory": %s, ' \
                '"to_move_directory": %s, ' \
-               '"priority": %d, ' \
+               '"priority": %s, ' \
                '"theorical_start_datetime": "%s", ' \
                '"lifecycle_insert_date": "%s", ' \
                '"lifecycle_update_date": "%s"' \

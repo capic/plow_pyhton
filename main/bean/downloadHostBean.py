@@ -14,7 +14,7 @@ class DownloadHost:
 
     def to_json(self):
         return '{' \
-               '"id": %d, ' \
+               '"id": %s, ' \
                '"name": "%s"' \
                '}' \
                % (self.id, self.name)

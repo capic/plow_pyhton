@@ -15,15 +15,15 @@ class DownloadPackage:
 
     def to_json(self):
         return '{' \
-               '"id": %d, ' \
+               '"id": %s, ' \
                '"name": "%s", ' \
-               '"unrar_progress": %d' \
+               '"unrar_progress": %s' \
                '}' \
                % (self.id, self.name, self.unrar_progress)
 
     def to_insert_json(self):
         return '{' \
                '"name": "%s", ' \
-               '"unrar_progress": %d' \
+               '"unrar_progress": %s' \
                '}' \
                % (self.name, self.unrar_progress)
