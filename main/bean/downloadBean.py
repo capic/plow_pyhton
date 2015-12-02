@@ -96,30 +96,30 @@ class Download:
                )
 
     def to_update_json(self):
-        return {"download": '{"id": %s, '
-                            '"name": "%s", '
-                            '"host_id": %s, '
-                            '"package_id": %s, '
-                            '"link": "%s",'
-                            '"size_file": %s, '
-                            '"size_part": %s, '
-                            '"size_file_downloaded": %s, '
-                            '"size_part_downloaded": %s, '
-                            '"status": %s, '
-                            '"progress_part": %s, '
-                            '"average_speed": %s, '
-                            '"current_speed": %s, '
-                            '"time_spent": %s, '
-                            '"time_left": %s, '
-                            '"pid_plowdown": %s, '
-                            '"pid_python": %s, '
-                            '"file_path": "%s", '
-                            '"directory_id": %s, '
-                            '"to_move_directory": %s, '
-                            '"priority": %s, '
-                            '"theorical_start_datetime": "%s", '
-                            '"lifecycle_insert_date": "%s", '
-                            '"lifecycle_update_date": "%s"}'
+        return {"download": "{\"id\": %s, "
+                            "\"name\": \"%s\", "
+                            "\"host_id\": %s, "
+                            "\"package_id\": %s, "
+                            "\"link\": \"%s\","
+                            "\"size_file\": %s, "
+                            "\"size_part\": %s, "
+                            "\"size_file_downloaded\": %s, "
+                            "\"size_part_downloaded\": %s, "
+                            "\"status\": %s, "
+                            "\"progress_part\": %s, "
+                            "\"average_speed\": %s, "
+                            "\"current_speed\": %s, "
+                            "\"time_spent\": %s, "
+                            "\"time_left\": %s, "
+                            "\"pid_plowdown\": %s, "
+                            "\"pid_python\": %s, "
+                            "\"file_path\": \"%s\", "
+                            "\"directory_id\": %s, "
+                            "\"to_move_directory\": %s, "
+                            "\"priority\": %s, "
+                            "\"theorical_start_datetime\": \"%s\", "
+                            "\"lifecycle_insert_date\": \"%s\", "
+                            "\"lifecycle_update_date\": \"%s\"}"
                             % (
                                 self.id,
                                 self.name,
