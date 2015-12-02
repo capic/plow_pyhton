@@ -95,6 +95,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Insert download: No database connection")
                 import traceback
+
                 print(traceback.format_exc())
         else:
             logging.error("Download is none")
@@ -107,17 +108,18 @@ class ManageDownload:
         try:
             response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
                                    headers={"Accept": "application/json"},
-                                   params=json.dumps(download.to_update_object()))
+                                   params=json.dumps({"parameter": "value","foo": "bar"}))
 
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
-                download.logs = u"ERROR DURING DOWNLOAD UPDATE"
+            download.logs = u"ERROR DURING DOWNLOAD UPDATE"
 
             self.update_download_log(download)
 
         except Exception:
             utils.log_debug("Update download: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
     def update_download_log(self, download):
@@ -132,6 +134,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Update download log: No database connection")
                 import traceback
+
                 print(traceback.format_exc())
 
     def update_download_package_unrar_percent(self, download_package_id, download_package_unrar_percent):
@@ -149,6 +152,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Update download package unrar percent: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return download_package_returned
@@ -169,6 +173,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Get download by id: No database connection")
                 import traceback
+
                 print(traceback.format_exc())
         else:
             logging.error('Id is none')
@@ -191,6 +196,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Get download directory by id: No database connection")
                 import traceback
+
                 print(traceback.format_exc())
         else:
             logging.error('Id is none')
@@ -227,6 +233,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Get download by link file path: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return download
@@ -255,6 +262,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Get download by package: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return downloads_list
@@ -284,6 +292,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug(u'no database connection => use rescue mode')
                 import traceback
+
                 print(traceback.format_exc())
                 file = open(file_path, 'r')
                 for line in file:
@@ -322,6 +331,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Get download in progress: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return downloads_list
@@ -343,6 +353,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Download already exists: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return exists
