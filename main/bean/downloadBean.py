@@ -59,8 +59,7 @@ class Download:
                    str(self.size_file_downloaded),
                    str(self.size_part_downloaded), str(self.status), str(self.progress_part), str(self.average_speed),
                    str(self.current_speed), str(self.time_left), str(self.time_spent), str(self.pid_plowdown),
-                   str(self.pid_python), self.directory.to_string() if self.directory is not None else 'null',
-                   self.to_move_directory.to_string() if self.to_move_directory is not None else 'null', self.file_path,
+                   str(self.pid_python), self.directory.to_string() if self.directory is not None else 'null', self.to_move_directory.to_string() if self.to_move_directory is not None else 'null', self.file_path,
                    str(self.priority))
 
         # + ' | lifecycle_insert_date => ' + str(self.lifecycle_insert_date)
@@ -96,56 +95,57 @@ class Download:
                )
 
     def to_update_json(self):
-        return {"download": "{\"id\": %s, "
-                            "\"name\": \"%s\", "
-                            "\"host_id\": %s, "
-                            "\"package_id\": %s, "
-                            "\"link\": \"%s\","
-                            "\"size_file\": %s, "
-                            "\"size_part\": %s, "
-                            "\"size_file_downloaded\": %s, "
-                            "\"size_part_downloaded\": %s, "
-                            "\"status\": %s, "
-                            "\"progress_part\": %s, "
-                            "\"average_speed\": %s, "
-                            "\"current_speed\": %s, "
-                            "\"time_spent\": %s, "
-                            "\"time_left\": %s, "
-                            "\"pid_plowdown\": %s, "
-                            "\"pid_python\": %s, "
-                            "\"file_path\": \"%s\", "
-                            "\"directory_id\": %s, "
-                            "\"to_move_directory\": %s, "
-                            "\"priority\": %s, "
-                            "\"theorical_start_datetime\": \"%s\", "
-                            "\"lifecycle_insert_date\": \"%s\", "
-                            "\"lifecycle_update_date\": \"%s\"}"
-                            % (
-                                self.id,
-                                self.name,
-                                self.host.id if self.host is not None else "null",
-                                self.package.id if self.package is not None else "null",
-                                self.link,
-                                self.size_file,
-                                self.size_part,
-                                self.size_file_downloaded,
-                                self.size_part_downloaded,
-                                self.status,
-                                self.progress_part,
-                                self.average_speed,
-                                self.current_speed,
-                                self.time_spent,
-                                self.time_left,
-                                self.pid_plowdown,
-                                self.pid_python,
-                                self.file_path,
-                                self.directory.id if self.directory is not None else "null",
-                                self.to_move_directory.id if self.to_move_directory is not None else "null",
-                                self.priority,
-                                self.theorical_start_datetime,
-                                self.lifecycle_insert_date,
-                                self.lifecycle_update_date
-                                )}
+        return '{' \
+               '"id": %s, ' \
+               '"name": "%s", ' \
+               '"host_id": %s, ' \
+               '"package_id": %s, ' \
+               '"link": "%s",' \
+               '"size_file": %s, ' \
+               '"size_part": %s, ' \
+               '"size_file_downloaded": %s, ' \
+               '"size_part_downloaded": %s, ' \
+               '"status": %s, ' \
+               '"progress_part": %s, ' \
+               '"average_speed": %s, ' \
+               '"current_speed": %s, ' \
+               '"time_spent": %s, ' \
+               '"time_left": %s, ' \
+               '"pid_plowdown": %s, ' \
+               '"pid_python": %s, ' \
+               '"file_path": "%s", ' \
+               '"directory_id": %s, ' \
+               '"to_move_directory": %s, ' \
+               '"priority": %s, ' \
+               '"theorical_start_datetime": "%s", ' \
+               '"lifecycle_insert_date": "%s", ' \
+               '"lifecycle_update_date": "%s"' \
+               '}' % (
+                   self.id,
+                   self.name,
+                   self.host.id if self.host is not None else "null",
+                   self.package.id if self.package is not None else "null",
+                   self.link,
+                   self.size_file,
+                   self.size_part,
+                   self.size_file_downloaded,
+                   self.size_part_downloaded,
+                   self.status,
+                   self.progress_part,
+                   self.average_speed,
+                   self.current_speed,
+                   self.time_spent,
+                   self.time_left,
+                   self.pid_plowdown,
+                   self.pid_python,
+                   self.file_path,
+                   self.directory.id if self.directory is not None else "null",
+                   self.to_move_directory.id if self.to_move_directory is not None else "null",
+                   self.priority,
+                   self.theorical_start_datetime,
+                   self.lifecycle_insert_date,
+                   self.lifecycle_update_date
+               )
 
     def to_json(self):
         return '{' \

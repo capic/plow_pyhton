@@ -17,6 +17,7 @@ from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
 from bean.downloadHostBean import DownloadHost
+import json
 
 
 class ManageDownload:
@@ -106,7 +107,7 @@ class ManageDownload:
         try:
             response = unirest.put(utils.REST_ADRESSE + 'downloads/' + str(download.id),
                                    headers={"Accept": "application/json"},
-                                   params=download.to_update_json())
+                                   params=json.loads(download.to_update_json()))
 
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
