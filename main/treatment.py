@@ -119,7 +119,10 @@ class Treatment:
 
         if download is not None and src_directory is not None and dest_directory is not None:
             # download_name = download.name.replace(' ', '\ ')
-            src_file_path = os.path.join(src_directory.path, download_name)
+            src_file_path = os.path.join(src_directory.path, download.name)
+
+            download.logs = 'Move file in progress, from %s to %s' % (src_file_path, dest_directory)
+            self.manage_download.update_download_log(download)
 
             if os.path.isfile(src_file_path):
                 utils.log_debug(u'downloaded file exists')
