@@ -118,27 +118,41 @@ class Treatment:
         dest_directory = self.manage_download.get_download_directory_by_id(dest_directory_id)
 
         if download is not None and src_directory is not None and dest_directory is not None:
-            # download_name = download.name.replace(' ', '\ ')
             src_file_path = os.path.join(src_directory.path, download.name)
 
-            download.logs = 'Move file in progress, from %s to %s' % (src_file_path, dest_directory)
+            download.logs = 'Move file in progress, from %s to %s' % (src_file_path, dest_directory.path)
             self.manage_download.update_download_log(download)
 
             if os.path.isfile(src_file_path):
                 utils.log_debug(u'downloaded file exists')
+                download.logs = 'File %s exists' % src_file_path
+                self.manage_download.update_download_log(download)
+
                 try:
                     utils.log_debug(u'Moving file')
                     shutil.move(src_file_path, dest_directory.path)
 
+                    download.logs = 'Moving to %s OK' % dest_directory.path
+                    self.manage_download.update_download_log(download)
+
                     utils.log_debug(u'OK')
                     print("#OK#")
                 except IOError as err:
+                    download.logs = 'Error: %s' % err
+                    self.manage_download.update_download_log(download)
+
                     utils.log_debug(u"Error: %s" % err)
                     print("#Error: %s#" % err)
             else:
+                download.logs = 'ERROR: File %s does not exists' % src_file_path
+                self.manage_download.update_download_log(download)
+
                 utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
                 print("#ERROR: File %s does not exists#" % src_file_path)
         else:
+            download.logs = 'ERROR: download or directory are None'
+            self.manage_download.update_download_log(download)
+
             utils.log_debug(u"ERROR: download or directory are None")
             print("#ERROR: download or directory are None#")
 
