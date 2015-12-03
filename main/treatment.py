@@ -118,7 +118,7 @@ class Treatment:
         dest_directory = self.manage_download.get_download_directory_by_id(dest_directory_id)
 
         if download is not None and src_directory is not None and dest_directory is not None:
-            download_name = download.name.replace(' ', '\ ')
+            # download_name = download.name.replace(' ', '\ ')
             src_file_path = os.path.join(src_directory.path, download_name)
 
             if os.path.isfile(src_file_path):
