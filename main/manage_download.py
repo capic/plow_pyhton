@@ -592,6 +592,7 @@ class ManageDownload:
                 if out != '':
                     # if out != '\n' and out != '\r':
                     if out != '%':
+                        utils.log_debug('out: ' + out)
                         line += out
                     else:
                         utils.log_debug('Line %s' % line)
