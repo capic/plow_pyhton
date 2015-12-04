@@ -574,6 +574,7 @@ class ManageDownload:
         utils.log_debug(u'*** unrar ***')
 
         download.logs = 'Unrar in progress ... \r\n'
+        self.update_download_log(download)
         if not utils.is_this_running("[u]nrar x \"%s\"" % download.name):
             cmd = (
                 self.COMMAND_UNRAR % (
@@ -589,7 +590,8 @@ class ManageDownload:
                 if out == '' and p.poll() is not None:
                     break
                 if out != '':
-                    if out != '\n' and out != '\r':
+                    # if out != '\n' and out != '\r':
+                    if out != '%':
                         line += out
                     else:
                         utils.log_debug('Line %s' % line)
