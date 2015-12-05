@@ -582,7 +582,7 @@ class ManageDownload:
             download.logs += 'Command: %s\r\n' % cmd
             self.update_download_log(download)
             utils.log_debug(u'command : %s' % cmd)
-            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=STDOUT)
+            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
             line = ''
             while True:
