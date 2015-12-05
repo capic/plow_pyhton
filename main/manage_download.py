@@ -586,36 +586,25 @@ class ManageDownload:
 
             line = ''
             while True:
-                print('1')
                 out = p.stdout.read(1)
-                print('2')
                 if out == '' and p.poll() is not None:
-                    print('break')
                     break
                 if out != '':
-                    print('3')
                     if out != '\n' and out != '\r':
-                        print('4')
                         line += out
                     else:
-                        print('5')
                         utils.log_debug('Line %s' % line)
                         download.logs = line
-                        if line != '':
-                            print('6')
-                            utils.log_debug('1) line %s' % line)
-                            values = line.split()
-                            if len(values) > 1:
-                                print('7')
-                                utils.log_debug('2) values[0] %s' % values[0])
-                                if 'stdo' in values[0]:
-                                    percent = int(values[1].replace('%', ''))
-                                    utils.log_debug('3) percent %s' % percent)
-                                    if not percent.isdigit():
-                                        percent = 100
-                                    self.update_download_package_unrar_percent(download.package.id, percent)
-
-                        self.update_download_log(download)
+                        # if line != '':
+                        #     values = line.split()
+                        #     if len(values) > 1:
+                        #         if 'stdo' in values[0]:
+                        #             percent = int(values[1].replace('%', ''))
+                        #             if not percent.isdigit():
+                        #                 percent = 100
+                        #             self.update_download_package_unrar_percent(download.package.id, percent)
+                        #
+                        # self.update_download_log(download)
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')
