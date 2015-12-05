@@ -587,14 +587,14 @@ class ManageDownload:
             line = ''
             while True:
                 out = p.stdout.read(1)
-                print(out)
                 if out == '' and p.poll() is not None:
                     break
                 if out != '':
-                    if out != '\n' and out != '\r':
+                    #if out != '\n' and out != '\r':
+                    if out != '%':
                         line += out
                     else:
-                        utils.log_debug('Line %s' % line)
+                        print('Line %s' % line)
                         download.logs = line
                         # if line != '':
                         #     values = line.split()
