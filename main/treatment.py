@@ -121,13 +121,13 @@ class Treatment:
             download.status = Download.STATUS_MOVING
             src_file_path = os.path.join(src_directory.path, download.name)
 
-            download.logs = 'Move file in progress, from %s to %s' % (src_file_path, dest_directory.path)
+            download.logs = 'Move file in progress, from %s to %s\r\n' % (src_file_path, dest_directory.path)
             self.manage_download.update_download(download)
             self.manage_download.update_download_log(download)
 
             if os.path.isfile(src_file_path):
                 utils.log_debug(u'downloaded file exists')
-                download.logs = 'File %s exists' % src_file_path
+                download.logs = 'File %s exists\r\n' % src_file_path
                 self.manage_download.update_download_log(download)
 
                 try:
@@ -137,7 +137,7 @@ class Treatment:
                     download.STATUS_MOVED
                     download.directory = dest_directory
                     download.to_move_directory = None
-                    download.logs = 'Moving to %s OK' % dest_directory.path
+                    download.logs = 'Moving to %s OK\r\n' % dest_directory.path
                     self.manage_download.update_download(download)
                     self.manage_download.update_download_log(download)
 
@@ -145,7 +145,7 @@ class Treatment:
                     print("#OK#")
                 except IOError as err:
                     download.STATUS_ERROR_MOVING
-                    download.logs = 'Error: %s' % err
+                    download.logs = 'Error: %s\r\n' % err
                     self.manage_download.update_download(download)
                     self.manage_download.update_download_log(download)
 
@@ -153,16 +153,13 @@ class Treatment:
                     print("#Error: %s#" % err)
             else:
                 download.STATUS_ERROR_MOVING
-                download.logs = 'ERROR: File %s does not exists' % src_file_path
+                download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
                 self.manage_download.update_download(download)
                 self.manage_download.update_download_log(download)
 
                 utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
                 print("#ERROR: File %s does not exists#" % src_file_path)
         else:
-            download.logs = 'ERROR: download or directory are None'
-            self.manage_download.update_download_log(download)
-
             utils.log_debug(u"ERROR: download or directory are None")
             print("#ERROR: download or directory are None#")
 
