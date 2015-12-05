@@ -591,7 +591,7 @@ class ManageDownload:
                     break
                 if out != '':
                     #if out != '\n' and out != '\r':
-                    if out != '\n' and out != '\r':
+                    if out != '%' or (out != '\n' and out != '\r'):
                         line += out
                     else:
                         print('Line %s' % line)
