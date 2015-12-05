@@ -123,7 +123,6 @@ class Treatment:
 
             download.logs = 'Move file in progress, from %s to %s\r\n' % (src_file_path, dest_directory.path)
             self.manage_download.update_download(download)
-            self.manage_download.update_download_log(download)
 
             if os.path.isfile(src_file_path):
                 utils.log_debug(u'downloaded file exists')
@@ -139,7 +138,6 @@ class Treatment:
                     download.to_move_directory = None
                     download.logs = 'Moving to %s OK\r\n' % dest_directory.path
                     self.manage_download.update_download(download)
-                    self.manage_download.update_download_log(download)
 
                     utils.log_debug(u'OK')
                     print("#OK#")
@@ -147,7 +145,6 @@ class Treatment:
                     download.STATUS_ERROR_MOVING
                     download.logs = 'Error: %s\r\n' % err
                     self.manage_download.update_download(download)
-                    self.manage_download.update_download_log(download)
 
                     utils.log_debug(u"Error: %s" % err)
                     print("#Error: %s#" % err)
@@ -155,7 +152,6 @@ class Treatment:
                 download.STATUS_ERROR_MOVING
                 download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
                 self.manage_download.update_download(download)
-                self.manage_download.update_download_log(download)
 
                 utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
                 print("#ERROR: File %s does not exists#" % src_file_path)
