@@ -587,6 +587,7 @@ class ManageDownload:
             line = ''
             while True:
                 out = p.stdout.read(1)
+                print(out)
                 if out == '' and p.poll() is not None:
                     break
                 if out != '':
