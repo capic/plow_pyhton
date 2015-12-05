@@ -590,25 +590,18 @@ class ManageDownload:
                 if out == '' and p.poll() is not None:
                     break
                 if out != '':
-                    #if out != '\n' and out != '\r':
-                    if out != '%' or (out != '\n' and out != '\r'):
+                    if out != '%':
                         line += out
                     else:
                         print('Line %s' % line)
                         download.logs = line
-                        if line != '':
-                            values = line.split()
-                            if len(values) > 1:
-                                print('value[0] ' + values[0])
-                                print('value[1] ' + values[1])
+                        values = line.split()
+                        if len(values) > 1:
+                            percent = values[int(len(values) - 1)]
+                            print('percent ' + percent)
+                            self.update_download_package_unrar_percent(download.package.id, percent)
 
-                         #         if 'stdo' in values[0]:
-                         #             percent = int(values[1].replace('%', ''))
-                         #             if not percent.isdigit():
-                         #                 percent = 100
-                         #             self.update_download_package_unrar_percent(download.package.id, percent)
-                         #
-                         # self.update_download_log(download)
+                        self.update_download_log(download)
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')
