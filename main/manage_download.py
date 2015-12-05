@@ -604,9 +604,15 @@ class ManageDownload:
                         self.update_download_log(download)
 
             if 'All OK' in line:
-                download.logs = 'Unrar finished'
+                download.logs = 'Unrar finished, all is OK'
                 self.update_download_package_unrar_percent(download.package.id, 100)
                 self.update_download_log(download)
+            else:
+                download.logs = 'Unrar finised but error'
+                download.status = Download.STATUS_ERROR_MOVING
+                self.update_download(download)
+                self.update_download_log(download)
+
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')
