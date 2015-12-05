@@ -594,10 +594,8 @@ class ManageDownload:
                     break
                 if out != '':
                     print('3')
-                    # if out != '\n' and out != '\r':
-                    if out != '%':
+                    if out != '\n' and out != '\r':
                         print('4')
-                        utils.log_debug('out: ' + out)
                         line += out
                     else:
                         print('5')
