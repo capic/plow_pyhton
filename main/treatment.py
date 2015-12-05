@@ -133,7 +133,7 @@ class Treatment:
                     utils.log_debug(u'Moving file')
                     shutil.move(src_file_path, dest_directory.path)
 
-                    download.STATUS_MOVED
+                    download.status = Download.STATUS_MOVED
                     download.directory = dest_directory
                     download.to_move_directory = None
                     download.logs = 'Moving to %s OK\r\n' % dest_directory.path
@@ -142,14 +142,14 @@ class Treatment:
                     utils.log_debug(u'OK')
                     print("#OK#")
                 except IOError as err:
-                    download.STATUS_ERROR_MOVING
+                    download.status = Download.STATUS_ERROR_MOVING
                     download.logs = 'Error: %s\r\n' % err
                     self.manage_download.update_download(download)
 
                     utils.log_debug(u"Error: %s" % err)
                     print("#Error: %s#" % err)
             else:
-                download.STATUS_ERROR_MOVING
+                download.status = Download.STATUS_ERROR_MOVING
                 download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
                 self.manage_download.update_download(download)
 
