@@ -570,8 +570,14 @@ class ManageDownload:
 
             utils.log_debug(traceback.format_exc())
 
-    def unrar(self, download):
+    def unrar(self, downloads_list):
         utils.log_debug(u'*** unrar ***')
+
+        download = downloads_list[0]
+
+        for down in downloads_list:
+            down.status = Download.STATUS_UNRARING
+            self.update_download(down)
 
         download.logs = 'Unrar in progress ... \r\n'
         self.update_download_log(download)
@@ -607,12 +613,16 @@ class ManageDownload:
                 download.logs = 'Unrar finished, all is OK'
                 self.update_download_package_unrar_percent(download.package.id, 100)
                 self.update_download_log(download)
+                download_status = Download.STATUS_UNRAR_OK
             else:
                 download.logs = 'Unrar finised but error'
-                download.status = Download.STATUS_ERROR_MOVING
                 self.update_download(download)
                 self.update_download_log(download)
+                download_status = Download.STATUS_UNRAR_ERROR
 
+            for down in downloads_list:
+                down.status = download_status
+                self.update_download(down)
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')

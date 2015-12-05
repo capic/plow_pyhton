@@ -248,7 +248,7 @@ class Treatment:
                         return d.name
 
                     downloads_list = sorted(downloads_list, key=getKey)
-                    self.manage_download.unrar(downloads_list[0])
+                    self.manage_download.unrar(downloads_list)
 
                 else:
                     utils.log_debug(u'No downloads')
