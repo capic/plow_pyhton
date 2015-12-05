@@ -135,6 +135,8 @@ class Treatment:
                     shutil.move(src_file_path, dest_directory.path)
 
                     download.STATUS_MOVED
+                    download.directory = dest_directory
+                    download.to_move_directory = None
                     download.logs = 'Moving to %s OK' % dest_directory.path
                     self.manage_download.update_download(download)
                     self.manage_download.update_download_log(download)
