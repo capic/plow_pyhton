@@ -175,6 +175,28 @@ class ManageDownload:
 
         return download
 
+    def get_package_by_id(self, package_id):
+        utils.log_debug(u'   *** get_package_by_id ***')
+        package = None
+
+        if package_id is not None:
+            try:
+                response = unirest.get(utils.REST_ADRESSE + 'downloads/package/' + str(package_id),
+                                       headers={"Accept": "application/json"})
+
+                if response.code == 200:
+                    package = utils.json_to_download_package_object(response.body)
+                else:
+                    utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+            except Exception:
+                utils.log_debug("Get download by id: No database connection")
+                import traceback
+                print(traceback.format_exc())
+        else:
+            logging.error('Id is none')
+
+        return package
+
     def get_download_directory_by_id(self, directory_id):
         utils.log_debug(u'*** get_download_directory_by_id ***')
         directory = None
