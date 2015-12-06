@@ -590,6 +590,8 @@ class ManageDownload:
             utils.log_debug(u'command : %s' % cmd)
             p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
+            self.update_download_package_unrar_percent(download.package.id, 0)
+
             line = ''
             while True:
                 out = p.stdout.read(1)
