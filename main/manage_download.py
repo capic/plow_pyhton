@@ -557,7 +557,7 @@ class ManageDownload:
         try:
             unirest.timeout(36000)
             response = unirest.post(utils.REST_ADRESSE + 'downloads/moveOne', headers={"Accept": "application/json"},
-                                    params={'id': download.id, 'directory_id': download.to_move_davedirectory.id, 'from': 2})
+                                    params={'id': download.id, 'directory_id': download.to_move_directory.id, 'from': 2})
             unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
             utils.log_debug(u'apres deplacement')
 

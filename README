@@ -18,4 +18,4 @@ TODO:
 - ajouter un flag au telechargement pour lui dire qu'il sera le prochain téléchargement => à utiliser lorsqu'on clique sur démarrer un téléchargement
 - lorsqu'on supprime depuis l'ihm il faut mettre en commentaire dans le fichier
 - mutualiser les 2 méthodes de move ?
-
+- si erreur durant la copie il faut supprimer la partie de fichier qui a été copié
