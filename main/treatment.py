@@ -283,8 +283,19 @@ class Treatment:
         list_downloads = self.manage_download.get_downloads_by_package(package)
 
         for download in list_downloads:
-            file_path = os.path.join(download.directory.path, download.name)
-            os.remove(file_path)
+            try:
+                download.log = 'deleting file'
+                download.status = Download.STATUS_FILE_DELETING
+                self.manage_download.update_download(download)
+                file_path = os.path.join(download.directory.path, download.name)
+                os.remove(file_path)
+                download.log = 'delete file ok'
+                download.status = Download.STATUS_FILE_DELETED
+                self.manage_download.update_download(download)
+            except OSError:
+                download.log = 'delete file error'
+                download.status = Download.STATUS_FILE_DELETE_ERROR
+                self.manage_download.update_download(download)
 
     def disconnect(self):
         self.manage_download.disconnect()
