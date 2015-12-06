@@ -142,6 +142,7 @@ class Treatment:
                     utils.log_debug(u'OK')
                     print("#OK#")
                 except IOError as err:
+                    download.to_move_directory = None
                     download.status = Download.STATUS_ERROR_MOVING
                     download.logs = 'Error: %s\r\n' % err
                     self.manage_download.update_download(download)
@@ -149,6 +150,7 @@ class Treatment:
                     utils.log_debug(u"Error: %s" % err)
                     print("#Error: %s#" % err)
             else:
+                download.to_move_directory = None
                 download.status = Download.STATUS_ERROR_MOVING
                 download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
                 self.manage_download.update_download(download)
