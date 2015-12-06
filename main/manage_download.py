@@ -16,7 +16,6 @@ from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
 from bean.downloadHostBean import DownloadHost
-import json
 
 
 class ManageDownload:
