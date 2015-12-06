@@ -193,9 +193,6 @@ class Treatment:
                 if download.to_move_directory is not None and download.to_move_directory.id != utils.DIRECTORY_DOWNLOAD_DESTINATION_ID:
                     utils.log_debug(u'File will be moved...............')
                     self.manage_download.move_download(download)
-                else:
-                    download.directory = copy.copy(download.to_move_directory)
-                    download.to_move_directory = None
             else:
                 if download.status == Download.STATUS_ERROR:
                     self.mark_link_error_in_file(download)

@@ -531,6 +531,11 @@ class ManageDownload:
                 if values[1] == values[3] and values[1] != '0' and download.status == Download.STATUS_IN_PROGRESS:
                     utils.log_debug(u'download marked as finished')
                     download.status = Download.STATUS_FINISHED
+                    directory = DownloadDirectory()
+                    directory.id = utils.DIRECTORY_DOWNLOAD_DESTINATION_ID
+                    directory.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
+                    download.directory = directory
+                    download.to_move_directory = None
 
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
