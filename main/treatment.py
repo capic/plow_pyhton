@@ -10,7 +10,7 @@ from manage_download import ManageDownload
 import logging
 import shutil
 import os
-import pycp
+import copy
 
 
 class Treatment:
@@ -133,8 +133,7 @@ class Treatment:
 
                 try:
                     utils.log_debug(u'Moving file')
-                    # shutil.move(src_file_path, dest_directory.path)
-                    pycp.pymv(src_file_path, dest_directory.path)
+                    shutil.move(src_file_path, dest_directory.path)
 
                     download.status = Download.STATUS_MOVED
                     download.directory = dest_directory
