@@ -271,5 +271,14 @@ class Treatment:
         else:
             utils.log_debug(u'Download is None')
 
+    def delete_package_files(self, package_id):
+        utils.log_debug(u'*** delete_package_files ***')
+
+        list_downloads = self.manage_download.get_downloads_by_package(package_id)
+
+        for download in list_downloads:
+            file_path = os.path.join(download.directory.path, download.name)
+            os.remove(file_path)
+
     def disconnect(self):
         self.manage_download.disconnect()

@@ -153,6 +153,15 @@ def main(argv):
                 treatment.reset(download_id, file_to_delete)
             else:
                 print(COMMAND_USAGE)
+        elif args[0] == 'delete_package_files':
+            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'delete_package_files.log', level=logging.DEBUG,
+                                format='%(asctime)s %(message)s',
+                                datefmt='%d/%m/%Y %H:%M:%S')
+            if len(args) > 1:
+                package_id = args[1]
+                treatment.delete_package_files(package_id)
+            else:
+                print(COMMAND_USAGE)
         else:
             print(COMMAND_USAGE)
 
