@@ -117,7 +117,7 @@ class Download:
                     "pid_python": self.pid_python,
                     "file_path": self.file_path,
                     "directory_id": self.directory.id if self.directory is not None else None,
-                    "to_move_directory": self.to_move_directory.id if self.to_move_directory is not None else None,
+                    "to_move_directory_id": self.to_move_directory.id if self.to_move_directory is not None else None,
                     "priority": self.priority,
                     "theorical_start_datetime": self.theorical_start_datetime,
                     "lifecycle_insert_date": self.lifecycle_insert_date,

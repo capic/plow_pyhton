@@ -163,6 +163,57 @@ class Treatment:
             utils.log_debug(u"ERROR: download or directory are None")
             print("#ERROR: download or directory are None#")
 
+    def move_file2(self, download_id, src_directory_id, dest_directory_id):
+        utils.log_debug(u'*** move_file2 ***')
+
+        download = self.manage_download.get_download_by_id(download_id)
+        src_directory = self.manage_download.get_download_directory_by_id(src_directory_id)
+        dest_directory = self.manage_download.get_download_directory_by_id(dest_directory_id)
+
+        if download is not None and src_directory is not None and dest_directory is not None:
+            download.status = Download.STATUS_MOVING
+            src_file_path = os.path.join(src_directory.path, download.name)
+
+            download.logs = 'Move file in progress, from %s to %s\r\n' % (src_file_path, dest_directory.path)
+            self.manage_download.update_download(download)
+
+            if os.path.isfile(src_file_path):
+                utils.log_debug(u'downloaded file exists')
+                download.logs = 'File %s exists\r\n' % src_file_path
+                self.manage_download.update_download_log(download)
+
+                try:
+                    utils.log_debug(u'Moving file')
+                    shutil.move(src_file_path, dest_directory.path)
+
+                    download.status = Download.STATUS_MOVED
+                    download.directory = dest_directory
+                    download.to_move_directory = None
+                    download.logs = 'Moving to %s OK\r\n' % dest_directory.path
+                    self.manage_download.update_download(download)
+
+                    utils.log_debug(u'OK')
+                    print("#OK#")
+                except IOError as err:
+                    download.to_move_directory = None
+                    download.status = Download.STATUS_ERROR_MOVING
+                    download.logs = 'Error: %s\r\n' % err
+                    self.manage_download.update_download(download)
+
+                    utils.log_debug(u"Error: %s" % err)
+                    print("#Error: %s#" % err)
+            else:
+                download.to_move_directory = None
+                download.status = Download.STATUS_ERROR_MOVING
+                download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
+                self.manage_download.update_download(download)
+
+                utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
+                print("#ERROR: File %s does not exists#" % src_file_path)
+        else:
+            utils.log_debug(u"ERROR: download or directory are None")
+            print("#ERROR: download or directory are None#")
+
     def start_multi_downloads(self, file_path):
         # utils.log_debug(u'*** start_file_treatment ***')
         # utils.log_debug(u'file_path %s' % (file_path))

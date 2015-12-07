@@ -590,7 +590,6 @@ class ManageDownload:
                 utils.log_debug(u'Moving OK %s => %s' % (str(response.code), response.body))
         except Exception:
             import traceback
-
             utils.log_debug(traceback.format_exc())
 
     def unrar(self, downloads_list):
