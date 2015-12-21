@@ -237,8 +237,8 @@ class ManageDownload:
         if download_id is not None and action_type_id is not None and num is not None:
             try:
                 response = unirest.get(utils.REST_ADRESSE + 'actions', params={
-                    'download_id:' + download_id + ', action_type_id:' + action_type_id + ', num:' + num},
-                                       headers={"Accept": "application/json"})
+                    'download_id:' + str(download_id) + ', action_type_id:' + str(action_type_id) + ', num:' + str(
+                        num)}, headers={"Accept": "application/json"})
 
                 actions_list = []
                 if response.code == 200:
@@ -677,7 +677,7 @@ class ManageDownload:
                         # download.logs = line
                         # values = line.split()
                         # if len(values) > 1:
-                        #     percent = values[int(len(values) - 1)]
+                        # percent = values[int(len(values) - 1)]
                         #     print('percent ' + percent)
                         #     self.update_download_package_unrar_percent(download.package.id, percent)
                         #
