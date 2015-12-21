@@ -651,38 +651,51 @@ class ManageDownload:
             src_file_path, action_directory_dst.property_value)
         self.manage_download.update_download(download)
 
-        action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
+        if os.path.isfile(src_file_path):
+            utils.log_debug(u'downloaded file exists')
+            download.logs = 'File %s exists\r\n' % src_file_path
+            self.manage_download.update_download_log(download)
 
-        if not utils.is_this_running("[p]ymv -g \"%s\" \"%s\"" % (src, dst)):
-            cmd = (
-                self.COMMAND_MOVE % (
-                    src_file_path, action_directory_dst))
-            download.logs += 'Command: %s\r\n' % cmd
-            self.update_download_log(download)
-            utils.log_debug(u'command : %s' % cmd)
-            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
 
-            action_percent.property_value = 0
-            self.update_action_property(action_percent)
+            if not utils.is_this_running("[p]ymv -g \"%s\" \"%s\"" % (src, dst)):
+                cmd = (
+                    self.COMMAND_MOVE % (
+                        src_file_path, action_directory_dst))
+                download.logs += 'Command: %s\r\n' % cmd
+                self.update_download_log(download)
+                utils.log_debug(u'command : %s' % cmd)
+                p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-            line = ''
-            while True:
-                out = p.stdout.read(1)
-                if out == '' and p.poll() is not None:
-                    break
-                if out != '':
-                    if out != '%':
-                        line += out
-                    else:
-                        print('Line %s' % line)
-                        # download.logs = line
-                        # values = line.split()
-                        # if len(values) > 1:
-                        # percent = values[int(len(values) - 1)]
-                        # print('percent ' + percent)
-                        # self.update_download_package_unrar_percent(download.package.id, percent)
-                        #
-                        # self.update_download_log(download)
+                action_percent.property_value = 0
+                self.update_action_property(action_percent)
+
+                line = ''
+                while True:
+                    out = p.stdout.read(1)
+                    if out == '' and p.poll() is not None:
+                        break
+                    if out != '':
+                        if out != '%':
+                            line += out
+                        else:
+                            print('Line %s' % line)
+                            # download.logs = line
+                            # values = line.split()
+                            # if len(values) > 1:
+                            # percent = values[int(len(values) - 1)]
+                            # print('percent ' + percent)
+                            # self.update_download_package_unrar_percent(download.package.id, percent)
+                            #
+                            # self.update_download_log(download)
+        else:
+            download.to_move_directory = None
+            download.status = Download.STATUS_ERROR_MOVING
+            download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
+            self.manage_download.update_download(download)
+
+            utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
+            print("#ERROR: File %s does not exists#" % src_file_path)
 
     def unrar(self, downloads_list):
         utils.log_debug(u'*** unrar ***')
