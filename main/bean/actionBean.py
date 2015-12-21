@@ -23,12 +23,12 @@ class Action:
         self.lifecycle_insert_date = None
         self.lifecycle_update_date = None
         self.action_status_id = None
-        self.directory_id = None
+        self.directory = None
 
     def to_string(self):
         return 'download_id: %s | action_type_id: %s | property_id: %s | num: %s | property_value: %s | action_status_id: %s | directory_id: %s' % (
             str(self.downloadid), str(self.action_type_id), str(self.property_id), str(self.num), self.property_value,
-            str(self.action_status_id), str(self.directory_id))
+            str(self.action_status_id), self.directory.to_string())
 
     def to_update_json(self):
         return {
@@ -41,7 +41,7 @@ class Action:
                     "property_value": self.property_value,
                     "lifecycle_update_date": self.lifecycle_update_date,
                     "action_status_id": self.action_status_id,
-                    "directory_id": self.directory_id})
+                    "directory_id": self.directory.id if self.directory is not None else None})
         }
 
     def to_insert_json(self):
@@ -56,5 +56,5 @@ class Action:
                     "lifecycle_insert_date": self.lifecycle_insert_date,
                     "lifecycle_update_date": self.lifecycle_update_date,
                     "action_status_id": self.action_status_id,
-                    "directory_id": self.directory_id})
+                    "directory_id": self.directory.id if self.directory is not None else None})
         }

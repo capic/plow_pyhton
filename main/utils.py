@@ -163,9 +163,7 @@ def json_to_download_object(json_object):
     download.pid_plowdown = json_object['pid_plowdown']
     download.pid_python = json_object['pid_python']
     if json_object['directory_id']:
-        download_directory = DownloadDirectory()
-        download_directory.id = json_object['directory']['id']
-        download_directory.path = json_object['directory']['path']
+        download_directory = json_to_download_directory_object(json_object['directory'])
     else:
         download_directory = None
     download.directory = download_directory
@@ -224,7 +222,11 @@ def json_to_action_object(json_object):
     action.lifecycle_insert_date = json_object['lifecycle_insert_date']
     action.lifecycle_update_date = json_object['lifecycle_update_date']
     action.action_status_id = json_object['action_status_id']
-    action.directory_id = json_object['directory_id']
+    if json_object['directory_id']:
+        directory = json_to_download_directory_object(json_object['directory'])
+    else:
+        directory = None
+    action.directory = directory
 
     return action
 
