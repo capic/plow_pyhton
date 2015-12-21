@@ -9,6 +9,7 @@ from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
 from bean.downloadHostBean import DownloadHost
+from bean.actionBean import Action
 import logging
 
 REST_ADRESSE = 'http://localhost:3000/'
@@ -220,6 +221,31 @@ def json_to_download_directory_object(json_object):
     return download_directory
 
 
+def json_to_action_object(json_object):
+    action = Action()
+    action.download_id = json_object['download_id']
+    action.action_type_id = json_object['action_type_id']
+    action.property_id = json_object['property_id']
+    action.num = json_object['num']
+    action.property_value = json_object['property_value']
+    action.lifecycle_insert_date = json_object['lifecycle_insert_date']
+    action.lifecycle_update_date = json_object['lifecycle_update_date']
+    action.action_status_id = json_object['action_status_id']
+    action.directory_id = json_object['directory_id']
+
+    return action
+
+
+def json_to_action_object_list(json_array):
+    list_actions = []
+
+    for json_object in json_array:
+        action = json_to_action_object(json_object)
+        list_actions.append(action)
+
+    return list_actions
+
+
 def json_to_download_host_object(json_object):
     download_host = DownloadHost()
     download_host.id = json_object['id']
@@ -235,6 +261,17 @@ def package_name_from_download_name(download_name):
         return download_name.split(".part")[0]
     else:
         return None
+
+
+def get_action_by_property(actions_list, property_id):
+    action_returned = None
+
+    for action in actions_list:
+        if action.property_id == property_id:
+            action_returned = action
+            break
+
+    return action_returned
 
 
 def log_debug(value):
