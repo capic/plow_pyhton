@@ -649,12 +649,12 @@ class ManageDownload:
         action_directory_dst = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_DST)
         download.logs = 'Move file in progress, from %s to %s\r\n' % (
             src_file_path, action_directory_dst.directory.path)
-        self.manage_download.update_download(download)
+        self.update_download(download)
 
         if os.path.isfile(src_file_path):
             utils.log_debug(u'downloaded file exists')
             download.logs = 'File %s exists\r\n' % src_file_path
-            self.manage_download.update_download_log(download)
+            self.update_download_log(download)
 
             action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
 
@@ -692,7 +692,7 @@ class ManageDownload:
             download.to_move_directory = None
             download.status = Download.STATUS_ERROR_MOVING
             download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
-            self.manage_download.update_download(download)
+            self.update_download(download)
 
             utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
             print("#ERROR: File %s does not exists#" % src_file_path)
