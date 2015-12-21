@@ -143,7 +143,7 @@ class ManageDownload:
         action_property.lifecycle_update_date = datetime.utcnow().isoformat()
 
         try:
-            response = unirest.post(
+            response = unirest.put(
                 utils.REST_ADRESSE + 'actions/' + str(action_property.download_id) + '/' + str(
                     action_property.action_type_id) + '/' + str(action_property.property_id) + '/' + str(
                     action_property.num),
