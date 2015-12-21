@@ -658,7 +658,7 @@ class ManageDownload:
 
             action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
 
-            if not utils.is_this_running("[p]ymv -g \"%s\" \"%s\"" % (src, dst)):
+            if not utils.is_this_running("[p]ymv -g \"%s\" \"%s\"" % (src_file_path, action_directory_dst)):
                 cmd = (
                     self.COMMAND_MOVE % (
                         src_file_path, action_directory_dst))
