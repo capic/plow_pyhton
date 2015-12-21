@@ -644,11 +644,11 @@ class ManageDownload:
         utils.log_debug(u'*** move_file ***')
 
         action_directory_src = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_SRC)
-        src_file_path = os.path.join(action_directory_src.property_value, download.name)
+        src_file_path = os.path.join(action_directory_src.directory.path, download.name)
 
         action_directory_dst = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_DST)
         download.logs = 'Move file in progress, from %s to %s\r\n' % (
-            src_file_path, action_directory_dst.property_value)
+            src_file_path, action_directory_dst.directory.path)
         self.manage_download.update_download(download)
 
         if os.path.isfile(src_file_path):
