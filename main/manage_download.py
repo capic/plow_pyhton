@@ -676,7 +676,7 @@ class ManageDownload:
                     if out == '' and p.poll() is not None:
                         break
                     if out != '':
-                        if out != '%':
+                        if out != '\n' and out != '\r':
                             line += out
                         else:
                             print('Line %s' % line)
