@@ -665,7 +665,7 @@ class ManageDownload:
                 download.logs += 'Command: %s\r\n' % cmd
                 self.update_download_log(download)
                 utils.log_debug(u'command : %s' % cmd)
-                p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, executable='/bin/bash', env=dict(COLUMNS=80, LINES=25))
+                p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=dict(COLUMNS='80', LINES='25'))
 
                 action_percent.property_value = 0
                 self.update_action_property(action_percent)
