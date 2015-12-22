@@ -665,7 +665,7 @@ class ManageDownload:
                 download.logs += 'Command: %s\r\n' % cmd
                 self.update_download_log(download)
                 utils.log_debug(u'command : %s' % cmd)
-                p = subprocess.Popen(['pymv', src_file_path, action_directory_dst.directory.path], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                p = subprocess.Popen(['pymv', src_file_path, action_directory_dst.directory.path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
                 action_percent.property_value = 0
                 self.update_action_property(action_percent)
