@@ -23,7 +23,7 @@ class ManageDownload:
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s=$=%%m' %s"
     COMMAND_UNRAR = "cd \"%s\" && unrar x -o+ \"%s\""
-    COMMAND_MOVE = "pymv \"%s\" \"%s\""
+    COMMAND_MOVE = "pymv -g \"%s\" \"%s\""
     MARK_AS_FINISHED = "# FINNISHED "
     MARK_AS_ERROR = "# ERROR"
 
@@ -665,7 +665,7 @@ class ManageDownload:
                 download.logs += 'Command: %s\r\n' % cmd
                 self.update_download_log(download)
                 utils.log_debug(u'command : %s' % cmd)
-                p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                p = subprocess.Popen(['pymv', src_file_path, action_directory_dst.directory.path], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
                 action_percent.property_value = 0
                 self.update_action_property(action_percent)
