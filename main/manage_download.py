@@ -701,6 +701,7 @@ class ManageDownload:
 
                 except Exception as e:  # inspect.stack()[1][3] will get caller function name
                     logging.error(inspect.stack()[1][3] + ' error: ' + str(e))
+                    return False
 
                 while 1:
                     # use read(1), can get wget progress bar like output
