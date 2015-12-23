@@ -18,6 +18,9 @@ from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
 from bean.downloadHostBean import DownloadHost
 
+import sys
+import inspect
+
 
 class ManageDownload:
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
@@ -658,45 +661,64 @@ class ManageDownload:
 
             action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
 
-            if not utils.is_this_running("[p]ymv -g \"%s\" \"%s\"" % (src_file_path, action_directory_dst.directory.path)):
+            if not utils.is_this_running(
+                            "[p]ymv -g \"%s\" \"%s\"" % (src_file_path, action_directory_dst.directory.path)):
                 cmd = (
                     self.COMMAND_MOVE % (
                         src_file_path, action_directory_dst.directory.path))
                 download.logs += 'Command: %s\r\n' % cmd
                 self.update_download_log(download)
                 utils.log_debug(u'command : %s' % cmd)
-                p = subprocess.Popen(cmd, shell=True, stderr=subprocess.STDOUT, env=dict(COLUMNS='80', LINES='25'))
-                # p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
+                # p = subprocess.Popen(cmd, shell=True, stderr=subprocess.STDOUT, env=dict(COLUMNS='80', LINES='25'))
+                #
+                # action_percent.property_value = 0
+                # self.update_action_property(action_percent)
+                #
+                # line = ''
+                # while True:
+                # out = p.stdout.read(1)
+                # if out == '' and p.poll() is not None:
+                # break
+                # if out != '':
+                #         if out != '\n' and out != '\r':
+                #             line += out
+                #         else:
+                #             print('Line %s' % line)
+                # download.logs = line
+                # values = line.split()
+                # if len(values) > 1:
+                # percent = values[int(len(values) - 1)]
+                # print('percent ' + percent)
+                # self.update_download_package_unrar_percent(download.package.id, percent)
+                #
+                # self.update_download_log(download)
 
-                action_percent.property_value = 0
-                self.update_action_property(action_percent)
+                try:
+                    pipe = subprocess.Popen(args, bufsize=0,
+                                            shell=False,
+                                            stdout=None,  # no redirection, child use parent's stdout
+                                            stderr=subprocess.PIPE)  # redirection stderr, create a new pipe, from which later we will read
 
-                line = ''
-                while True:
-                    out = p.stdout.read(1)
-                    if out == '' and p.poll() is not None:
+                except Exception as e:  # inspect.stack()[1][3] will get caller function name
+                    logging.error(inspect.stack()[1][3] + ' error: ' + str(e))
+
+                while 1:
+                    # use read(1), can get wget progress bar like output
+                    s = pipe.stderr.read(1)
+                    if s:
+                        sys.stdout.write(s)
+                    if pipe.returncode is None:
+                        code = pipe.poll()
+                    else:
                         break
-                    if out != '':
-                        if out != '\n' and out != '\r':
-                            line += out
-                        else:
-                            print('Line %s' % line)
-                            # download.logs = line
-                            # values = line.split()
-                            # if len(values) > 1:
-                            # percent = values[int(len(values) - 1)]
-                            # print('percent ' + percent)
-                            # self.update_download_package_unrar_percent(download.package.id, percent)
-                            #
-                            # self.update_download_log(download)
-        else:
-            download.to_move_directory = None
-            download.status = Download.STATUS_ERROR_MOVING
-            download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
-            self.update_download(download)
+            else:
+                download.to_move_directory = None
+                download.status = Download.STATUS_ERROR_MOVING
+                download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
+                self.update_download(download)
 
-            utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
-            print("#ERROR: File %s does not exists#" % src_file_path)
+                utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
+                print("#ERROR: File %s does not exists#" % src_file_path)
 
     def unrar(self, downloads_list):
         utils.log_debug(u'*** unrar ***')
@@ -753,6 +775,7 @@ class ManageDownload:
             for down in downloads_list:
                 down.status = download_status
                 self.update_download(down)
+
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')
