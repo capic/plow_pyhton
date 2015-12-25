@@ -695,7 +695,7 @@ class ManageDownload:
 
                 try:
                     pipe = subprocess.Popen(cmd, bufsize=0,
-                                            shell=False,
+                                            shell=True,
                                             stdout=None,  # no redirection, child use parent's stdout
                                             stderr=subprocess.PIPE)  # redirection stderr, create a new pipe, from which later we will read
 
