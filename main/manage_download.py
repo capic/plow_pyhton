@@ -26,7 +26,7 @@ class ManageDownload:
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s=$=%%m' %s"
     COMMAND_UNRAR = "cd \"%s\" && unrar x -o+ \"%s\""
-    COMMAND_MOVE = "pymv \"%s\" \"%s\""
+    COMMAND_MOVE = "pymv --i-love-candy \"%s\" \"%s\""
     MARK_AS_FINISHED = "# FINNISHED "
     MARK_AS_ERROR = "# ERROR"
 
