@@ -693,25 +693,7 @@ class ManageDownload:
                 #
                 # self.update_download_log(download)
 
-                try:
-                    pipe = subprocess.Popen(cmd, bufsize=0,
-                                            shell=True,
-                                            stdout=None,  # no redirection, child use parent's stdout
-                                            stderr=subprocess.PIPE)  # redirection stderr, create a new pipe, from which later we will read
-
-                except Exception as e:  # inspect.stack()[1][3] will get caller function name
-                    logging.error(inspect.stack()[1][3] + ' error: ' + str(e))
-                    return False
-
-                while 1:
-                    # use read(1), can get wget progress bar like output
-                    s = pipe.stderr.read(1)
-                    if s:
-                        sys.stdout.write(s)
-                    if pipe.returncode is None:
-                        code = pipe.poll()
-                    else:
-                        break
+                utils.copy_large_file(src_file_path, action_directory_dst.directory.path)
             else:
                 download.to_move_directory = None
                 download.status = Download.STATUS_ERROR_MOVING
