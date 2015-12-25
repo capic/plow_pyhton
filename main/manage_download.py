@@ -650,8 +650,10 @@ class ManageDownload:
         src_file_path = os.path.join(action_directory_src.directory.path, download.name)
 
         action_directory_dst = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_DST)
+        dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
         download.logs = 'Move file in progress, from %s to %s\r\n' % (
             src_file_path, action_directory_dst.directory.path)
+
         self.update_download(download)
 
         if os.path.isfile(src_file_path):
@@ -693,7 +695,7 @@ class ManageDownload:
                 #
                 # self.update_download_log(download)
 
-                utils.copy_large_file(src_file_path, action_directory_dst.directory.path)
+                utils.copy_large_file(src_file_path, dst_file_path)
             else:
                 download.to_move_directory = None
                 download.status = Download.STATUS_ERROR_MOVING
