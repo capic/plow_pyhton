@@ -142,6 +142,8 @@ class ManageDownload:
                 print(traceback.format_exc())
 
     def update_action_property(self, action_property):
+        utils.log_debug(u'*** update_action_property ***')
+
         action_property_returned = None
 
         action_property.lifecycle_update_date = datetime.utcnow().isoformat()
@@ -166,9 +168,13 @@ class ManageDownload:
         return action_property_returned
 
     def update_action_properties_list_callback(self, response):
+        utils.log_debug(u'*** update_action_properties_list_callback ***')
+
         self.action_property_update_in_progress = False
 
     def update_action_properties_list(self, download_id, action_type_id, num, properties_list):
+        utils.log_debug(u'*** update_action_properties_list ***')
+
         action_property_returned = None
         self.action_property_update_in_progress = True
 
@@ -694,6 +700,7 @@ class ManageDownload:
                 utils.copy_large_file(src_file_path, dst_file_path, self.treatment_update_action_properties, actions_list)
 
     def treatment_update_action_properties(self, actions_list, percent, time_left):
+        utils.log_debug(u'*** treatment_update_action_properties ***')
         if not self.action_property_update_in_progress:
             actions_list_to_update = []
 
