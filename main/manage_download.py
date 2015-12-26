@@ -32,6 +32,7 @@ class ManageDownload:
 
     def __init__(self):
         unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
+        self.action_property_update_in_progress = False
 
     def insert_download(self, download):
         utils.log_debug(u'  *** insert_download ***')
@@ -164,15 +165,19 @@ class ManageDownload:
 
         return action_property_returned
 
+    def update_action_properties_list_callback(self, response):
+        self.action_property_update_in_progress = False
+
     def update_action_properties_list(self, download_id, action_type_id, num, properties_list):
         action_property_returned = None
+        self.action_property_update_in_progress = True
 
         try:
             response = unirest.put(
                 utils.REST_ADRESSE + 'actions/' + str(download_id) + '/' + str(
                     action_type_id) + '/' + str(num),
                 headers={"Accept": "application/json"},
-                params=utils.action_object_list_to_json(properties_list), callback='')
+                params=utils.action_object_list_to_json(properties_list), callback=update_action_properties_list_callback)
             # if response.code != 200:
             # utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             # else:
@@ -689,24 +694,25 @@ class ManageDownload:
                 utils.copy_large_file(src_file_path, dst_file_path, self.treatment_update_action_properties, actions_list)
 
     def treatment_update_action_properties(self, actions_list, percent, time_left):
-        actions_list_to_update = []
+        if not self.action_property_update_in_progress:
+            actions_list_to_update = []
 
-        action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
-        if action_percent is not None:
-            action_percent.property_value = percent
-            action_percent.lifecycle_update_date = datetime.utcnow().isoformat()
-            actions_list_to_update.append(action_percent)
+            action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
+            if action_percent is not None:
+                action_percent.property_value = percent
+                action_percent.lifecycle_update_date = datetime.utcnow().isoformat()
+                actions_list_to_update.append(action_percent)
 
-        action_time_left = utils.get_action_by_property(actions_list, Action.PROPERTY_TIME_LEFT)
-        if action_time_left is not None:
-            action_time_left.property_value = time_left
-            action_time_left.lifecycle_update_date = datetime.utcnow().isoformat()
-            actions_list_to_update.append(action_time_left)
+            action_time_left = utils.get_action_by_property(actions_list, Action.PROPERTY_TIME_LEFT)
+            if action_time_left is not None:
+                action_time_left.property_value = time_left
+                action_time_left.lifecycle_update_date = datetime.utcnow().isoformat()
+                actions_list_to_update.append(action_time_left)
 
-        if len(actions_list_to_update) > 0:
-            self.update_action_properties_list(actions_list_to_update[0].download_id,
-                                               actions_list_to_update[0].action_type_id, actions_list_to_update[0].num,
-                                               actions_list_to_update)
+            if len(actions_list_to_update) > 0:
+                self.update_action_properties_list(actions_list_to_update[0].download_id,
+                                                   actions_list_to_update[0].action_type_id, actions_list_to_update[0].num,
+                                                   actions_list_to_update)
 
     def unrar(self, downloads_list):
         utils.log_debug(u'*** unrar ***')
