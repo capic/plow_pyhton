@@ -16,6 +16,9 @@ class Action:
     PROPERTY_TIME_ELAPSED = 5
     PROPERTY_TIME_TOTAL = 6
 
+    STATUS_WAITING = 1
+    STATUS_IN_PROGRESS = 2
+
     def __init__(self):
         self.download_id = None
         self.action_type_id = None
