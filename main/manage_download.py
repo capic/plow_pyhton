@@ -699,6 +699,7 @@ class ManageDownload:
 
                 utils.copy_large_file(src_file_path, dst_file_path, self.treatment_update_action_properties, actions_list)
 
+                self.action_property_update_in_progress = False
                 self.treatment_update_action_properties(actions_list, 100, 0)
 
     def treatment_update_action_properties(self, actions_list, percent, time_left):
