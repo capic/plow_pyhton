@@ -14,6 +14,7 @@ import logging
 import os
 import sys
 import time
+import json
 
 REST_ADRESSE = 'http://localhost:3000/'
 
@@ -247,9 +248,17 @@ def json_to_action_object_list(json_array):
 def action_object_list_to_json(action_list):
     tab_json = []
     for action in action_list:
-        tab_json.append(action.to_update_simple_json())
+        tab_json.append({
+            "download_id": action.download_id,
+            "action_type_id": action.action_type_id,
+            "property_id": action.property_id,
+            "num": action.num,
+            "property_value": action.property_value,
+            "lifecycle_update_date": action.lifecycle_update_date,
+            "action_status_id": action.action_status_id,
+            "directory_id": action.directory.id if action.directory is not None else None})
 
-    return {"actions": tab_json}
+    return {"actions": json.dumps(tab_json)}
 
 
 def json_to_download_host_object(json_object):
