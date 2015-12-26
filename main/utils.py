@@ -244,6 +244,14 @@ def json_to_action_object_list(json_array):
     return list_actions
 
 
+def action_object_list_to_json(action_list):
+    tab_json = []
+    for action in action_list:
+        tab_json.append(action.to_update_simple_json())
+
+    return {"actions": tab_json}
+
+
 def json_to_download_host_object(json_object):
     download_host = DownloadHost()
     download_host.id = json_object['id']

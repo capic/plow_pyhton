@@ -30,18 +30,21 @@ class Action:
             str(self.downloadid), str(self.action_type_id), str(self.property_id), str(self.num), self.property_value,
             str(self.action_status_id), self.directory.to_string())
 
+    def to_update_simple_json(self):
+        return json.dumps({
+            "download_id": self.download_id,
+            "action_type_id": self.action_type_id,
+            "property_id": self.property_id,
+            "num": self.num,
+            "property_value": self.property_value,
+            "lifecycle_update_date": self.lifecycle_update_date,
+            "action_status_id": self.action_status_id,
+            "directory_id": self.directory.id if self.directory is not None else None})
+
     def to_update_json(self):
         return {
             "action":
-                json.dumps({
-                    "download_id":  self.download_id,
-                    "action_type_id": self.action_type_id,
-                    "property_id": self.property_id,
-                    "num": self.num,
-                    "property_value": self.property_value,
-                    "lifecycle_update_date": self.lifecycle_update_date,
-                    "action_status_id": self.action_status_id,
-                    "directory_id": self.directory.id if self.directory is not None else None})
+                self.to_update_simple_json()
         }
 
     def to_insert_json(self):
