@@ -702,30 +702,38 @@ class ManageDownload:
                                       actions_list)
 
                 self.action_property_update_in_progress = False
-                self.treatment_update_action_properties(actions_list, 100, 0, None)
+                self.treatment_update_action_properties(download.id, 100, 0, None)
 
-    def treatment_update_action_properties(self, actions_list, percent, time_left, time_elapsed):
+    def treatment_update_action_properties(self, download_id, percent, time_left, time_elapsed):
         utils.log_debug(u'*** treatment_update_action_properties ***')
         actions_list_to_update = []
         if not self.action_property_update_in_progress:
-            action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
-            if action_percent is not None:
+            if percent is not None:
+                action_percent = Action()
+                action_percent.download_id = download_id
+                action_percent.action_type_id = Action.ACTION_MOVE
+                action_percent.property_id = Action.PROPERTY_PERCENTAGE
                 action_percent.property_value = percent
                 action_percent.lifecycle_update_date = datetime.utcnow().isoformat()
                 actions_list_to_update.append(action_percent)
 
-            action_time_left = utils.get_action_by_property(actions_list, Action.PROPERTY_TIME_LEFT)
-            if action_time_left is not None:
+            if time_left is not None:
+                action_time_left = Action()
+                action_time_left.download_id = download_id
+                action_time_left.action_type_id = Action.ACTION_MOVE
+                action_time_left.property_id = Action.PROPERTY_TIME_LEFT
                 action_time_left.property_value = time_left
                 action_time_left.lifecycle_update_date = datetime.utcnow().isoformat()
                 actions_list_to_update.append(action_time_left)
 
             if time_elapsed is not None:
-                action_time_elapsed = utils.get_action_by_property(actions_list, Action.PROPERTY_TIME_ELAPSED)
-                if action_time_elapsed is not None:
-                    action_time_elapsed.property_value = time_elapsed
-                    action_time_elapsed.lifecycle_update_date = datetime.utcnow().isoformat()
-                    actions_list_to_update.append(action_time_elapsed)
+                action_time_elapsed = Action()
+                action_time_elapsed.download_id = download_id
+                action_time_elapsed.action_type_id = Action.ACTION_MOVE
+                action_time_elapsed.property_id = Action.PROPERTY_TIME_ELAPSED
+                action_time_elapsed.property_value = time_elapsed
+                action_time_elapsed.lifecycle_update_date = datetime.utcnow().isoformat()
+                actions_list_to_update.append(action_time_elapsed)
 
             if len(actions_list_to_update) > 0:
                 self.update_action_properties_list(actions_list_to_update[0].download_id,
