@@ -702,9 +702,9 @@ class ManageDownload:
                                       actions_list)
 
                 self.action_property_update_in_progress = False
-                self.treatment_update_action_properties(download.id, 100, 0, None)
+                self.treatment_update_action_properties(download.id, num, 100, 0, None)
 
-    def treatment_update_action_properties(self, download_id, percent, time_left, time_elapsed):
+    def treatment_update_action_properties(self, download_id, num, percent, time_left, time_elapsed):
         utils.log_debug(u'*** treatment_update_action_properties ***')
         actions_list_to_update = []
         if not self.action_property_update_in_progress:
@@ -713,6 +713,7 @@ class ManageDownload:
                 action_percent.download_id = download_id
                 action_percent.action_type_id = Action.ACTION_MOVE
                 action_percent.property_id = Action.PROPERTY_PERCENTAGE
+                action_percent.num = num
                 action_percent.property_value = percent
                 action_percent.lifecycle_update_date = datetime.utcnow().isoformat()
                 actions_list_to_update.append(action_percent)
@@ -722,6 +723,7 @@ class ManageDownload:
                 action_time_left.download_id = download_id
                 action_time_left.action_type_id = Action.ACTION_MOVE
                 action_time_left.property_id = Action.PROPERTY_TIME_LEFT
+                action_time_left.num = num
                 action_time_left.property_value = time_left
                 action_time_left.lifecycle_update_date = datetime.utcnow().isoformat()
                 actions_list_to_update.append(action_time_left)
@@ -731,6 +733,7 @@ class ManageDownload:
                 action_time_elapsed.download_id = download_id
                 action_time_elapsed.action_type_id = Action.ACTION_MOVE
                 action_time_elapsed.property_id = Action.PROPERTY_TIME_ELAPSED
+                action_time_elapsed.num = num
                 action_time_elapsed.property_value = time_elapsed
                 action_time_elapsed.lifecycle_update_date = datetime.utcnow().isoformat()
                 actions_list_to_update.append(action_time_elapsed)
