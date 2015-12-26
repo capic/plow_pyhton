@@ -704,7 +704,7 @@ class ManageDownload:
                 self.action_property_update_in_progress = False
                 self.treatment_update_action_properties(actions_list, 100, 0)
 
-    def treatment_update_action_properties(self, actions_list, percent, time_left):
+    def treatment_update_action_properties(self, actions_list, percent, time_left, time_elapsed):
         utils.log_debug(u'*** treatment_update_action_properties ***')
         if not self.action_property_update_in_progress:
             actions_list_to_update = []
@@ -720,6 +720,12 @@ class ManageDownload:
                 action_time_left.property_value = time_left
                 action_time_left.lifecycle_update_date = datetime.utcnow().isoformat()
                 actions_list_to_update.append(action_time_left)
+
+            action_time_elapsed = utils.get_action_by_property(actions_list, Action.PROPERTY_TIME_ELAPSED)
+            if action_time_elapsed is not None:
+                action_time_elapsed.property_value = time_elapsed
+                action_time_elapsed.lifecycle_update_date = datetime.utcnow().isoformat()
+                actions_list_to_update.append(action_time_elapsed)
 
             if len(actions_list_to_update) > 0:
                 self.update_action_properties_list(actions_list_to_update[0].download_id,

@@ -13,6 +13,8 @@ class Action:
     PROPERTY_DIRECTORY_SRC = 2
     PROPERTY_DIRECTORY_DST = 3
     PROPERTY_TIME_LEFT = 4
+    PROPERTY_TIME_ELAPSED = 5
+    PROPERTY_TIME_TOTAL = 6
 
     def __init__(self):
         self.download_id = None
