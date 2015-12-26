@@ -158,7 +158,7 @@ class ManageDownload:
             # if response.code != 200:
             # utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             # else:
-            #     action_property_returned = utils.json_to_action_object(response.body)
+            # action_property_returned = utils.json_to_action_object(response.body)
         except Exception:
             utils.log_debug("Update action: No database connection")
             import traceback
@@ -183,11 +183,12 @@ class ManageDownload:
                 utils.REST_ADRESSE + 'actions/' + str(download_id) + '/' + str(
                     action_type_id) + '/' + str(num),
                 headers={"Accept": "application/json"},
-                params=utils.action_object_list_to_json(properties_list), callback=update_action_properties_list_callback)
+                params=utils.action_object_list_to_json(properties_list),
+                callback=self.update_action_properties_list_callback)
             # if response.code != 200:
             # utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             # else:
-            #     action_property_returned = utils.json_to_action_object(response.body)
+            # action_property_returned = utils.json_to_action_object(response.body)
         except Exception:
             utils.log_debug("Update action: No database connection")
             import traceback
@@ -697,7 +698,8 @@ class ManageDownload:
                 download.logs = 'File %s exists\r\n' % src_file_path
                 self.update_download_log(download)
 
-                utils.copy_large_file(src_file_path, dst_file_path, self.treatment_update_action_properties, actions_list)
+                utils.copy_large_file(src_file_path, dst_file_path, self.treatment_update_action_properties,
+                                      actions_list)
 
                 self.action_property_update_in_progress = False
                 self.treatment_update_action_properties(actions_list, 100, 0)
@@ -721,7 +723,8 @@ class ManageDownload:
 
             if len(actions_list_to_update) > 0:
                 self.update_action_properties_list(actions_list_to_update[0].download_id,
-                                                   actions_list_to_update[0].action_type_id, actions_list_to_update[0].num,
+                                                   actions_list_to_update[0].action_type_id,
+                                                   actions_list_to_update[0].num,
                                                    actions_list_to_update)
 
     def unrar(self, downloads_list):
