@@ -152,10 +152,10 @@ class ManageDownload:
                     action_property.num),
                 headers={"Accept": "application/json"},
                 params=action_property.to_update_json(), callback='')
-            if response.code != 200:
-                utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
-            else:
-                action_property_returned = utils.json_to_action_object(response.body)
+            # if response.code != 200:
+            #     utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
+            # else:
+            #     action_property_returned = utils.json_to_action_object(response.body)
         except Exception:
             utils.log_debug("Update action: No database connection")
             import traceback
