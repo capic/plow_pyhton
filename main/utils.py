@@ -358,6 +358,9 @@ def copy_large_file(src, dst, properties_treatment=None, actions_list=None):
                         sys.stdout.flush()
                     else:
                         if actions_list is not None:
+                            eststr = 'rem={:>.1f}s, tot={:>.1f}s'.format(est, est1)
+                            log_debug('\r\033[K{:>6.1f}%  {}  {} --> {} '.format(per, eststr, src, dst))
+
                             properties_treatment(actions_list, per, (est1 - est))
 
                     # Read in the next chunk.
