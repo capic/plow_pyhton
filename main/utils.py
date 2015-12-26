@@ -368,13 +368,13 @@ def copy_large_file(src, dst, download_id=None, num=None, status=None, propertie
                     est1 = size * avg_time_per_byte
 
                     if properties_treatment is None:
-                        eststr = 'ela={:>.1f}s rem={:>.1f}s, tot={:>.1f}s'.format(elapsed, est, est1)
+                        eststr = 'ela={:>.1f}s, rem={:>.1f}s, tot={:>.1f}s'.format(elapsed, est, est1)
 
                         # Write out the status.
                         sys.stdout.write('\r\033[K{:>6.1f}%  {}  {} --> {} '.format(per, eststr, src, dst))
                         sys.stdout.flush()
                     else:
-                        eststr = 'rem={:>.1f}s, tot={:>.1f}s'.format(est, est1)
+                        eststr = 'ela={:>.1f}s, rem={:>.1f}s, tot={:>.1f}s'.format(elapsed, est, est1)
                         log_debug('\r\033[K{:>6.1f}%  {}  {} --> {} '.format(per, eststr, src, dst))
 
                         properties_treatment(download_id, num, status, per, (est1 - est), elapsed)
