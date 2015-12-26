@@ -361,7 +361,7 @@ def copy_large_file(src, dst, properties_treatment=None, actions_list=None):
                             eststr = 'rem={:>.1f}s, tot={:>.1f}s'.format(est, est1)
                             log_debug('\r\033[K{:>6.1f}%  {}  {} --> {} '.format(per, eststr, src, dst))
 
-                            properties_treatment(actions_list, per, (est1 - est))
+                            # properties_treatment(actions_list, per, (est1 - est))
 
                     # Read in the next chunk.
                     chunk = ifp.read(chunk_size)
