@@ -151,7 +151,7 @@ class ManageDownload:
                     action_property.action_type_id) + '/' + str(action_property.property_id) + '/' + str(
                     action_property.num),
                 headers={"Accept": "application/json"},
-                params=action_property.to_update_json(), callback=None)
+                params=action_property.to_update_json(), callback='')
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             else:
