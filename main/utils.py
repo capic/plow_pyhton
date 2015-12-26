@@ -304,7 +304,7 @@ def is_this_running(process_name):
         return True
 
 
-def copy_large_file(src, dst):
+def copy_large_file(src, dst, properties_treatment=None, actions_list=None):
     '''
     Copy a large file showing progress.
     '''
@@ -349,11 +349,16 @@ def copy_large_file(src, dst):
                     remaining = size - copied
                     est = remaining * avg_time_per_byte
                     est1 = size * avg_time_per_byte
-                    eststr = 'rem={:>.1f}s, tot={:>.1f}s'.format(est, est1)
 
-                    # Write out the status.
-                    sys.stdout.write('\r\033[K{:>6.1f}%  {}  {} --> {} '.format(per, eststr, src, dst))
-                    sys.stdout.flush()
+                    if properties_treatment is None:
+                        eststr = 'rem={:>.1f}s, tot={:>.1f}s'.format(est, est1)
+
+                        # Write out the status.
+                        sys.stdout.write('\r\033[K{:>6.1f}%  {}  {} --> {} '.format(per, eststr, src, dst))
+                        sys.stdout.flush()
+                    else:
+                        if actions_list is not None:
+                            properties_treatment(actions_list, per, (est1 - est))
 
                     # Read in the next chunk.
                     chunk = ifp.read(chunk_size)

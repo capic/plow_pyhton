@@ -117,13 +117,9 @@ class Treatment:
         utils.log_debug(u'*** move_file ***')
 
         download = self.manage_download.get_download_by_id(download_id)
-        actions_list = self.manage_download.get_actions(download_id, Action.ACTION_MOVE, num)
 
-        if download is not None and actions_list is not None and len(actions_list) > 0:
-            download.status = Download.STATUS_MOVING
-            # TODO: le statut de l'action
-
-            self.manage_download.move_file(actions_list, download)
+        if download is not None:
+            self.manage_download.move_file(download)
         else:
             utils.log_debug(u"ERROR: download or directory are None")
             print("#ERROR: download or directory are None#")

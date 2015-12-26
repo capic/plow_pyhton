@@ -643,67 +643,42 @@ class ManageDownload:
 
             utils.log_debug(traceback.format_exc())
 
-    def move_file(self, actions_list, download):
+    def move_file(self, download):
         utils.log_debug(u'*** move_file ***')
 
-        action_directory_src = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_SRC)
-        src_file_path = os.path.join(action_directory_src.directory.path, download.name)
+        actions_list = self.manage_download.get_actions(download_id, Action.ACTION_MOVE, num)
+        if actions_list is not None and len(actions_list) > 0:
+            download.status = Download.STATUS_MOVING
+            # TODO: le statut de l'action
+            action_directory_src = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_SRC)
+            src_file_path = os.path.join(action_directory_src.directory.path, download.name)
 
-        action_directory_dst = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_DST)
-        dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
-        download.logs = 'Move file in progress, from %s to %s\r\n' % (
-            src_file_path, action_directory_dst.directory.path)
+            action_directory_dst = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_DST)
+            dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
+            download.logs = 'Move file in progress, from %s to %s\r\n' % (
+                src_file_path, action_directory_dst.directory.path)
 
-        self.update_download(download)
+            self.update_download(download)
 
-        if os.path.isfile(src_file_path):
-            utils.log_debug(u'downloaded file exists')
-            download.logs = 'File %s exists\r\n' % src_file_path
-            self.update_download_log(download)
-
-            action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
-
-            if not utils.is_this_running(
-                            "[p]ymv -g \"%s\" \"%s\"" % (src_file_path, action_directory_dst.directory.path)):
-                cmd = (
-                    self.COMMAND_MOVE % (
-                        src_file_path, action_directory_dst.directory.path))
-                download.logs += 'Command: %s\r\n' % cmd
+            if os.path.isfile(src_file_path):
+                utils.log_debug(u'downloaded file exists')
+                download.logs = 'File %s exists\r\n' % src_file_path
                 self.update_download_log(download)
-                utils.log_debug(u'command : %s' % cmd)
-                # p = subprocess.Popen(cmd, shell=True, stderr=subprocess.STDOUT, env=dict(COLUMNS='80', LINES='25'))
-                #
-                # action_percent.property_value = 0
-                # self.update_action_property(action_percent)
-                #
-                # line = ''
-                # while True:
-                # out = p.stdout.read(1)
-                # if out == '' and p.poll() is not None:
-                # break
-                # if out != '':
-                #         if out != '\n' and out != '\r':
-                #             line += out
-                #         else:
-                #             print('Line %s' % line)
-                # download.logs = line
-                # values = line.split()
-                # if len(values) > 1:
-                # percent = values[int(len(values) - 1)]
-                # print('percent ' + percent)
-                # self.update_download_package_unrar_percent(download.package.id, percent)
-                #
-                # self.update_download_log(download)
 
-                utils.copy_large_file(src_file_path, dst_file_path)
-            else:
-                download.to_move_directory = None
-                download.status = Download.STATUS_ERROR_MOVING
-                download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
-                self.update_download(download)
+                utils.copy_large_file(src_file_path, dst_file_path, self.update_action_properties, actions_list)
 
-                utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
-                print("#ERROR: File %s does not exists#" % src_file_path)
+    def update_action_properties(self, actions_list, percent, time_left):
+        action_percent = utils.get_action_by_property(actions_list, Action.PROPERTY_PERCENTAGE)
+
+        if action_percent is not None:
+            action_percent.property_value = percent
+            self.update_action_property(action_percent)
+
+        action_time_left = utils.get_action_by_property(actions_list, Action.PROPERTY_TIME_LEFT)
+        if action_time_left is not None:
+            action_time_left.property_value = time_left
+            self.update_action_property(action_time_left)
+
 
     def unrar(self, downloads_list):
         utils.log_debug(u'*** unrar ***')
