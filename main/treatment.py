@@ -119,7 +119,7 @@ class Treatment:
         download = self.manage_download.get_download_by_id(download_id)
 
         if download is not None:
-            self.manage_download.move_file(download)
+            self.manage_download.move_file(download, num)
         else:
             utils.log_debug(u"ERROR: download or directory are None")
             print("#ERROR: download or directory are None#")
