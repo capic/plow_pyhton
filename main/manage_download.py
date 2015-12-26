@@ -698,7 +698,8 @@ class ManageDownload:
                 download.logs = 'File %s exists\r\n' % src_file_path
                 self.update_download_log(download)
 
-                utils.copy_large_file(src_file_path, dst_file_path, self.treatment_update_action_properties)
+                utils.copy_large_file(src_file_path, dst_file_path, download.id, num,
+                                      self.treatment_update_action_properties)
 
                 self.action_property_update_in_progress = False
                 self.treatment_update_action_properties(download.id, num, 100, 0, None)
