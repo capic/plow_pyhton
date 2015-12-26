@@ -646,7 +646,7 @@ class ManageDownload:
     def move_file(self, download):
         utils.log_debug(u'*** move_file ***')
 
-        actions_list = self.manage_download.get_actions(download_id, Action.ACTION_MOVE, num)
+        actions_list = self.get_actions(download_id, Action.ACTION_MOVE, num)
         if actions_list is not None and len(actions_list) > 0:
             download.status = Download.STATUS_MOVING
             # TODO: le statut de l'action
