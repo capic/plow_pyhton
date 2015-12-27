@@ -682,7 +682,7 @@ class ManageDownload:
         actions_list = self.get_actions(download.id, Action.ACTION_MOVE, num)
         if actions_list is not None and len(actions_list) > 0:
             download.status = Download.STATUS_MOVING
-            # TODO: le statut de l'action
+
             action_directory_src = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_SRC)
             src_file_path = os.path.join(action_directory_src.directory.path, download.name)
 
@@ -703,6 +703,8 @@ class ManageDownload:
 
                 self.action_property_update_in_progress = False
                 self.treatment_update_action_properties(download.id, num, Action.STATUS_IN_PROGRESS, 100, 0, None)
+                download.status = Download.STATUS_MOVED
+                self.update_download(download)
 
     def treatment_update_action_properties(self, download_id, num, status, percent, time_left, time_elapsed):
         utils.log_debug(u'*** treatment_update_action_properties ***')
