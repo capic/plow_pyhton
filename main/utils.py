@@ -153,11 +153,26 @@ def find_element_by_attribute_in_object_array(array, attribute_to_find, value_to
     return returned
 
 
-def update_element_by_attribute_in_object_array(array, attribute_to_find, value_to_find, attribute_to_change, value_to_change):
+def change_element_by_attribute_in_object_array(array, attribute_to_find, value_to_find, attribute_to_change, value_to_change):
+    found = False
+
     for x in array:
         if getattr(x, attribute_to_find) == value_to_find:
             setattr(x, attribute_to_change, value_to_change)
+            found = True
             break
+
+    return found
+
+
+def change_action_property(action, attribute_to_find, value_to_find, attribute_to_change, value_to_change):
+    found = change_element_by_attribute_in_object_array(action.properties, attribute_to_find, value_to_find, attribute_to_change, value_to_change)
+    if found is False:
+        prop = Property()
+        prop.action_id = action.id
+        prop.property_id = value_to_find
+        prop.property_value = value_to_change
+        action.properties.append(prop)
 
 
 def json_to_download_object(json_object):
