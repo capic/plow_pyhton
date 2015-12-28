@@ -668,7 +668,7 @@ class ManageDownload:
 
                 # TODO: il faut mettre au statut finished tous les elements
                 self.action_update_in_progress = False
-                self.treatment_update_action_properties(download.id, num, Action.STATUS_FINISHED, 100, 0, None)
+                self.treatment_update_action(download.id, Action.STATUS_FINISHED, 100, 0, None)
                 download.status = Download.STATUS_MOVED
                 self.update_download(download)
 
