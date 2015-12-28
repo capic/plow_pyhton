@@ -150,6 +150,7 @@ class ManageDownload:
 
         self.action_update_in_progress = True
 
+        action.lifecycle_update_date = datetime.utcnow().isoformat()
         try:
             unirest.put(
                 utils.REST_ADRESSE + 'actions/' + str(action.id),
