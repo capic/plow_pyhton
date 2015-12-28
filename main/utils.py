@@ -142,14 +142,22 @@ def clean_string_console(string):
     return string
 
 
-def find_element_by_attribute_in_object_array(array, attribute, value):
+def find_element_by_attribute_in_object_array(array, attribute_to_find, value_to_find):
     returned = None
 
     for x in array:
-        if getattr(x, attribute) == value:
+        if getattr(x, attribute_to_find) == value_to_find:
             returned = x
+            break
 
     return returned
+
+
+def update_element_by_attribute_in_object_array(array, attribute_to_find, value_to_find, attribute_to_change, value_to_change):
+    for x in array:
+        if getattr(x, attribute_to_find) == value_to_find:
+            setattr(x, attribute_to_change, value_to_change)
+            break
 
 
 def json_to_download_object(json_object):

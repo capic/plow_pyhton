@@ -678,13 +678,13 @@ class ManageDownload:
         action_returned = None
         if not self.action_update_in_progress:
             if percent is not None:
-                utils.update_element_by_attribute_in_object_array(action.properties, 'property_value', Action.PROPERTY_PERCENTAGE, percent)
+                utils.update_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_PERCENTAGE, 'property_value', percent)
 
             if time_left is not None:
-                utils.update_element_by_attribute_in_object_array(action.properties, 'property_value', Action.PROPERTY_TIME_LEFT, time_left)
+                utils.update_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_TIME_LEFT, 'property_value', time_left)
 
             if time_elapsed is not None:
-                utils.update_element_by_attribute_in_object_array(action.properties, 'property_value', Action.PROPERTY_TIME_ELAPSED, time_elapsed)
+                utils.update_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_TIME_ELAPSED, 'property_value', time_elapsed)
 
             if status is not None:
                 action.action_status_id = status
