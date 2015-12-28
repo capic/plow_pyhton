@@ -648,10 +648,10 @@ class ManageDownload:
         if action is not None:
             download.status = Download.STATUS_MOVING
 
-            action_directory_src = utils.find_element_by_attribute_in_object_array(action.properties, 'id', Action.PROPERTY_DIRECTORY_SRC)
+            action_directory_src = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_SRC)
             src_file_path = os.path.join(action_directory_src.directory.path, download.name)
 
-            action_directory_dst = utils.find_element_by_attribute_in_object_array(action.properties, 'id', Action.PROPERTY_DIRECTORY_DST)
+            action_directory_dst = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_DST)
             dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
             download.logs = 'Move file in progress, from %s to %s\r\n' % (
                 src_file_path, action_directory_dst.directory.path)
