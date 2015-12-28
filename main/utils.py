@@ -286,20 +286,23 @@ def json_to_action_object(json_object):
     return action
 
 
-def action_object_list_to_json(action_list):
-    tab_json = []
-    for action in action_list:
-        tab_json.append({
-            "download_id": action.download_id,
-            "action_type_id": action.action_type_id,
-            "property_id": action.property_id,
-            "num": action.num,
-            "property_value": action.property_value,
-            "lifecycle_update_date": action.lifecycle_update_date,
-            "action_status_id": action.action_status_id,
-            "directory_id": action.directory.id if action.directory is not None else None})
+def action_object_to_update_json(action_object):
+    tab_properties = []
 
-    return {"actions": json.dumps(tab_json)}
+    for prop in action_object.properties:
+        tab_properties.append({
+            "action_id": prop.action_id,
+            "property_id": prop.property_id,
+            "property_value": prop.property_value
+        })
+
+    action = {
+        "lifecycle_update_date": action_object.lifecycle_update_date,
+        "action_status_id": action_object.action_status_id,
+        "action_has_properties": tab_properties
+    }
+
+    return {"action": json.dumps(action)}
 
 
 def json_to_download_host_object(json_object):

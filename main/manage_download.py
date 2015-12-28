@@ -142,8 +142,7 @@ class ManageDownload:
                 print(traceback.format_exc())
 
     def update_action_callback(self, response):
-        utils.log_debug(u'*** update_action_properties_list_callback ***')
-
+        utils.log_debug(u'*** update_action_callback ***')
         self.action_update_in_progress = False
 
     def update_action(self, action):
@@ -155,7 +154,7 @@ class ManageDownload:
             unirest.put(
                 utils.REST_ADRESSE + 'actions/' + str(action.id),
                 headers={"Accept": "application/json"},
-                params=action.to_update_json(),
+                params=utils.action_object_to_update_json(action),
                 callback=self.update_action_callback)
             # if response.code != 200:
             # utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
