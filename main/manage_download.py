@@ -32,7 +32,7 @@ class ManageDownload:
 
     def __init__(self):
         unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
-        self.action_property_update_in_progress = False
+        self.action_update_in_progress = False
 
     def insert_download(self, download):
         utils.log_debug(u'  *** insert_download ***')
@@ -141,50 +141,22 @@ class ManageDownload:
 
                 print(traceback.format_exc())
 
-    def update_action_property(self, action_property):
-        utils.log_debug(u'*** update_action_property ***')
-
-        action_property_returned = None
-
-        action_property.lifecycle_update_date = datetime.utcnow().isoformat()
-
-        try:
-            response = unirest.put(
-                utils.REST_ADRESSE + 'actions/' + str(action_property.download_id) + '/' + str(
-                    action_property.action_type_id) + '/' + str(action_property.property_id) + '/' + str(
-                    action_property.num),
-                headers={"Accept": "application/json"},
-                params=action_property.to_update_json(), callback='')
-            # if response.code != 200:
-            # utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
-            # else:
-            # action_property_returned = utils.json_to_action_object(response.body)
-        except Exception:
-            utils.log_debug("Update action: No database connection")
-            import traceback
-
-            print(traceback.format_exc())
-
-        return action_property_returned
-
-    def update_action_properties_list_callback(self, response):
+    def update_action_callback(self, response):
         utils.log_debug(u'*** update_action_properties_list_callback ***')
 
-        self.action_property_update_in_progress = False
+        self.action_update_in_progress = False
 
-    def update_action_properties_list(self, download_id, action_type_id, num, properties_list):
-        utils.log_debug(u'*** update_action_properties_list ***')
+    def update_action(self, action):
+        utils.log_debug(u'*** update_action ***')
 
-        action_property_returned = None
-        self.action_property_update_in_progress = True
+        self.action_update_in_progress = True
 
         try:
-            response = unirest.put(
-                utils.REST_ADRESSE + 'actions/' + str(download_id) + '/' + str(
-                    action_type_id) + '/' + str(num),
+            unirest.put(
+                utils.REST_ADRESSE + 'actions/' + str(action.id),
                 headers={"Accept": "application/json"},
-                params=utils.action_object_list_to_json(properties_list),
-                callback=self.update_action_properties_list_callback)
+                params=action.to_update_json(),
+                callback=self.update_action_callback)
             # if response.code != 200:
             # utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
             # else:
@@ -195,7 +167,6 @@ class ManageDownload:
 
             print(traceback.format_exc())
 
-        return action_property_returned
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
@@ -266,20 +237,17 @@ class ManageDownload:
 
         return directory
 
-    def get_actions(self, download_id, action_type_id, num):
+    def get_action(self, action_id):
         utils.log_debug(u'*** get_action ***')
-        actions_list = None
+        action = None
 
-        if download_id is not None and action_type_id is not None and num is not None:
+        if action_id is not None:
             try:
-                response = unirest.get(utils.REST_ADRESSE + 'actions',
-                                       params={"download_id": download_id, "action_type_id": action_type_id,
-                                               "num": num},
+                response = unirest.get(utils.REST_ADRESSE + 'actions/' + str(action_id),
                                        headers={"Accept": "application/json"})
 
-                actions_list = []
                 if response.code == 200:
-                    actions_list = utils.json_to_action_object_list(response.body)
+                    action = utils.json_to_action_objec(response.body)
                 else:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
             except Exception:
@@ -287,13 +255,10 @@ class ManageDownload:
                 import traceback
 
                 print(traceback.format_exc())
-
-            if len(actions_list) == 0:
-                logging.info('No actions found  %s' % actions_list)
         else:
             logging.error('Id is none')
 
-        return actions_list
+        return action
 
     def get_download_by_link_file_path(self, link, file_path):
         utils.log_debug(u'   *** get_download_by_link_file_path ***')
@@ -676,17 +641,17 @@ class ManageDownload:
 
             utils.log_debug(traceback.format_exc())
 
-    def move_file(self, download, num):
+    def move_file(self, download, action_id):
         utils.log_debug(u'*** move_file ***')
 
-        actions_list = self.get_actions(download.id, Action.ACTION_MOVE, num)
-        if actions_list is not None and len(actions_list) > 0:
+        action = self.get_action(action_id)
+        if action is not None:
             download.status = Download.STATUS_MOVING
 
-            action_directory_src = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_SRC)
+            action_directory_src = utils.find_element_by_attribute_in_object_array(action.properties, 'id', Action.PROPERTY_DIRECTORY_SRC)
             src_file_path = os.path.join(action_directory_src.directory.path, download.name)
 
-            action_directory_dst = utils.get_action_by_property(actions_list, Action.PROPERTY_DIRECTORY_DST)
+            action_directory_dst = utils.find_element_by_attribute_in_object_array(action.properties, 'id', Action.PROPERTY_DIRECTORY_DST)
             dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
             download.logs = 'Move file in progress, from %s to %s\r\n' % (
                 src_file_path, action_directory_dst.directory.path)
@@ -698,60 +663,35 @@ class ManageDownload:
                 download.logs = 'File %s exists\r\n' % src_file_path
                 self.update_download_log(download)
 
-                utils.copy_large_file(src_file_path, dst_file_path, download.id, num, Action.STATUS_IN_PROGRESS,
-                                      self.treatment_update_action_properties)
+                utils.copy_large_file(src_file_path, dst_file_path, action, Action.STATUS_IN_PROGRESS,
+                                      self.treatment_update_action)
 
-                self.action_property_update_in_progress = False
-                self.treatment_update_action_properties(download.id, num, Action.STATUS_IN_PROGRESS, 100, 0, None)
+                # TODO: il faut mettre au statut finished tous les elements
+                self.action_update_in_progress = False
+                self.treatment_update_action_properties(download.id, num, Action.STATUS_FINISHED, 100, 0, None)
                 download.status = Download.STATUS_MOVED
                 self.update_download(download)
 
-    def treatment_update_action_properties(self, download_id, num, status, percent, time_left, time_elapsed):
-        utils.log_debug(u'*** treatment_update_action_properties ***')
-        utils.log_debug(u'parameters: %s, %s, %s, %s, %s' % (
-            str(download_id), str(num), str(percent), str(time_left), str(time_elapsed)))
-        actions_list_to_update = []
-        if not self.action_property_update_in_progress:
+    def treatment_update_action(self, action, status, percent, time_left, time_elapsed):
+        utils.log_debug(u'*** treatment_update_action ***')
+
+        action_returned = None
+        if not self.action_update_in_progress:
             if percent is not None:
-                action_percent = Action()
-                action_percent.download_id = download_id
-                action_percent.action_type_id = Action.ACTION_MOVE
-                action_percent.property_id = Action.PROPERTY_PERCENTAGE
-                action_percent.num = num
-                action_percent.property_value = percent
-                action_percent.lifecycle_update_date = datetime.utcnow().isoformat()
-                action_percent.action_status_id = status
-                actions_list_to_update.append(action_percent)
+                utils.update_element_by_attribute_in_object_array(action.properties, 'property_value', Action.PROPERTY_PERCENTAGE, percent)
 
             if time_left is not None:
-                action_time_left = Action()
-                action_time_left.download_id = download_id
-                action_time_left.action_type_id = Action.ACTION_MOVE
-                action_time_left.property_id = Action.PROPERTY_TIME_LEFT
-                action_time_left.num = num
-                action_time_left.property_value = time_left
-                action_time_left.lifecycle_update_date = datetime.utcnow().isoformat()
-                action_time_left.action_status_id = status
-                actions_list_to_update.append(action_time_left)
+                utils.update_element_by_attribute_in_object_array(action.properties, 'property_value', Action.PROPERTY_TIME_LEFT, time_left)
 
             if time_elapsed is not None:
-                action_time_elapsed = Action()
-                action_time_elapsed.download_id = download_id
-                action_time_elapsed.action_type_id = Action.ACTION_MOVE
-                action_time_elapsed.property_id = Action.PROPERTY_TIME_ELAPSED
-                action_time_elapsed.num = num
-                action_time_elapsed.property_value = time_elapsed
-                action_time_elapsed.lifecycle_update_date = datetime.utcnow().isoformat()
-                action_time_elapsed.action_status_id = status
-                actions_list_to_update.append(action_time_elapsed)
+                utils.update_element_by_attribute_in_object_array(action.properties, 'property_value', Action.PROPERTY_TIME_ELAPSED, time_elapsed)
 
-            if len(actions_list_to_update) > 0:
-                self.update_action_properties_list(actions_list_to_update[0].download_id,
-                                                   actions_list_to_update[0].action_type_id,
-                                                   actions_list_to_update[0].num,
-                                                   actions_list_to_update)
+            if status is not None:
+                action.action_status_id = status
 
-        return actions_list_to_update
+            self.update_action(action)
+
+        return action_returned
 
     def unrar(self, downloads_list):
         utils.log_debug(u'*** unrar ***')

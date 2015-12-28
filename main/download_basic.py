@@ -129,8 +129,8 @@ def main(argv):
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 2:
                 download_id = args[1]
-                num = args[2]
-                treatment.move_file(download_id, num)
+                action_id = args[2]
+                treatment.move_file(download_id, action_id)
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'unrar':

@@ -18,51 +18,42 @@ class Action:
 
     STATUS_WAITING = 1
     STATUS_IN_PROGRESS = 2
+    STATUS_FINISHED = 3
 
     def __init__(self):
-        self.download_id = None
-        self.action_type_id = None
-        self.property_id = None
-        self.num = None
-        self.property_value = None
+        self.id = None
         self.lifecycle_insert_date = None
         self.lifecycle_update_date = None
+        self.download_id = None
         self.action_status_id = None
-        self.directory = None
+        self.action_type_id = None
+        self.properties = None
 
     def to_string(self):
-        return 'download_id: %s | action_type_id: %s | property_id: %s | num: %s | property_value: %s | action_status_id: %s | directory_id: %s' % (
-            str(self.downloadid), str(self.action_type_id), str(self.property_id), str(self.num), self.property_value,
-            str(self.action_status_id), self.directory.to_string())
-
-    def to_update_simple_json(self):
-        return json.dumps({
-            "download_id": self.download_id,
-            "action_type_id": self.action_type_id,
-            "property_id": self.property_id,
-            "num": self.num,
-            "property_value": self.property_value,
-            "lifecycle_update_date": self.lifecycle_update_date,
-            "action_status_id": self.action_status_id,
-            "directory_id": self.directory.id if self.directory is not None else None})
+        return 'id: %s | download_id: %s | action_status_id: %s | action_type_id: %s ' % (
+            str(self.id), str(self.download_id), str(self.action_status_id), str(self.action_type_id))
 
     def to_update_json(self):
         return {
             "action":
-                self.to_update_simple_json()
-        }
-
-    def to_insert_json(self):
-        return {
-            "action":
                 json.dumps({
-                    "download_id": self.download_id,
-                    "action_type_id": self.action_type_id,
-                    "property_id": self.property_id,
-                    "num": self.num,
-                    "property_value": self.property_value,
-                    "lifecycle_insert_date": self.lifecycle_insert_date,
+                    "id": self.id,
                     "lifecycle_update_date": self.lifecycle_update_date,
                     "action_status_id": self.action_status_id,
-                    "directory_id": self.directory.id if self.directory is not None else None})
+                    "action_has_properties": self.properties})
         }
+
+    # def to_insert_json(self):
+    #     return {
+    #         "action":
+    #             json.dumps({
+    #                 "download_id": self.download_id,
+    #                 "action_type_id": self.action_type_id,
+    #                 "property_id": self.property_id,
+    #                 "num": self.num,
+    #                 "property_value": self.property_value,
+    #                 "lifecycle_insert_date": self.lifecycle_insert_date,
+    #                 "lifecycle_update_date": self.lifecycle_update_date,
+    #                 "action_status_id": self.action_status_id,
+    #                 "directory_id": self.directory.id if self.directory is not None else None})
+    #     }

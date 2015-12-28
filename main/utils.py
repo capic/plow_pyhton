@@ -10,6 +10,7 @@ from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
 from bean.downloadHostBean import DownloadHost
 from bean.actionBean import Action
+from bean.propertyBean import Property
 import logging
 import os
 import sys
@@ -141,6 +142,16 @@ def clean_string_console(string):
     return string
 
 
+def find_element_by_attribute_in_object_array(array, attribute, value):
+    returned = None
+
+    for x in array:
+        if getattr(x, attribute) == value:
+            returned = x
+
+    return returned
+
+
 def json_to_download_object(json_object):
     download = Download()
     download.id = json_object['id']
@@ -216,33 +227,40 @@ def json_to_download_directory_object(json_object):
     return download_directory
 
 
-def json_to_action_object(json_object):
-    action = Action()
-    action.download_id = json_object['download_id']
-    action.action_type_id = json_object['action_type_id']
-    action.property_id = json_object['property_id']
-    action.num = json_object['num']
-    action.property_value = json_object['property_value']
-    action.lifecycle_insert_date = json_object['lifecycle_insert_date']
-    action.lifecycle_update_date = json_object['lifecycle_update_date']
-    action.action_status_id = json_object['action_status_id']
+def json_to_property_object(json_object):
+    property_ = Property()
+    property_.action_id = json_object['action_id']
+    property_.property_id = json_object['property_id']
+    property_.property_value = json_object['property_value']
     if json_object['directory_id']:
-        directory = json_to_download_directory_object(json_object['directory'])
+        property_.directory = json_to_download_directory_object(json_object['directory'])
     else:
-        directory = None
-    action.directory = directory
+        property_.directory = None
 
-    return action
+    return property_
 
 
-def json_to_action_object_list(json_array):
-    list_actions = []
+def json_to_property_object_list(json_array):
+    list_properties = []
 
     for json_object in json_array:
-        action = json_to_action_object(json_object)
-        list_actions.append(action)
+        property_ = json_to_property_object(json_object)
+        list_properties.append(property_)
 
-    return list_actions
+    return list_properties
+
+
+def json_to_action_object(json_object):
+    action = Action()
+    action.id = json_object['id']
+    action.lifecycle_insert_date = json_object['lifecycle_insert_date']
+    action.lifecycle_update_date = json_object['lifecycle_update_date']
+    action.download_id = json_object['download_id']
+    action.action_status_id = json_object['action_status_id']
+    action.action_type_id = json_object['action_type_id']
+    action.properties = json_to_property_object_list(json_object['action_has_properties'])
+
+    return action
 
 
 def action_object_list_to_json(action_list):
@@ -321,7 +339,7 @@ def is_this_running(process_name):
         return True
 
 
-def copy_large_file(src, dst, download_id=None, num=None, status=None, properties_treatment=None):
+def copy_large_file(src, dst, action=None, status=None, properties_treatment=None):
     '''
     Copy a large file showing progress.
     '''
@@ -377,7 +395,7 @@ def copy_large_file(src, dst, download_id=None, num=None, status=None, propertie
                         eststr = 'ela={:>.1f}s, rem={:>.1f}s, tot={:>.1f}s'.format(elapsed, est, est1)
                         log_debug('\r\033[K{:>6.1f}%  {}  {} --> {} '.format(per, eststr, src, dst))
 
-                        properties_treatment(download_id, num, status, per, (est1 - est), elapsed)
+                        properties_treatment(action, status, per, (est1 - est), elapsed)
 
                     # Read in the next chunk.
                     chunk = ifp.read(chunk_size)
