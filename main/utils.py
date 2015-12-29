@@ -297,6 +297,8 @@ def action_object_to_update_json(action_object):
         })
 
     action = {
+        "id": action_object.id,
+        "download_id": action_object.download_id,
         "lifecycle_update_date": action_object.lifecycle_update_date,
         "action_status_id": action_object.action_status_id,
         "action_has_properties": tab_properties
