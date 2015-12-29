@@ -293,14 +293,17 @@ def action_object_to_update_json(action_object):
         tab_properties.append({
             "action_id": prop.action_id,
             "property_id": prop.property_id,
-            "property_value": prop.property_value
+            "property_value": prop.property_value,
+            "directory_id": prop.directory.id if prop.directory is not None else None
         })
 
     action = {
         "id": action_object.id,
         "download_id": action_object.download_id,
+        "lifecycle_insert_date": action_object.lifecycle_insert_date,
         "lifecycle_update_date": action_object.lifecycle_update_date,
         "action_status_id": action_object.action_status_id,
+        "action_type_id": action_object.action_type_id,
         "action_has_properties": tab_properties
     }
 
