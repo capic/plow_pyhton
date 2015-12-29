@@ -648,20 +648,15 @@ class ManageDownload:
             download = self.get_download_by_id(download_id)
 
             if download is not None:
-                download.status = Download.STATUS_MOVING
-
                 action_directory_src = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_SRC)
                 src_file_path = os.path.join(action_directory_src.directory.path, download.name)
 
                 action_directory_dst = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_DST)
                 dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
-                download.logs = 'Move file in progress, from %s to %s\r\n' % (
-                    src_file_path, action_directory_dst.directory.path)
-
-                self.update_download(download)
 
                 if os.path.isfile(src_file_path):
                     utils.log_debug(u'downloaded file exists')
+                    download.status = Download.STATUS_MOVING
                     download.logs = 'File %s exists\r\n' % src_file_path
                     self.update_download_log(download)
 
