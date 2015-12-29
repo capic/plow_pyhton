@@ -119,7 +119,7 @@ class Treatment:
 
         if action is not None:
             if action.action_type_id == Action.ACTION_MOVE:
-                self.manage_download.move_file(download_id, action_id)
+                self.manage_download.move_file(download_id, action)
         else:
             utils.log_debug(u'Action is none')
 
