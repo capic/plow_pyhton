@@ -665,14 +665,20 @@ class ManageDownload:
                     download.logs = 'File %s exists\r\n' % src_file_path
                     self.update_download_log(download)
 
-                    utils.copy_large_file(src_file_path, dst_file_path, action, Action.STATUS_IN_PROGRESS,
-                                          self.treatment_update_action)
+                    try:
+                        utils.copy_large_file(src_file_path, dst_file_path, action, Action.STATUS_IN_PROGRESS,
+                                              self.treatment_update_action)
 
-                    self.action_update_in_progress = False
-                    self.treatment_update_action(action, Action.STATUS_FINISHED, 100, 0, None)
-                    download.status = Download.STATUS_MOVED
-                    download.directory = action_directory_dst.directory
-                    self.update_download(download)
+                        self.action_update_in_progress = False
+                        self.treatment_update_action(action, Action.STATUS_FINISHED, 100, 0, None)
+                        download.status = Download.STATUS_MOVED
+                        download.directory = action_directory_dst.directory
+                        self.update_download(download)
+                    except Exception:
+                        import traceback
+                        utils.log_debug(traceback.format_exc())
+                        download.status = Download.STATUS_ERROR_MOVING
+                        self.update_download(download)
             else:
                 utils.log_debug(u'Download is none')
         else:
