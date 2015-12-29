@@ -248,7 +248,7 @@ class ManageDownload:
                                        headers={"Accept": "application/json"})
 
                 if response.code == 200:
-                    utils.log(u'Action got: %s' % response.body)
+                    utils.log_debug(u'Action got: %s' % response.body)
                     action = utils.json_to_action_object(response.body)
                 else:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
