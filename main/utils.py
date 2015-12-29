@@ -426,6 +426,9 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
                     # Read in the next chunk.
                     chunk = ifp.read(chunk_size)
 
+                if copied == size:
+                    os.remove(src)
+
     except IOError as obj:
         print('\nERROR: {}'.format(obj))
         sys.exit(1)
