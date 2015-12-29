@@ -645,7 +645,7 @@ class ManageDownload:
         utils.log_debug(u'*** move_file ***')
 
         if action is not None:
-            download = self.manage_download.get_download_by_id(download_id)
+            download = self.get_download_by_id(download_id)
 
             if download is not None:
                 download.status = Download.STATUS_MOVING
