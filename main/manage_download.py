@@ -641,36 +641,42 @@ class ManageDownload:
 
             utils.log_debug(traceback.format_exc())
 
-    def move_file(self, download, action_id):
+    def move_file(self, download_id, action):
         utils.log_debug(u'*** move_file ***')
 
-        action = self.get_action(action_id)
         if action is not None:
-            download.status = Download.STATUS_MOVING
+            download = self.manage_download.get_download_by_id(download_id)
 
-            action_directory_src = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_SRC)
-            src_file_path = os.path.join(action_directory_src.directory.path, download.name)
+            if download is not None:
+                download.status = Download.STATUS_MOVING
 
-            action_directory_dst = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_DST)
-            dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
-            download.logs = 'Move file in progress, from %s to %s\r\n' % (
-                src_file_path, action_directory_dst.directory.path)
+                action_directory_src = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_SRC)
+                src_file_path = os.path.join(action_directory_src.directory.path, download.name)
 
-            self.update_download(download)
+                action_directory_dst = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_DST)
+                dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
+                download.logs = 'Move file in progress, from %s to %s\r\n' % (
+                    src_file_path, action_directory_dst.directory.path)
 
-            if os.path.isfile(src_file_path):
-                utils.log_debug(u'downloaded file exists')
-                download.logs = 'File %s exists\r\n' % src_file_path
-                self.update_download_log(download)
-
-                utils.copy_large_file(src_file_path, dst_file_path, action, Action.STATUS_IN_PROGRESS,
-                                      self.treatment_update_action)
-
-                self.action_update_in_progress = False
-                self.treatment_update_action(action, Action.STATUS_FINISHED, 100, 0, None)
-                download.status = Download.STATUS_MOVED
-                download.directory = action_directory_dst.directory
                 self.update_download(download)
+
+                if os.path.isfile(src_file_path):
+                    utils.log_debug(u'downloaded file exists')
+                    download.logs = 'File %s exists\r\n' % src_file_path
+                    self.update_download_log(download)
+
+                    utils.copy_large_file(src_file_path, dst_file_path, action, Action.STATUS_IN_PROGRESS,
+                                          self.treatment_update_action)
+
+                    self.action_update_in_progress = False
+                    self.treatment_update_action(action, Action.STATUS_FINISHED, 100, 0, None)
+                    download.status = Download.STATUS_MOVED
+                    download.directory = action_directory_dst.directory
+                    self.update_download(download)
+            else:
+                utils.log_debug(u'Download is none')
+        else:
+            utils.log_debug(u'Action is none')
 
     def treatment_update_action(self, action, status, percent, time_left, time_elapsed):
         utils.log_debug(u'*** treatment_update_action ***')

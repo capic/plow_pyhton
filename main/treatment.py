@@ -113,16 +113,15 @@ class Treatment:
         download = self.manage_download.get_download_by_id(download_id)
         self.manage_download.move_download(download)
 
-    def move_file(self, download_id, action_id):
-        utils.log_debug(u'*** move_file ***')
+    def action(self, download_id, action_id):
+        utils.log_debug(u'*** action ***')
+        action = self.manage_download.get_action(action_id)
 
-        download = self.manage_download.get_download_by_id(download_id)
-
-        if download is not None:
-            self.manage_download.move_file(download, action_id)
+        if action is not None:
+            if action.action_type_id == Action.ACTION_MOVE:
+                self.manage_download.move_file(download_id, action_id)
         else:
-            utils.log_debug(u"ERROR: download or directory are None")
-            print("#ERROR: download or directory are None#")
+            utils.log_debug(u'Action is none')
 
     def start_multi_downloads(self, file_path):
         # utils.log_debug(u'*** start_file_treatment ***')
