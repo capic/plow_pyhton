@@ -666,10 +666,10 @@ class ManageDownload:
                 utils.copy_large_file(src_file_path, dst_file_path, action, Action.STATUS_IN_PROGRESS,
                                       self.treatment_update_action)
 
-                # TODO: il faut mettre au statut finished tous les elements
                 self.action_update_in_progress = False
                 self.treatment_update_action(action, Action.STATUS_FINISHED, 100, 0, None)
                 download.status = Download.STATUS_MOVED
+                download.directory = action_directory_dst.directory
                 self.update_download(download)
 
     def treatment_update_action(self, action, status, percent, time_left, time_elapsed):
