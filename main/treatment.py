@@ -119,6 +119,7 @@ class Treatment:
 
         if action is not None:
             if action.action_type_id == Action.ACTION_MOVE:
+                utils.log_debug(u'Action typed: move')
                 self.manage_download.move_file(download_id, action)
         else:
             utils.log_debug(u'Action is none')

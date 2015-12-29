@@ -178,6 +178,7 @@ class ManageDownload:
                                        headers={"Accept": "application/json"})
 
                 if response.code == 200:
+                    utils.log_debug('download got: %s' % response.body)
                     download = utils.json_to_download_object(response.body)
                 else:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
@@ -247,6 +248,7 @@ class ManageDownload:
                                        headers={"Accept": "application/json"})
 
                 if response.code == 200:
+                    utils.log(u'Action got: %s' % response.body)
                     action = utils.json_to_action_object(response.body)
                 else:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
@@ -650,13 +652,16 @@ class ManageDownload:
             if download is not None:
                 action_directory_src = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_SRC)
                 src_file_path = os.path.join(action_directory_src.directory.path, download.name)
+                utils.log_debug(u'Source path %s' % src_file_path)
 
                 action_directory_dst = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_DST)
                 dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
+                utils.log_debug(u'Destination path %s' % dst_file_path)
 
                 if os.path.isfile(src_file_path):
                     utils.log_debug(u'downloaded file exists')
                     download.status = Download.STATUS_MOVING
+                    self.update_download(download)
                     download.logs = 'File %s exists\r\n' % src_file_path
                     self.update_download_log(download)
 
