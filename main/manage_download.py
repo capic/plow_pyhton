@@ -679,6 +679,11 @@ class ManageDownload:
                         utils.log_debug(traceback.format_exc())
                         download.status = Download.STATUS_ERROR_MOVING
                         self.update_download(download)
+                else:
+                    utils.log_debug(u'File does not exist')
+                    download.logs = 'File %s does not exist\r\n' % src_file_path
+                    self.update_download_log(download)
+
             else:
                 utils.log_debug(u'Download is none')
         else:
