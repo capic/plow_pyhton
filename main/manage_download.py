@@ -510,7 +510,6 @@ class ManageDownload:
         download.logs = 'updated by stop_download method\r\n'
         self.update_download(download)
 
-
     def start_download(self, download):
         utils.log_debug(u'*** start_download ***')
         indent_log = '  '

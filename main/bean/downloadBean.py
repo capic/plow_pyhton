@@ -91,7 +91,6 @@ class Download:
                     "theorical_start_datetime": self.theorical_start_datetime})
         }
 
-
     def to_update_object(self):
         return {
             "download":
