@@ -10,6 +10,7 @@ import utils
 import os
 
 from treatment import Treatment
+from bean.actionBean import Action
 
 COMMAND_USAGE = 'usage: script start|stop (download_id)'
 
@@ -124,14 +125,22 @@ def main(argv):
             else:
                 treatment.check_multi_downloads_alive()
         elif args[0] == 'action':
-            if len(args) > 2:
-                download_id = args[1]
+            if len(args) > 3:
+                object_id = args[1]
                 action_id = args[2]
+                action_target_id = args[3]
 
-                logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'action_download_' + download_id + '.log', level=logging.DEBUG,
-                                format='%(asctime)s %(message)s',
-                                datefmt='%d/%m/%Y %H:%M:%S')
-                treatment.action(download_id, action_id)
+                file_name = 'action_' + str(action_id)
+                if action_target_id == Action.TARGET_DOWNLOAD:
+                    file_name += 'download_'
+                elif action_target_id == Action.TARGET_PACKAGE:
+                    file_name += 'package_'
+                file_name += str(object_id) + '.log'
+
+                logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + file_name, level=logging.DEBUG,
+                                    format='%(asctime)s %(message)s',
+                                    datefmt='%d/%m/%Y %H:%M:%S')
+                treatment.action(object_id, action_id, action_target_id)
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'unrar':

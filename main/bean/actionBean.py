@@ -20,6 +20,9 @@ class Action:
     STATUS_IN_PROGRESS = 2
     STATUS_FINISHED = 3
 
+    TARGET_DOWNLOAD = 1
+    TARGET_PACKAGE = 2
+
     def __init__(self):
         self.id = None
         self.lifecycle_insert_date = None

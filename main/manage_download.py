@@ -296,18 +296,17 @@ class ManageDownload:
 
         return download
 
-
-    def get_downloads_by_package(self, package):
+    def get_downloads_by_package(self, package_id):
         utils.log_debug(u'   *** get_downloads_by_package ***')
         utils.log_debug(u'package: %s' % package.to_string())
 
         downloads_list = None
 
         try:
-            if package is not None and package != '':
+            if package_id is not None:
                 response = unirest.get(utils.REST_ADRESSE + 'downloads',
                                        headers={"Accept": "application/json"},
-                                       params={"package_id": package.id})
+                                       params={"package_id": package_id})
 
                 downloads_list = []
                 if response.code == 200:
@@ -710,62 +709,76 @@ class ManageDownload:
 
         return action_returned
 
-    def unrar(self, downloads_list):
+    def unrar(self, object_id, action):
         utils.log_debug(u'*** unrar ***')
 
-        download = downloads_list[0]
+        # logger = logging.getLogger()
+        # logger.setLevel(logging.DEBUG)
+        #
+        # file_handler = logging.FileHandler(utils.DIRECTORY_WEB_LOG + 'log_unrar_id_' + str(download_id) + '.log')
+        # file_handler.setLevel(logging.DEBUG)
+        # file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+        # logger.addHandler(file_handler)
 
-        for down in downloads_list:
-            down.status = Download.STATUS_UNRARING
-            self.update_download(down)
+        downloads_list = self.manage_download.get_downloads_by_package(object_id)
+        if downloads_list is not None and len(downloads_list) > 0:
+            def getKey(d):
+                return d.name
 
-        download.logs = 'Unrar in progress ... \r\n'
-        self.update_download_log(download)
-        if not utils.is_this_running("[u]nrar x \"%s\"" % download.name):
-            cmd = (
-                self.COMMAND_UNRAR % (
-                    download.directory.path, download.name))
-            download.logs += 'Command: %s\r\n' % cmd
-            self.update_download_log(download)
-            utils.log_debug(u'command : %s' % cmd)
-            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            downloads_list = sorted(downloads_list, key=getKey)
+            download = downloads_list[0]
 
-            self.update_download_package_unrar_percent(download.package.id, 0)
+            filename, file_extension = os.path.splitext(download.name)
+            if file_extension == '.rar':
+                for down in downloads_list:
+                    down.status = Download.STATUS_UNRARING
+                    self.update_download(down)
 
-            line = ''
-            while True:
-                out = p.stdout.read(1)
-                if out == '' and p.poll() is not None:
-                    break
-                if out != '':
-                    if out != '%':
-                        line += out
-                    else:
-                        print('Line %s' % line)
-                        download.logs = line
-                        values = line.split()
-                        if len(values) > 1:
-                            percent = values[int(len(values) - 1)]
-                            print('percent ' + percent)
-                            self.update_download_package_unrar_percent(download.package.id, percent)
+                    download.logs = 'Unrar in progress ... \r\n'
+                    self.update_download_log(download)
+                    if not utils.is_this_running("[u]nrar x \"%s\"" % download.name):
+                        cmd = (
+                            self.COMMAND_UNRAR % (
+                                download.directory.path, download.name))
 
+                        download.logs += 'Command: %s\r\n' % cmd
                         self.update_download_log(download)
+                        utils.log_debug(u'command : %s' % cmd)
+                        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-            if 'All OK' in line:
-                download.logs = 'Unrar finished, all is OK'
-                self.update_download_package_unrar_percent(download.package.id, 100)
-                self.update_download_log(download)
-                download_status = Download.STATUS_UNRAR_OK
-            else:
-                download.logs = 'Unrar finised but error'
-                self.update_download(download)
-                self.update_download_log(download)
-                download_status = Download.STATUS_UNRAR_ERROR
+                        self.treatment_update_action(self, action, Action.STATUS_IN_PROGRESS, 0, None, None)
 
-            for down in downloads_list:
-                down.status = download_status
-                self.update_download(down)
+                        line = ''
+                        while True:
+                            out = p.stdout.read(1)
+                            if out == '' and p.poll() is not None:
+                                break
+                            if out != '':
+                                if out != '%':
+                                    line += out
+                                else:
+                                    print('Line %s' % line)
+                                    download.logs = line
+                                    values = line.split()
+                                    if len(values) > 1:
+                                        percent = values[int(len(values) - 1)]
+                                        print('percent ' + percent)
+                                        self.treatment_update_action(self, action, None, percent, None, None)
+                                        self.update_download_log(download)
 
+                        if 'All OK' in line:
+                            download.logs = 'Unrar finished, all is OK'
+                            self.treatment_update_action(self, action, None, 100, None, None)
+                            self.update_download_log(download)
+                            download_status = Download.STATUS_UNRAR_OK
+                        else:
+                            download.logs = 'Unrar finised but error'
+                            self.update_download_log(download)
+                            download_status = Download.STATUS_UNRAR_ERROR
+
+                        for down in downloads_list:
+                            down.status = download_status
+                            self.update_download(down)
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')

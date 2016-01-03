@@ -113,14 +113,17 @@ class Treatment:
         download = self.manage_download.get_download_by_id(download_id)
         self.manage_download.move_download(download)
 
-    def action(self, download_id, action_id):
+    def action(self, object_id, action_id, action_target_id):
         utils.log_debug(u'*** action ***')
         action = self.manage_download.get_action(action_id)
 
         if action is not None:
             if action.action_type_id == Action.ACTION_MOVE:
                 utils.log_debug(u'Action typed: move')
-                self.manage_download.move_file(download_id, action)
+                self.manage_download.move_file(object_id, action)
+            elif action.action_type_id == Action.ACTION_UNRAR:
+                utils.log_debug(u'Action typed: unrar')
+                self.manage_download.unrar(object_id, action)
         else:
             utils.log_debug(u'Action is none')
 
@@ -188,37 +191,6 @@ class Treatment:
 
         for download_to_check in downloads:
             self.manage_download.check_download_alive(download_to_check)
-
-    def unrar(self, download_id):
-        utils.log_debug(u'*** unrar ***')
-
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
-
-        file_handler = logging.FileHandler(utils.DIRECTORY_WEB_LOG + 'log_unrar_id_' + str(download_id) + '.log')
-        file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
-        logger.addHandler(file_handler)
-
-        download = self.manage_download.get_download_by_id(download_id)
-
-        if download is not None:
-            filename, file_extension = os.path.splitext(download.name)
-
-            if file_extension == '.rar':
-                downloads_list = self.manage_download.get_downloads_by_package(download.package)
-
-                if downloads_list is not None and len(downloads_list) > 0:
-                    def getKey(d):
-                        return d.name
-
-                    downloads_list = sorted(downloads_list, key=getKey)
-                    self.manage_download.unrar(downloads_list)
-
-                else:
-                    utils.log_debug(u'No downloads')
-            else:
-                utils.log_debug(u'download %s is not a rar file' % download.id)
 
     def reset(self, download_id, file_to_delete):
         utils.log_debug(u'*** reset ***')
