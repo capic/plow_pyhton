@@ -176,51 +176,54 @@ def change_action_property(action, attribute_to_find, value_to_find, attribute_t
 
 
 def json_to_download_object(json_object):
-    download = Download()
-    download.id = json_object['id']
-    download.name = json_object['name']
-    if json_object['package_id']:
-        download_package = DownloadPackage()
-        download_package.id = json_object['download_package']['id']
-        download_package.name = json_object['download_package']['name']
-        download_package.unrar_progress = json_object['download_package']['unrar_progress']
-    else:
-        download_package = None
-    download.package = download_package
-    download.link = json_object['link']
-    download.size_file = json_object['size_file']
-    download.size_part = json_object['size_part']
-    download.size_file_downloaded = json_object['size_file_downloaded']
-    download.size_part_downloaded = json_object['size_part_downloaded']
-    download.status = json_object['status']
-    download.progress_part = json_object['progress_part']
-    download.average_speed = json_object['average_speed']
-    download.current_speed = json_object['current_speed']
-    download.time_spent = json_object['time_spent']
-    download.time_left = json_object['time_left']
-    download.pid_plowdown = json_object['pid_plowdown']
-    download.pid_python = json_object['pid_python']
-    if json_object['directory_id']:
-        download_directory = json_to_download_directory_object(json_object['directory'])
-    else:
-        download_directory = None
-    download.directory = download_directory
-    download.file_path = json_object['file_path']
-    download.priority = json_object['priority']
-    if json_object['theorical_start_datetime'] == 0:
-        download.theorical_start_datetime = None
-    else:
-        download.theorical_start_datetime = json_object['theorical_start_datetime']
-    if json_object['lifecycle_insert_date'] == 0:
-        download.lifecycle_insert_date = None
-    else:
-        download.lifecycle_insert_date = json_object['lifecycle_insert_date']
-    if json_object['lifecycle_update_date'] == 0:
-        download.lifecycle_update_date = None
-    else:
-        download.lifecycle_update_date = json_object['lifecycle_update_date']
+    if json_object is not False:
+        download = Download()
+        download.id = json_object['id']
+        download.name = json_object['name']
+        if json_object['package_id']:
+            download_package = DownloadPackage()
+            download_package.id = json_object['download_package']['id']
+            download_package.name = json_object['download_package']['name']
+            download_package.unrar_progress = json_object['download_package']['unrar_progress']
+        else:
+            download_package = None
+        download.package = download_package
+        download.link = json_object['link']
+        download.size_file = json_object['size_file']
+        download.size_part = json_object['size_part']
+        download.size_file_downloaded = json_object['size_file_downloaded']
+        download.size_part_downloaded = json_object['size_part_downloaded']
+        download.status = json_object['status']
+        download.progress_part = json_object['progress_part']
+        download.average_speed = json_object['average_speed']
+        download.current_speed = json_object['current_speed']
+        download.time_spent = json_object['time_spent']
+        download.time_left = json_object['time_left']
+        download.pid_plowdown = json_object['pid_plowdown']
+        download.pid_python = json_object['pid_python']
+        if json_object['directory_id']:
+            download_directory = json_to_download_directory_object(json_object['directory'])
+        else:
+            download_directory = None
+        download.directory = download_directory
+        download.file_path = json_object['file_path']
+        download.priority = json_object['priority']
+        if json_object['theorical_start_datetime'] == 0:
+            download.theorical_start_datetime = None
+        else:
+            download.theorical_start_datetime = json_object['theorical_start_datetime']
+        if json_object['lifecycle_insert_date'] == 0:
+            download.lifecycle_insert_date = None
+        else:
+            download.lifecycle_insert_date = json_object['lifecycle_insert_date']
+        if json_object['lifecycle_update_date'] == 0:
+            download.lifecycle_update_date = None
+        else:
+            download.lifecycle_update_date = json_object['lifecycle_update_date']
 
-    return download
+        return download
+    else:
+        return None
 
 
 def json_to_download_object_list(json_array):
@@ -234,33 +237,42 @@ def json_to_download_object_list(json_array):
 
 
 def json_to_download_package_object(json_object):
-    download_package = DownloadPackage()
-    download_package.id = json_object['id']
-    download_package.name = json_object['name']
-    download_package.unrar_percent = json_object['unrar_progress']
+    if json_object is not False:
+        download_package = DownloadPackage()
+        download_package.id = json_object['id']
+        download_package.name = json_object['name']
+        download_package.unrar_percent = json_object['unrar_progress']
 
-    return download_package
+        return download_package
+    else:
+        return None
 
 
 def json_to_download_directory_object(json_object):
-    download_directory = DownloadDirectory()
-    download_directory.id = json_object['id']
-    download_directory.path = json_object['path']
+    if json_object is not False:
+        download_directory = DownloadDirectory()
+        download_directory.id = json_object['id']
+        download_directory.path = json_object['path']
 
-    return download_directory
+        return download_directory
+    else:
+        return None
 
 
 def json_to_property_object(json_object):
-    property_ = Property()
-    property_.action_id = json_object['action_id']
-    property_.property_id = json_object['property_id']
-    property_.property_value = json_object['property_value']
-    if json_object['directory_id']:
-        property_.directory = json_to_download_directory_object(json_object['directory'])
-    else:
-        property_.directory = None
+    if json_object is not False:
+        property_ = Property()
+        property_.action_id = json_object['action_id']
+        property_.property_id = json_object['property_id']
+        property_.property_value = json_object['property_value']
+        if json_object['directory_id']:
+            property_.directory = json_to_download_directory_object(json_object['directory'])
+        else:
+            property_.directory = None
 
-    return property_
+        return property_
+    else:
+        return None
 
 
 def json_to_property_object_list(json_array):
@@ -280,20 +292,23 @@ def json_to_action_object_list(json_array):
         action = json_to_action_object(json_object)
         list_actions.append(action)
 
-    return  list_actions
+    return list_actions
 
 
 def json_to_action_object(json_object):
-    action = Action()
-    action.id = json_object['id']
-    action.lifecycle_insert_date = json_object['lifecycle_insert_date']
-    action.lifecycle_update_date = json_object['lifecycle_update_date']
-    action.download_id = json_object['download_id']
-    action.action_status_id = json_object['action_status_id']
-    action.action_type_id = json_object['action_type_id']
-    action.properties = json_to_property_object_list(json_object['action_has_properties'])
+    if json_object is not False:
+        action = Action()
+        action.id = json_object['id']
+        action.lifecycle_insert_date = json_object['lifecycle_insert_date']
+        action.lifecycle_update_date = json_object['lifecycle_update_date']
+        action.download_id = json_object['download_id']
+        action.action_status_id = json_object['action_status_id']
+        action.action_type_id = json_object['action_type_id']
+        action.properties = json_to_property_object_list(json_object['action_has_properties'])
 
-    return action
+        return action
+    else:
+        return None
 
 
 def action_object_to_update_json(action_object):
@@ -321,11 +336,14 @@ def action_object_to_update_json(action_object):
 
 
 def json_to_download_host_object(json_object):
-    download_host = DownloadHost()
-    download_host.id = json_object['id']
-    download_host.name = json_object['name']
+    if json_object is not False:
+        download_host = DownloadHost()
+        download_host.id = json_object['id']
+        download_host.name = json_object['name']
 
-    return download_host
+        return download_host
+    else:
+        return None
 
 
 def package_name_from_download_name(download_name):
