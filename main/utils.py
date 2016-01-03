@@ -176,7 +176,7 @@ def change_action_property(action, attribute_to_find, value_to_find, attribute_t
 
 
 def json_to_download_object(json_object):
-    if json_object is not False:
+    if bool(json_object) is not False:
         download = Download()
         download.id = json_object['id']
         download.name = json_object['name']
@@ -237,7 +237,7 @@ def json_to_download_object_list(json_array):
 
 
 def json_to_download_package_object(json_object):
-    if json_object is not False:
+    if bool(json_object) is not False:
         download_package = DownloadPackage()
         download_package.id = json_object['id']
         download_package.name = json_object['name']
@@ -249,7 +249,7 @@ def json_to_download_package_object(json_object):
 
 
 def json_to_download_directory_object(json_object):
-    if json_object is not False:
+    if bool(json_object) is not False:
         download_directory = DownloadDirectory()
         download_directory.id = json_object['id']
         download_directory.path = json_object['path']
@@ -260,7 +260,7 @@ def json_to_download_directory_object(json_object):
 
 
 def json_to_property_object(json_object):
-    if json_object is not False:
+    if bool(json_object) is not False:
         property_ = Property()
         property_.action_id = json_object['action_id']
         property_.property_id = json_object['property_id']
@@ -296,7 +296,7 @@ def json_to_action_object_list(json_array):
 
 
 def json_to_action_object(json_object):
-    if json_object is not False:
+    if bool(json_object) is not False:
         action = Action()
         action.id = json_object['id']
         action.lifecycle_insert_date = json_object['lifecycle_insert_date']
@@ -336,7 +336,7 @@ def action_object_to_update_json(action_object):
 
 
 def json_to_download_host_object(json_object):
-    if json_object is not False:
+    if bool(json_object) is not False:
         download_host = DownloadHost()
         download_host.id = json_object['id']
         download_host.name = json_object['name']
