@@ -471,6 +471,7 @@ class ManageDownload:
                         download.status = Download.STATUS_WAITING
                         download.priority = Download.PRIORITY_NORMAL
                         download.file_path = file_path
+                        download.directory = download_directory
                         download.lifecycle_insert_date = datetime.utcnow().isoformat()
 
                         self.insert_download(download)
