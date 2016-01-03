@@ -232,9 +232,9 @@ class ManageDownload:
         try:
             params = {}
             if download_id is not None:
-                params.download_id = download_id
+                params['download_id'] = download_id
             if action_type_id is not None:
-                params.action_type_id = action_type_id
+                params['action_type_id'] = action_type_id
 
             action_list = []
             response = unirest.get(utils.REST_ADRESSE + 'actions', headers={"Accept": "application/json"}, params=params)
