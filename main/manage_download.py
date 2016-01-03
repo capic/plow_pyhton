@@ -755,16 +755,16 @@ class ManageDownload:
                                     self.treatment_update_action(action, None, percent, None, None)
                                     self.update_download_log(download)
 
-                                    if 'All OK' in line:
-                                        download.logs = 'Unrar finished, all is OK'
-                                        self.treatment_update_action(action, Action.STATUS_FINISHED, 100, None, None)
-                                        self.update_download_log(download)
-                                        download_status = Download.STATUS_UNRAR_OK
-                                    else:
-                                        download.logs = 'Unrar finised but error'
-                                        self.treatment_update_action(action, Action.STATUS_ERROR, None, None, None)
-                                        self.update_download_log(download)
-                                        download_status = Download.STATUS_UNRAR_ERROR
+                    if 'All OK' in line:
+                        download.logs = 'Unrar finished, all is OK'
+                        self.treatment_update_action(action, Action.STATUS_FINISHED, 100, None, None)
+                        self.update_download_log(download)
+                        download_status = Download.STATUS_UNRAR_OK
+                    else:
+                        download.logs = 'Unrar finised but error'
+                        self.treatment_update_action(action, Action.STATUS_ERROR, None, None, None)
+                        self.update_download_log(download)
+                        download_status = Download.STATUS_UNRAR_ERROR
 
                     for down in downloads_list:
                         down.status = download_status
