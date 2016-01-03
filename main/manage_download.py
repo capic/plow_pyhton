@@ -310,7 +310,6 @@ class ManageDownload:
 
     def get_downloads_by_package(self, package_id):
         utils.log_debug(u'   *** get_downloads_by_package ***')
-        utils.log_debug(u'package: %s' % package.to_string())
 
         downloads_list = None
 
