@@ -326,7 +326,7 @@ class ManageDownload:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
 
                 if len(downloads_list) == 0:
-                    logging.info('No download found with package %s' % package)
+                    logging.info('No download found with package_id %s' % str(package_id))
         except Exception:
             utils.log_debug("Get download by package: No database connection")
             import traceback
