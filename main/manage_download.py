@@ -735,7 +735,7 @@ class ManageDownload:
                         utils.log_debug(u'command : %s' % cmd)
                         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-                        self.treatment_update_action(self, action, Action.STATUS_IN_PROGRESS, 0, None, None)
+                        self.treatment_update_action(action, Action.STATUS_IN_PROGRESS, 0, None, None)
 
                         line = ''
                         while True:
@@ -752,12 +752,12 @@ class ManageDownload:
                                     if len(values) > 1:
                                         percent = values[int(len(values) - 1)]
                                         print('percent ' + percent)
-                                        self.treatment_update_action(self, action, None, percent, None, None)
+                                        self.treatment_update_action(action, None, percent, None, None)
                                         self.update_download_log(download)
 
                         if 'All OK' in line:
                             download.logs = 'Unrar finished, all is OK'
-                            self.treatment_update_action(self, action, None, 100, None, None)
+                            self.treatment_update_action(action, None, 100, None, None)
                             self.update_download_log(download)
                             download_status = Download.STATUS_UNRAR_OK
                         else:
