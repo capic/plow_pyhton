@@ -273,6 +273,16 @@ def json_to_property_object_list(json_array):
     return list_properties
 
 
+def json_to_action_object_list(json_array):
+    list_actions = []
+
+    for json_object in json_array:
+        action = json_to_action_object(json_object)
+        list_actions.append(action)
+
+    return  list_actions
+
+
 def json_to_action_object(json_object):
     action = Action()
     action.id = json_object['id']

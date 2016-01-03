@@ -71,19 +71,6 @@ class ManageDownload:
 
                 download.package = download_package
 
-                utils.log_debug("Insert directory ....")
-                response = unirest.post(utils.REST_ADRESSE + 'downloadDirectories',
-                                        headers={"Accept": "application/json"},
-                                        params=download.to_move_directory.to_insert_json())
-
-                if response.code != 200:
-                    utils.log_debug(u'Error insert directory %s => %s' % (response.code, response.body))
-                    raise Exception(u'Error insert directory %s => %s' % (response.code, response.body))
-
-                download_directory = utils.json_to_download_directory_object(response.body)
-                utils.log_debug(u'directory inserted: ' + download_directory.to_string())
-
-                download.to_move_directory = download_directory
                 download.lifecycle_insert_date = datetime.utcnow().isoformat()
                 download.lifecycle_update_date = datetime.utcnow().isoformat()
                 download.theorical_start_datetime = datetime.utcnow().isoformat()
@@ -238,8 +225,33 @@ class ManageDownload:
 
         return directory
 
-    def get_action(self, action_id):
-        utils.log_debug(u'*** get_action ***')
+    def get_actions_by_parameters(self, download_id=None, action_type_id=None):
+        utils.log_debug(u'*** get_action_by_parameters ***')
+        action_list = None
+
+        try:
+            params = {}
+            if download_id is not None:
+                params.download_id = download_id
+            if action_type_id is not None:
+                params.action_type_id = action_type_id
+
+            action_list = []
+            response = unirest.get(utils.REST_ADRESSE + 'actions', headers={"Accept": "application/json"}, params=params)
+            if response.code == 200:
+                action_list = utils.json_to_action_object_list(response.body)
+            else:
+                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+
+        except Exception:
+            utils.log_debug("Get action: No database connection")
+            import traceback
+            print(traceback.format_exc())
+
+        return action_list
+
+    def get_action_by_id(self, action_id):
+        utils.log_debug(u'*** get_action_by_id ***')
         action = None
 
         if action_id is not None:
@@ -460,7 +472,6 @@ class ManageDownload:
                         download.priority = Download.PRIORITY_NORMAL
                         download.file_path = file_path
                         download.lifecycle_insert_date = datetime.utcnow().isoformat()
-                        download.to_move_directory = download_directory
 
                         self.insert_download(download)
             else:
@@ -621,26 +632,6 @@ class ManageDownload:
             download.logs = 'updated by check_download_alive_method\r\nProcess killed by inactivity ...\r\n'
 
             self.update_download(download)
-
-    def move_download(self, download):
-        utils.log_debug(u'*** move_download ***')
-
-        try:
-            unirest.timeout(36000)
-            response = unirest.post(utils.REST_ADRESSE + 'downloads/moveOne', headers={"Accept": "application/json"},
-                                    params={'id': download.id, 'directory_id': download.to_move_directory.id,
-                                            'from': 2})
-            unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
-            utils.log_debug(u'apres deplacement')
-
-            if response.code != 200:
-                utils.log_debug(u'Error during moving file operation %s => %s' % (response.code, response.body))
-            else:
-                utils.log_debug(u'Moving OK %s => %s' % (str(response.code), response.body))
-        except Exception:
-            import traceback
-
-            utils.log_debug(traceback.format_exc())
 
     def move_file(self, download_id, action):
         utils.log_debug(u'*** move_file ***')

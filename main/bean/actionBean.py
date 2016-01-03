@@ -6,8 +6,8 @@ import json
 
 
 class Action:
-    ACTION_MOVE = 1
-    ACTION_UNRAR = 2
+    ACTION_MOVE_DOWNLOAD = 1
+    ACTION_UNRAR_PACKAGE = 2
 
     PROPERTY_PERCENTAGE = 1
     PROPERTY_DIRECTORY_SRC = 2

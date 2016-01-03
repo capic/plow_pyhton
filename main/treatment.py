@@ -99,15 +99,19 @@ class Treatment:
 
     def mark_link_error_in_file(self, download):
         utils.log_debug(u'*** mark_link_error_in_file ***')
-        self.mark_link_in_file(download, download.link, '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_ERROR, download.link))
+        self.mark_link_in_file(download, download.link,
+                               '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_ERROR, download.link))
 
     def mark_link_finished_in_file(self, download):
         utils.log_debug(u'*** mark_link_finished_in_file ***')
-        self.mark_link_in_file(download, download.link, '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link))
+        self.mark_link_in_file(download, download.link,
+                               '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link))
 
     def reset_link_finished_in_file(self, download):
         utils.log_debug(u'*** reset_link_finished_in_file ***')
-        self.mark_link_in_file(download, '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link), download.link)
+        self.mark_link_in_file(download,
+                               '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link),
+                               download.link)
 
     def move_download(self, download_id):
         download = self.manage_download.get_download_by_id(download_id)
@@ -115,7 +119,7 @@ class Treatment:
 
     def action(self, object_id, action_id, action_target_id):
         utils.log_debug(u'*** action ***')
-        action = self.manage_download.get_action(action_id)
+        action = self.manage_download.get_action_by_id(action_id)
 
         if action is not None:
             if action.action_type_id == Action.ACTION_MOVE:
@@ -154,9 +158,14 @@ class Treatment:
                 self.mark_link_finished_in_file(download)
 
                 utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
-                if download.to_move_directory is not None and download.to_move_directory.id != utils.DIRECTORY_DOWNLOAD_DESTINATION_ID:
+                move_action_list = self.manage_download.get_actions_by_parameters(download_id=download.id,
+                                                                                  action_type_id=Action.ACTION_MOVE_DOWNLOAD
+                                                                                  )
+                if len(move_action_list) == 1:
                     utils.log_debug(u'File will be moved...............')
-                    self.manage_download.move_download(download)
+                    self.manage_download.move_file(download.id, move_action_list[0])
+                else:
+                    utils.log_debug(u'No move action or too many move action')
             else:
                 if download.status == Download.STATUS_ERROR:
                     self.mark_link_error_in_file(download)
