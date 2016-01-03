@@ -710,7 +710,7 @@ class ManageDownload:
         # file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
         # logger.addHandler(file_handler)
 
-        downloads_list = self.manage_download.get_downloads_by_package(object_id)
+        downloads_list = self.get_downloads_by_package(object_id)
         if downloads_list is not None and len(downloads_list) > 0:
             def getKey(d):
                 return d.name
