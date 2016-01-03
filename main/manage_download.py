@@ -355,7 +355,6 @@ class ManageDownload:
                 if response.code == 200:
                     print("json: %s" % response.body)
                     download = utils.json_to_download_object(response.body)
-                    print("download: %s" % download.to_string())
                 else:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
             except Exception:
