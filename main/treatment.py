@@ -122,10 +122,10 @@ class Treatment:
         action = self.manage_download.get_action_by_id(action_id)
 
         if action is not None:
-            if action.action_type_id == Action.ACTION_MOVE:
+            if action.action_type_id == Action.ACTION_MOVE_DOWNLOAD:
                 utils.log_debug(u'Action typed: move')
                 self.manage_download.move_file(object_id, action)
-            elif action.action_type_id == Action.ACTION_UNRAR:
+            elif action.action_type_id == Action.ACTION_UNRAR_PACKAGE:
                 utils.log_debug(u'Action typed: unrar')
                 self.manage_download.unrar(object_id, action)
         else:
