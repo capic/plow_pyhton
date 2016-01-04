@@ -235,9 +235,11 @@ class Treatment:
             utils.log_debug(u'=========> Start new download <=========')
             download = self.manage_download.start_download(download)
 
+            utils.log_debug(u'Download Status %s' % str(download.status))
             # mark link with # in file
             if download.status == Download.STATUS_FINISHED:
-                download = self.manage_download.get_download_by_id(download.id)
+                if download.id != -1:
+                    download = self.manage_download.get_download_by_id(download.id)
                 self.mark_link_finished_in_file(download)
 
                 utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
