@@ -58,7 +58,7 @@ class Treatment:
                 utils.log_debug(u'Line %s contains http' % line)
                 download = self.manage_download.insert_update_download(line, file_path)
 
-                if download is not None and download.status == Download.STATUS_FINISHED:
+                if download is not None and download.status == Download.STATUS_FINISHED and self.manage_download.MARK_AS_FINISHED not in line:
                     utils.log_debug(
                         u'Download id %s already finished in database but not marked in file => mark as finished')
                     downloads_to_mark_as_finished_in_file.append(download)
@@ -98,15 +98,19 @@ class Treatment:
 
     def mark_link_error_in_file(self, download):
         utils.log_debug(u'*** mark_link_error_in_file ***')
-        self.mark_link_in_file(download, download.link, '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_ERROR, download.link))
+        self.mark_link_in_file(download, download.link,
+                               '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_ERROR, download.link))
 
     def mark_link_finished_in_file(self, download):
         utils.log_debug(u'*** mark_link_finished_in_file ***')
-        self.mark_link_in_file(download, download.link, '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link))
+        self.mark_link_in_file(download, download.link,
+                               '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link))
 
     def reset_link_finished_in_file(self, download):
         utils.log_debug(u'*** reset_link_finished_in_file ***')
-        self.mark_link_in_file(download, '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link), download.link)
+        self.mark_link_in_file(download,
+                               '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link),
+                               download.link)
 
     def move_download(self, download_id):
         download = self.manage_download.get_download_by_id(download_id)
