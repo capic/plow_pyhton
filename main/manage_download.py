@@ -93,6 +93,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Insert download: No database connection")
                 import traceback
+
                 print(traceback.format_exc())
         else:
             logging.error("Download is none")
@@ -116,6 +117,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Update download: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
     def update_download_log(self, download):
@@ -130,6 +132,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Update download log: No database connection")
                 import traceback
+
                 print(traceback.format_exc())
 
     def update_download_package_unrar_percent(self, download_package_id, download_package_unrar_percent):
@@ -147,6 +150,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Update download package unrar percent: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return download_package_returned
@@ -167,6 +171,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Get download by id: No database connection")
                 import traceback
+
                 print(traceback.format_exc())
         else:
             logging.error('Id is none')
@@ -189,6 +194,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Get download by id: No database connection")
                 import traceback
+
                 print(traceback.format_exc())
         else:
             logging.error('Id is none')
@@ -211,6 +217,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Get download directory by id: No database connection")
                 import traceback
+
                 print(traceback.format_exc())
         else:
             logging.error('Id is none')
@@ -247,6 +254,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Get download by link file path: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return download
@@ -275,6 +283,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Get download by package: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return downloads_list
@@ -304,6 +313,7 @@ class ManageDownload:
             except Exception:
                 utils.log_debug(u'no database connection => use rescue mode')
                 import traceback
+
                 print(traceback.format_exc())
                 file = open(file_path, 'r')
                 for line in file:
@@ -343,6 +353,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Get download in progress: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return downloads_list
@@ -364,6 +375,7 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Download already exists: No database connection")
             import traceback
+
             print(traceback.format_exc())
 
         return exists
@@ -437,6 +449,19 @@ class ManageDownload:
                         if to_update:
                             download.logs = 'updated by insert_update_download method\r\n'
                             self.update_download(download)
+        else:
+            download = self.get_download_by_link_file_path(link, file_path)
+            if download is not None:
+                if download.status != Download.STATUS_FINISHED:
+                    if download.name is None or download.name == '':
+                        cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
+                        utils.log_debug(u'command : %s' % cmd)
+                        name, size = utils.get_infos_plowprobe(cmd)
+                        utils.log_debug(u'Infos get from plowprobe %s,%s' % (name, size))
+
+                    download.status = Download.STATUS_FINISHED
+
+                    self.update_download(download)
 
         return download
 
@@ -581,7 +606,8 @@ class ManageDownload:
         try:
             unirest.timeout(36000)
             response = unirest.post(utils.REST_ADRESSE + 'downloads/moveOne', headers={"Accept": "application/json"},
-                                    params={'id': download.id, 'directory_id': download.to_move_directory.id, 'from': 2})
+                                    params={'id': download.id, 'directory_id': download.to_move_directory.id,
+                                            'from': 2})
             unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
             utils.log_debug(u'apres deplacement')
 
@@ -591,6 +617,7 @@ class ManageDownload:
                 utils.log_debug(u'Moving OK %s => %s' % (str(response.code), response.body))
         except Exception:
             import traceback
+
             utils.log_debug(traceback.format_exc())
 
     def unrar(self, downloads_list):
