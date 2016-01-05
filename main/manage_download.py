@@ -450,7 +450,7 @@ class ManageDownload:
                             download.logs = 'updated by insert_update_download method\r\n'
                             self.update_download(download)
         else:
-            link = link.replace(self.MARK_AS_FINISHED + '  ', '')
+            link = link.replace(self.MARK_AS_FINISHED + ' ', '')
             utils.log_debug(u'Download already marked as finished in file')
             download = self.get_download_by_link_file_path(link, file_path)
             if download is not None:
