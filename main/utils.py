@@ -24,6 +24,8 @@ DIRECTORY_DOWNLOAD_DESTINATION_TEMP = '/mnt/HD/HD_a2/telechargement/temp_plowdow
 DIRECTORY_DOWNLOAD_DESTINATION_ID = 1
 DIRECTORY_DOWNLOAD_DESTINATION = '/mnt/HD/HD_a2/telechargement/'
 
+CONFIG_FILE = '/var/www/plow_solution/config.cfg'
+
 LOG_OUTPUT = True
 CONSOLE_OUTPUT = True
 

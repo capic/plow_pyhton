@@ -27,9 +27,9 @@ def main(argv):
         print(COMMAND_USAGE)
         exit()
     else:
-        if os.path.isfile("/var/www/plow_solution/config.cfg"):
+        if os.path.isfile(utils.CONFIG_FILE):
             config = {}
-            execfile("/var/www/plow_solution_test/config.cfg", config)
+            execfile(utils.CONFIG_FILE, config)
             utils.log_debug("config file found")
             if 'rest_adresse' in config:
                 utils.REST_ADRESSE = config['rest_adresse']
