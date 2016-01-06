@@ -48,7 +48,7 @@ class Treatment:
 
         utils.log_debug(u'*** start_file_treatment ***')
         utils.log_debug(u'file_path %s' % file_path)
-         utils.log_debug('===> rest address: %s' % utils.log_debug(utils.REST_ADRESSE))
+        utils.log_debug('===> rest address: %s' % utils.log_debug(utils.REST_ADRESSE))
 
         utils.log_debug(u'=========> Insert new links or update old in database <=========')
         downloads_to_mark_as_finished_in_file = []
