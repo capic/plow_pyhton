@@ -101,7 +101,7 @@ class ManageDownload:
 
             if response.code != 200:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
-                download.logs = u"ERROR DURING DOWNLOAD UPDATE"
+                download.logs = u"ERROR DURING DOWNLOAD UPDATE\r\n"
 
             self.update_download_log(download)
 
@@ -657,7 +657,7 @@ class ManageDownload:
                     utils.log_debug(u'downloaded file exists')
                     download.status = Download.STATUS_MOVING
                     download.logs = 'File %s exists\r\n' % src_file_path
-                    download.logs += 'Moving from %s to %s => status %s' % (src_file_path, dst_file_path, download.status)
+                    download.logs += 'Moving from %s to %s => status %s\r\n' % (src_file_path, dst_file_path, download.status)
                     self.update_download(download)
 
                     try:
@@ -668,13 +668,13 @@ class ManageDownload:
                         self.treatment_update_action(action, Action.STATUS_FINISHED, 100, 0, None)
                         download.status = Download.STATUS_MOVED
                         download.directory = action_directory_dst.directory
-                        download.logs = 'File moved to %s => status %s' % (download.directory, download.status)
+                        download.logs = 'File moved to %s => status %s\r\n' % (download.directory.path, download.status)
                         self.update_download(download)
                     except Exception:
                         import traceback
                         utils.log_debug(traceback.format_exc())
                         download.status = Download.STATUS_ERROR_MOVING
-                        download.logs = 'File moved to %s => status %s' % (download.directory, download.status)
+                        download.logs = 'File moved to %s => status %s\r\n' % (download.directory.path, download.status)
                         self.update_download(download)
                 else:
                     utils.log_debug(u'File does not exist')
@@ -765,12 +765,12 @@ class ManageDownload:
                                     self.update_download_log(download)
 
                     if 'All OK' in line:
-                        download.logs = 'Unrar finished, all is OK'
+                        download.logs = 'Unrar finished, all is OK\r\n'
                         self.treatment_update_action(action, Action.STATUS_FINISHED, 100, None, None)
                         self.update_download_log(download)
                         download_status = Download.STATUS_UNRAR_OK
                     else:
-                        download.logs = 'Unrar finised but error'
+                        download.logs = 'Unrar finised but error\r\n'
                         self.treatment_update_action(action, Action.STATUS_ERROR, None, None, None)
                         self.update_download_log(download)
                         download_status = Download.STATUS_UNRAR_ERROR
