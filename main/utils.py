@@ -341,10 +341,11 @@ def json_to_download_host_object(json_object):
 
 def package_name_from_download_name(download_name):
     ext = download_name.split(".")[-1]
-    log_debug('Extensions %s ' % ext)
+    ext2 = download_name.split(".")[-1]
+    log_debug('Extensions %s | %s ' % (ext, ext2))
     if ext == 'rar':
-        log_debug('Extensions %s ' % download_name.split(".")[-2])
-        return download_name.split(".part")[0]
+        if 'part' in ext2:
+            return download_name.split(".part")[0]
     else:
         return None
 
