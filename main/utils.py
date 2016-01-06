@@ -17,12 +17,7 @@ import sys
 import time
 import json
 
-REST_ADRESSE = 'http://localhost:3000/'
-
-MYSQL_LOGIN = 'root'
-MYSQL_PASS = 'capic_20_04_1982'
-MYSQL_HOST = '192.168.1.101'
-MYSQL_DATABASE = 'plowshare'
+REST_ADRESSE = 'http://192.168.1.101:3000/'
 
 DIRECTORY_WEB_LOG = '.'
 DIRECTORY_DOWNLOAD_DESTINATION_TEMP = '/mnt/HD/HD_a2/telechargement/temp_plowdown/'
@@ -33,10 +28,6 @@ LOG_OUTPUT = True
 CONSOLE_OUTPUT = True
 
 DEFAULT_UNIREST_TIMEOUT = 30
-
-
-def database_connect():
-    return connection.MySQLConnection(user=MYSQL_LOGIN, password=MYSQL_PASS, host=MYSQL_HOST, database=MYSQL_DATABASE)
 
 
 def hms_to_seconds(t):
