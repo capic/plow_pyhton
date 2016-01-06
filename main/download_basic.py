@@ -10,6 +10,7 @@ import utils
 import os
 
 from treatment import Treatment
+from bean.actionBean import Action
 
 COMMAND_USAGE = 'usage: script start|stop (download_id)'
 
@@ -28,7 +29,7 @@ def main(argv):
     else:
         if os.path.isfile("/var/www/plow_solution/config.cfg"):
             config = {}
-            execfile("/var/www/plow_solution/config.cfg", config)
+            execfile("/var/www/plow_solution_test/config.cfg", config)
             utils.log_debug("config file found")
             if 'rest_adresse' in config:
                 utils.REST_ADRESSE = config['rest_adresse']
@@ -123,26 +124,23 @@ def main(argv):
                 treatment.check_download_alive(download_id)
             else:
                 treatment.check_multi_downloads_alive()
-        elif args[0] == 'move':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'move.log', level=logging.DEBUG,
-                                format='%(asctime)s %(message)s',
-                                datefmt='%d/%m/%Y %H:%M:%S')
-            if len(args) > 2:
-                download_id = args[1]
-                src_directory_id = args[2]
-                dest_directory_id = args[3]
-                treatment.move_file(download_id, src_directory_id, dest_directory_id)
-            else:
-                print(COMMAND_USAGE)
-        elif args[0] == 'move2':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'move.log', level=logging.DEBUG,
-                                format='%(asctime)s %(message)s',
-                                datefmt='%d/%m/%Y %H:%M:%S')
-            if len(args) > 2:
-                download_id = args[1]
-                src_directory_id = args[2]
-                dest_directory_id = args[3]
-                treatment.move_file2(download_id, src_directory_id, dest_directory_id)
+        elif args[0] == 'action':
+            if len(args) > 3:
+                object_id = args[1]
+                action_id = args[2]
+                action_target_id = args[3]
+
+                file_name = 'action_' + str(action_id)
+                if action_target_id == Action.TARGET_DOWNLOAD:
+                    file_name += 'download_'
+                elif action_target_id == Action.TARGET_PACKAGE:
+                    file_name += 'package_'
+                file_name += str(object_id) + '.log'
+
+                logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + file_name, level=logging.DEBUG,
+                                    format='%(asctime)s %(message)s',
+                                    datefmt='%d/%m/%Y %H:%M:%S')
+                treatment.action(object_id, action_id, action_target_id)
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'unrar':

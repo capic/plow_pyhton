@@ -6,6 +6,7 @@ __author__ = 'Vincent'
 import utils
 
 from bean.downloadBean import Download
+from bean.actionBean import Action
 from manage_download import ManageDownload
 import logging
 import shutil
@@ -116,107 +117,19 @@ class Treatment:
         download = self.manage_download.get_download_by_id(download_id)
         self.manage_download.move_download(download)
 
-    def move_file(self, download_id, src_directory_id, dest_directory_id):
-        utils.log_debug(u'*** move_file ***')
+    def action(self, object_id, action_id, action_target_id):
+        utils.log_debug(u'*** action ***')
+        action = self.manage_download.get_action_by_id(action_id)
 
-        download = self.manage_download.get_download_by_id(download_id)
-        src_directory = self.manage_download.get_download_directory_by_id(src_directory_id)
-        dest_directory = self.manage_download.get_download_directory_by_id(dest_directory_id)
-
-        if download is not None and src_directory is not None and dest_directory is not None:
-            download.status = Download.STATUS_MOVING
-            src_file_path = os.path.join(src_directory.path, download.name)
-
-            download.logs = 'Move file in progress, from %s to %s\r\n' % (src_file_path, dest_directory.path)
-            self.manage_download.update_download(download)
-
-            if os.path.isfile(src_file_path):
-                utils.log_debug(u'downloaded file exists')
-                download.logs = 'File %s exists\r\n' % src_file_path
-                self.manage_download.update_download_log(download)
-
-                try:
-                    utils.log_debug(u'Moving file')
-                    shutil.move(src_file_path, dest_directory.path)
-
-                    download.status = Download.STATUS_MOVED
-                    download.directory = dest_directory
-                    download.to_move_directory = None
-                    download.logs = 'Moving to %s OK\r\n' % dest_directory.path
-                    self.manage_download.update_download(download)
-
-                    utils.log_debug(u'OK')
-                    print("#OK#")
-                except IOError as err:
-                    download.to_move_directory = None
-                    download.status = Download.STATUS_ERROR_MOVING
-                    download.logs = 'Error: %s\r\n' % err
-                    self.manage_download.update_download(download)
-
-                    utils.log_debug(u"Error: %s" % err)
-                    print("#Error: %s#" % err)
-            else:
-                download.to_move_directory = None
-                download.status = Download.STATUS_ERROR_MOVING
-                download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
-                self.manage_download.update_download(download)
-
-                utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
-                print("#ERROR: File %s does not exists#" % src_file_path)
+        if action is not None:
+            if action.action_type_id == Action.ACTION_MOVE_DOWNLOAD:
+                utils.log_debug(u'Action typed: move')
+                self.manage_download.move_file(object_id, action)
+            elif action.action_type_id == Action.ACTION_UNRAR_PACKAGE:
+                utils.log_debug(u'Action typed: unrar')
+                self.manage_download.unrar(object_id, action)
         else:
-            utils.log_debug(u"ERROR: download or directory are None")
-            print("#ERROR: download or directory are None#")
-
-    def move_file2(self, download_id, src_directory_id, dest_directory_id):
-        utils.log_debug(u'*** move_file2 ***')
-
-        download = self.manage_download.get_download_by_id(download_id)
-        src_directory = self.manage_download.get_download_directory_by_id(src_directory_id)
-        dest_directory = self.manage_download.get_download_directory_by_id(dest_directory_id)
-
-        if download is not None and src_directory is not None and dest_directory is not None:
-            download.status = Download.STATUS_MOVING
-            src_file_path = os.path.join(src_directory.path, download.name)
-
-            download.logs = 'Move file in progress, from %s to %s\r\n' % (src_file_path, dest_directory.path)
-            self.manage_download.update_download(download)
-
-            if os.path.isfile(src_file_path):
-                utils.log_debug(u'downloaded file exists')
-                download.logs = 'File %s exists\r\n' % src_file_path
-                self.manage_download.update_download_log(download)
-
-                try:
-                    utils.log_debug(u'Moving file')
-                    shutil.move(src_file_path, dest_directory.path)
-
-                    download.status = Download.STATUS_MOVED
-                    download.directory = dest_directory
-                    download.to_move_directory = None
-                    download.logs = 'Moving to %s OK\r\n' % dest_directory.path
-                    self.manage_download.update_download(download)
-
-                    utils.log_debug(u'OK')
-                    print("#OK#")
-                except IOError as err:
-                    download.to_move_directory = None
-                    download.status = Download.STATUS_ERROR_MOVING
-                    download.logs = 'Error: %s\r\n' % err
-                    self.manage_download.update_download(download)
-
-                    utils.log_debug(u"Error: %s" % err)
-                    print("#Error: %s#" % err)
-            else:
-                download.to_move_directory = None
-                download.status = Download.STATUS_ERROR_MOVING
-                download.logs = 'ERROR: File %s does not exists\r\n' % src_file_path
-                self.manage_download.update_download(download)
-
-                utils.log_debug(u"ERROR: File %s does not exists" % src_file_path)
-                print("#ERROR: File %s does not exists#" % src_file_path)
-        else:
-            utils.log_debug(u"ERROR: download or directory are None")
-            print("#ERROR: download or directory are None#")
+            utils.log_debug(u'Action is none')
 
     def start_multi_downloads(self, file_path):
         # utils.log_debug(u'*** start_file_treatment ***')
@@ -247,9 +160,14 @@ class Treatment:
                 self.mark_link_finished_in_file(download)
 
                 utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
-                if download.to_move_directory is not None and download.to_move_directory.id != utils.DIRECTORY_DOWNLOAD_DESTINATION_ID:
+                move_action_list = self.manage_download.get_actions_by_parameters(download_id=download.id,
+                                                                                  action_type_id=Action.ACTION_MOVE_DOWNLOAD
+                                                                                  )
+                if len(move_action_list) == 1:
                     utils.log_debug(u'File will be moved...............')
-                    self.manage_download.move_download(download)
+                    self.manage_download.move_file(download.id, move_action_list[0])
+                else:
+                    utils.log_debug(u'No move action or too many move action')
             else:
                 if download.status == Download.STATUS_ERROR:
                     self.mark_link_error_in_file(download)
@@ -284,37 +202,6 @@ class Treatment:
 
         for download_to_check in downloads:
             self.manage_download.check_download_alive(download_to_check)
-
-    def unrar(self, download_id):
-        utils.log_debug(u'*** unrar ***')
-
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
-
-        file_handler = logging.FileHandler(utils.DIRECTORY_WEB_LOG + 'log_unrar_id_' + str(download_id) + '.log')
-        file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
-        logger.addHandler(file_handler)
-
-        download = self.manage_download.get_download_by_id(download_id)
-
-        if download is not None:
-            filename, file_extension = os.path.splitext(download.name)
-
-            if file_extension == '.rar':
-                downloads_list = self.manage_download.get_downloads_by_package(download.package)
-
-                if downloads_list is not None and len(downloads_list) > 0:
-                    def getKey(d):
-                        return d.name
-
-                    downloads_list = sorted(downloads_list, key=getKey)
-                    self.manage_download.unrar(downloads_list)
-
-                else:
-                    utils.log_debug(u'No downloads')
-            else:
-                utils.log_debug(u'download %s is not a rar file' % download.id)
 
     def reset(self, download_id, file_to_delete):
         utils.log_debug(u'*** reset ***')

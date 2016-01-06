@@ -13,9 +13,13 @@ from datetime import datetime, timedelta
 import unirest
 import utils
 from bean.downloadBean import Download
+from bean.actionBean import Action
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
 from bean.downloadHostBean import DownloadHost
+
+import sys
+import inspect
 
 
 class ManageDownload:
@@ -27,6 +31,7 @@ class ManageDownload:
 
     def __init__(self):
         unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
+        self.action_update_in_progress = False
 
     def insert_download(self, download):
         utils.log_debug(u'  *** insert_download ***')
@@ -65,19 +70,6 @@ class ManageDownload:
 
                 download.package = download_package
 
-                utils.log_debug("Insert directory ....")
-                response = unirest.post(utils.REST_ADRESSE + 'downloadDirectories',
-                                        headers={"Accept": "application/json"},
-                                        params=download.to_move_directory.to_insert_json())
-
-                if response.code != 200:
-                    utils.log_debug(u'Error insert directory %s => %s' % (response.code, response.body))
-                    raise Exception(u'Error insert directory %s => %s' % (response.code, response.body))
-
-                download_directory = utils.json_to_download_directory_object(response.body)
-                utils.log_debug(u'directory inserted: ' + download_directory.to_string())
-
-                download.to_move_directory = download_directory
                 download.lifecycle_insert_date = datetime.utcnow().isoformat()
                 download.lifecycle_update_date = datetime.utcnow().isoformat()
                 download.theorical_start_datetime = datetime.utcnow().isoformat()
@@ -93,7 +85,6 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Insert download: No database connection")
                 import traceback
-
                 print(traceback.format_exc())
         else:
             logging.error("Download is none")
@@ -117,7 +108,6 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Update download: No database connection")
             import traceback
-
             print(traceback.format_exc())
 
     def update_download_log(self, download):
@@ -132,28 +122,33 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Update download log: No database connection")
                 import traceback
-
                 print(traceback.format_exc())
 
-    def update_download_package_unrar_percent(self, download_package_id, download_package_unrar_percent):
-        download_package_returned = None
+    def update_action_callback(self, response):
+        utils.log_debug(u'*** update_action_callback ***')
+        self.action_update_in_progress = False
 
+    def update_action(self, action):
+        utils.log_debug(u'*** update_action ***')
+
+        self.action_update_in_progress = True
+
+        action.lifecycle_update_date = datetime.utcnow().isoformat()
         try:
-            response = unirest.post(
-                utils.REST_ADRESSE + 'downloads/package/unrarPercent',
+            unirest.put(
+                utils.REST_ADRESSE + 'actions/' + str(action.id),
                 headers={"Accept": "application/json"},
-                params={"id": download_package_id, "unrar_progress": download_package_unrar_percent})
-            if response.code != 200:
-                utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
-            else:
-                download_package_returned = utils.json_to_download_package_object(response.body)
+                params=utils.action_object_to_update_json(action),
+                callback=self.update_action_callback)
+            # if response.code != 200:
+            # utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
+            # else:
+            # action_property_returned = utils.json_to_action_object(response.body)
         except Exception:
-            utils.log_debug("Update download package unrar percent: No database connection")
+            utils.log_debug("Update action: No database connection")
             import traceback
-
             print(traceback.format_exc())
 
-        return download_package_returned
 
     def get_download_by_id(self, download_id):
         utils.log_debug(u'   *** get_download_by_id ***')
@@ -165,13 +160,13 @@ class ManageDownload:
                                        headers={"Accept": "application/json"})
 
                 if response.code == 200:
+                    utils.log_debug('download got: %s' % response.body)
                     download = utils.json_to_download_object(response.body)
                 else:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
             except Exception:
                 utils.log_debug("Get download by id: No database connection")
                 import traceback
-
                 print(traceback.format_exc())
         else:
             logging.error('Id is none')
@@ -194,7 +189,6 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Get download by id: No database connection")
                 import traceback
-
                 print(traceback.format_exc())
         else:
             logging.error('Id is none')
@@ -217,13 +211,60 @@ class ManageDownload:
             except Exception:
                 utils.log_debug("Get download directory by id: No database connection")
                 import traceback
-
                 print(traceback.format_exc())
         else:
             logging.error('Id is none')
 
         return directory
 
+    def get_actions_by_parameters(self, download_id=None, action_type_id=None):
+        utils.log_debug(u'*** get_action_by_parameters ***')
+        action_list = None
+
+        try:
+            params = {}
+            if download_id is not None:
+                params['download_id'] = download_id
+            if action_type_id is not None:
+                params['action_type_id'] = action_type_id
+
+            action_list = []
+            response = unirest.get(utils.REST_ADRESSE + 'actions', headers={"Accept": "application/json"}, params=params)
+            if response.code == 200:
+                action_list = utils.json_to_action_object_list(response.body)
+            else:
+                utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+
+        except Exception:
+            utils.log_debug("Get action: No database connection")
+            import traceback
+            print(traceback.format_exc())
+
+        return action_list
+
+    def get_action_by_id(self, action_id):
+        utils.log_debug(u'*** get_action_by_id ***')
+        action = None
+
+        if action_id is not None:
+            try:
+                response = unirest.get(utils.REST_ADRESSE + 'actions/' + str(action_id),
+                                       headers={"Accept": "application/json"})
+
+                if response.code == 200:
+                    utils.log_debug(u'Action got: %s' % response.body)
+                    action = utils.json_to_action_object(response.body)
+                else:
+                    utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+            except Exception:
+                utils.log_debug("Get action: No database connection")
+                import traceback
+
+                print(traceback.format_exc())
+        else:
+            logging.error('Id is none')
+
+        return action
 
     def get_download_by_link_file_path(self, link, file_path):
         utils.log_debug(u'   *** get_download_by_link_file_path ***')
@@ -254,23 +295,20 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Get download by link file path: No database connection")
             import traceback
-
             print(traceback.format_exc())
 
         return download
 
-
-    def get_downloads_by_package(self, package):
+    def get_downloads_by_package(self, package_id):
         utils.log_debug(u'   *** get_downloads_by_package ***')
-        utils.log_debug(u'package: %s' % package.to_string())
 
         downloads_list = None
 
         try:
-            if package is not None and package != '':
+            if package_id is not None:
                 response = unirest.get(utils.REST_ADRESSE + 'downloads',
                                        headers={"Accept": "application/json"},
-                                       params={"package_id": package.id})
+                                       params={"package_id": package_id})
 
                 downloads_list = []
                 if response.code == 200:
@@ -279,11 +317,10 @@ class ManageDownload:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
 
                 if len(downloads_list) == 0:
-                    logging.info('No download found with package %s' % package)
+                    logging.info('No download found with package_id %s' % str(package_id))
         except Exception:
             utils.log_debug("Get download by package: No database connection")
             import traceback
-
             print(traceback.format_exc())
 
         return downloads_list
@@ -307,13 +344,11 @@ class ManageDownload:
                 if response.code == 200:
                     print("json: %s" % response.body)
                     download = utils.json_to_download_object(response.body)
-                    print("download: %s" % download.to_string())
                 else:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
             except Exception:
                 utils.log_debug(u'no database connection => use rescue mode')
                 import traceback
-
                 print(traceback.format_exc())
                 file = open(file_path, 'r')
                 for line in file:
@@ -353,7 +388,6 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Get download in progress: No database connection")
             import traceback
-
             print(traceback.format_exc())
 
         return downloads_list
@@ -375,7 +409,6 @@ class ManageDownload:
         except Exception:
             utils.log_debug("Download already exists: No database connection")
             import traceback
-
             print(traceback.format_exc())
 
         return exists
@@ -424,8 +457,8 @@ class ManageDownload:
                         download.status = Download.STATUS_WAITING
                         download.priority = Download.PRIORITY_NORMAL
                         download.file_path = file_path
+                        download.directory = download_directory
                         download.lifecycle_insert_date = datetime.utcnow().isoformat()
-                        download.to_move_directory = download_directory
 
                         self.insert_download(download)
             else:
@@ -481,7 +514,6 @@ class ManageDownload:
         download.status = Download.STATUS_WAITING
         download.logs = 'updated by stop_download method\r\n'
         self.update_download(download)
-
 
     def start_download(self, download):
         utils.log_debug(u'*** start_download ***')
@@ -606,81 +638,144 @@ class ManageDownload:
 
             self.update_download(download)
 
-    def move_download(self, download):
-        utils.log_debug(u'*** move_download ***')
+    def move_file(self, download_id, action):
+        utils.log_debug(u'*** move_file ***')
 
-        try:
-            unirest.timeout(36000)
-            response = unirest.post(utils.REST_ADRESSE + 'downloads/moveOne', headers={"Accept": "application/json"},
-                                    params={'id': download.id, 'directory_id': download.to_move_directory.id,
-                                            'from': 2})
-            unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
-            utils.log_debug(u'apres deplacement')
+        if action is not None:
+            download = self.get_download_by_id(download_id)
 
-            if response.code != 200:
-                utils.log_debug(u'Error during moving file operation %s => %s' % (response.code, response.body))
+            if download is not None:
+                action_directory_src = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_SRC)
+                src_file_path = os.path.join(action_directory_src.directory.path, download.name)
+                utils.log_debug(u'Source path %s' % src_file_path)
+
+                action_directory_dst = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_DST)
+                dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
+                utils.log_debug(u'Destination path %s' % dst_file_path)
+
+                if os.path.isfile(src_file_path):
+                    utils.log_debug(u'downloaded file exists')
+                    download.status = Download.STATUS_MOVING
+                    self.update_download(download)
+                    download.logs = 'File %s exists\r\n' % src_file_path
+                    self.update_download_log(download)
+
+                    try:
+                        utils.copy_large_file(src_file_path, dst_file_path, action, Action.STATUS_IN_PROGRESS,
+                                              self.treatment_update_action)
+
+                        self.action_update_in_progress = False
+                        self.treatment_update_action(action, Action.STATUS_FINISHED, 100, 0, None)
+                        download.status = Download.STATUS_MOVED
+                        download.directory = action_directory_dst.directory
+                        self.update_download(download)
+                    except Exception:
+                        import traceback
+                        utils.log_debug(traceback.format_exc())
+                        download.status = Download.STATUS_ERROR_MOVING
+                        self.update_download(download)
+                else:
+                    utils.log_debug(u'File does not exist')
+                    download.logs = 'File %s does not exist\r\n' % src_file_path
+                    self.update_download_log(download)
+
             else:
-                utils.log_debug(u'Moving OK %s => %s' % (str(response.code), response.body))
-        except Exception:
-            import traceback
+                utils.log_debug(u'Download is none')
+        else:
+            utils.log_debug(u'Action is none')
 
-            utils.log_debug(traceback.format_exc())
+    def treatment_update_action(self, action, status, percent, time_left, time_elapsed):
+        utils.log_debug(u'*** treatment_update_action ***')
 
-    def unrar(self, downloads_list):
+        action_returned = None
+        if not self.action_update_in_progress:
+            if percent is not None:
+                utils.change_action_property(action, 'property_id', Action.PROPERTY_PERCENTAGE, 'property_value', percent)
+
+            if time_left is not None:
+                utils.change_action_property(action, 'property_id', Action.PROPERTY_TIME_LEFT, 'property_value', time_left)
+
+            if time_elapsed is not None:
+                utils.change_action_property(action, 'property_id', Action.PROPERTY_TIME_ELAPSED, 'property_value', time_elapsed)
+
+            if status is not None:
+                action.action_status_id = status
+
+            self.update_action(action)
+
+        return action_returned
+
+    def unrar(self, object_id, action):
         utils.log_debug(u'*** unrar ***')
 
-        download = downloads_list[0]
+        # logger = logging.getLogger()
+        # logger.setLevel(logging.DEBUG)
+        #
+        # file_handler = logging.FileHandler(utils.DIRECTORY_WEB_LOG + 'log_unrar_id_' + str(download_id) + '.log')
+        # file_handler.setLevel(logging.DEBUG)
+        # file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+        # logger.addHandler(file_handler)
 
-        for down in downloads_list:
-            down.status = Download.STATUS_UNRARING
-            self.update_download(down)
+        downloads_list = self.get_downloads_by_package(object_id)
+        if downloads_list is not None and len(downloads_list) > 0:
+            def getKey(d):
+                return d.name
 
-        download.logs = 'Unrar in progress ... \r\n'
-        self.update_download_log(download)
-        if not utils.is_this_running("[u]nrar x \"%s\"" % download.name):
-            cmd = (
-                self.COMMAND_UNRAR % (
-                    download.directory.path, download.name))
-            download.logs += 'Command: %s\r\n' % cmd
-            self.update_download_log(download)
-            utils.log_debug(u'command : %s' % cmd)
-            p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            downloads_list = sorted(downloads_list, key=getKey)
+            download = downloads_list[0]
 
-            self.update_download_package_unrar_percent(download.package.id, 0)
+            filename, file_extension = os.path.splitext(download.name)
+            if file_extension == '.rar':
+                for down in downloads_list:
+                    down.status = Download.STATUS_UNRARING
+                    self.update_download(down)
 
-            line = ''
-            while True:
-                out = p.stdout.read(1)
-                if out == '' and p.poll() is not None:
-                    break
-                if out != '':
-                    if out != '%':
-                        line += out
-                    else:
-                        print('Line %s' % line)
-                        download.logs = line
-                        values = line.split()
-                        if len(values) > 1:
-                            percent = values[int(len(values) - 1)]
-                            print('percent ' + percent)
-                            self.update_download_package_unrar_percent(download.package.id, percent)
+                download.logs = 'Unrar in progress ... \r\n'
+                self.update_download_log(download)
+                if not utils.is_this_running("[u]nrar x \"%s\"" % download.name):
+                    cmd = (
+                        self.COMMAND_UNRAR % (
+                            download.directory.path, download.name))
 
+                    download.logs += 'Command: %s\r\n' % cmd
+                    self.update_download_log(download)
+                    utils.log_debug(u'command : %s' % cmd)
+                    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+                    self.treatment_update_action(action, Action.STATUS_IN_PROGRESS, 0, None, None)
+
+                    line = ''
+                    while True:
+                        out = p.stdout.read(1)
+                        if out == '' and p.poll() is not None:
+                            break
+                        if out != '':
+                            if out != '%':
+                                line += out
+                            else:
+                                print('Line %s' % line)
+                                download.logs = line
+                                values = line.split()
+                                if len(values) > 1:
+                                    percent = values[int(len(values) - 1)]
+                                    print('percent ' + percent)
+                                    self.treatment_update_action(action, None, percent, None, None)
+                                    self.update_download_log(download)
+
+                    if 'All OK' in line:
+                        download.logs = 'Unrar finished, all is OK'
+                        self.treatment_update_action(action, Action.STATUS_FINISHED, 100, None, None)
                         self.update_download_log(download)
+                        download_status = Download.STATUS_UNRAR_OK
+                    else:
+                        download.logs = 'Unrar finised but error'
+                        self.treatment_update_action(action, Action.STATUS_ERROR, None, None, None)
+                        self.update_download_log(download)
+                        download_status = Download.STATUS_UNRAR_ERROR
 
-            if 'All OK' in line:
-                download.logs = 'Unrar finished, all is OK'
-                self.update_download_package_unrar_percent(download.package.id, 100)
-                self.update_download_log(download)
-                download_status = Download.STATUS_UNRAR_OK
-            else:
-                download.logs = 'Unrar finised but error'
-                self.update_download(download)
-                self.update_download_log(download)
-                download_status = Download.STATUS_UNRAR_ERROR
-
-            for down in downloads_list:
-                down.status = download_status
-                self.update_download(down)
+                    for down in downloads_list:
+                        down.status = download_status
+                        self.update_download(down)
 
     def disconnect(self):
         utils.log_debug(u'*** disconnect ***')
