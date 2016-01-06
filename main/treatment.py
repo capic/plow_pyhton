@@ -133,9 +133,6 @@ class Treatment:
             utils.log_debug(u'Action is none')
 
     def start_multi_downloads(self, file_path):
-        # utils.log_debug(u'*** start_file_treatment ***')
-        utils.log_debug(u'===> rest address: ' + utils.log_debug(utils.REST_ADRESSE))
-
         download = self.manage_download.get_download_to_start(None, file_path)
         logger = logging.getLogger()
         logger.setLevel(logging.DEBUG)

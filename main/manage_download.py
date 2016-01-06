@@ -656,9 +656,9 @@ class ManageDownload:
                 if os.path.isfile(src_file_path):
                     utils.log_debug(u'downloaded file exists')
                     download.status = Download.STATUS_MOVING
-                    self.update_download(download)
                     download.logs = 'File %s exists\r\n' % src_file_path
-                    self.update_download_log(download)
+                    download.logs += 'Moving from %s to %s => status %s' % (src_file_path, dst_file_path, download.status)
+                    self.update_download(download)
 
                     try:
                         utils.copy_large_file(src_file_path, dst_file_path, action, Action.STATUS_IN_PROGRESS,
@@ -668,11 +668,13 @@ class ManageDownload:
                         self.treatment_update_action(action, Action.STATUS_FINISHED, 100, 0, None)
                         download.status = Download.STATUS_MOVED
                         download.directory = action_directory_dst.directory
+                        download.logs = 'File moved to %s => status %s' % (download.directory, download.status)
                         self.update_download(download)
                     except Exception:
                         import traceback
                         utils.log_debug(traceback.format_exc())
                         download.status = Download.STATUS_ERROR_MOVING
+                        download.logs = 'File moved to %s => status %s' % (download.directory, download.status)
                         self.update_download(download)
                 else:
                     utils.log_debug(u'File does not exist')
