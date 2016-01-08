@@ -29,13 +29,14 @@ class Action:
         self.lifecycle_insert_date = None
         self.lifecycle_update_date = None
         self.download_id = None
+        self.download_package_id = None
         self.action_status_id = None
         self.action_type_id = None
         self.properties = None
 
     def to_string(self):
-        return 'id: %s | download_id: %s | action_status_id: %s | action_type_id: %s ' % (
-            str(self.id), str(self.download_id), str(self.action_status_id), str(self.action_type_id))
+        return 'id: %s | download_id: %s | download_package_id: %s | action_status_id: %s | action_type_id: %s ' % (
+            str(self.id), str(self.download_id), str(self.download_package_id), str(self.action_status_id), str(self.action_type_id))
 
     def to_update_json(self):
         return {

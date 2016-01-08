@@ -295,6 +295,7 @@ def json_to_action_object(json_object):
         action.lifecycle_insert_date = json_object['lifecycle_insert_date']
         action.lifecycle_update_date = json_object['lifecycle_update_date']
         action.download_id = json_object['download_id']
+        action.download_package_id = json_object['download_package_id']
         action.action_status_id = json_object['action_status_id']
         action.action_type_id = json_object['action_type_id']
         action.properties = json_to_property_object_list(json_object['action_has_properties'])
@@ -318,6 +319,7 @@ def action_object_to_update_json(action_object):
     action = {
         "id": action_object.id,
         "download_id": action_object.download_id,
+        "download_package_id": action_object.download_package_id,
         "lifecycle_insert_date": action_object.lifecycle_insert_date,
         "lifecycle_update_date": action_object.lifecycle_update_date,
         "action_status_id": action_object.action_status_id,

@@ -158,14 +158,16 @@ class Treatment:
                 self.mark_link_finished_in_file(download)
 
                 utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
-                move_action_list = self.manage_download.get_actions_by_parameters(download_id=download.id,
-                                                                                  action_type_id=Action.ACTION_MOVE_DOWNLOAD
-                                                                                  )
-                if len(move_action_list) == 1:
-                    utils.log_debug(u'File will be moved...............')
-                    self.manage_download.move_file(download.id, move_action_list[0])
-                else:
-                    utils.log_debug(u'No move action or too many move action')
+                actions_list = self.manage_download.get_actions_by_parameters(download_id=download.id)
+
+                for action in actions_list:
+                    object_id = None
+                    if action.download_id is not None:
+                        object_id = action.download_id
+                    elif action.download_package_id is not None:
+                        object_id = action.download_package_id
+
+                    self.action(object_id, action)
             else:
                 if download.status == Download.STATUS_ERROR:
                     self.mark_link_error_in_file(download)
