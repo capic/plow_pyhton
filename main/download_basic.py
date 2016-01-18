@@ -132,17 +132,17 @@ def main(argv):
                 print(tab)
                 for o in tab:
                     print(o)
-                    file_name = 'action_' + str(o.action_id)
-                    if o.action_target_id == Action.TARGET_DOWNLOAD:
+                    file_name = 'action_' + str(o['action_id'])
+                    if o['action_target_id'] == Action.TARGET_DOWNLOAD:
                         file_name += 'download_'
-                    elif o.action_target_id == Action.TARGET_PACKAGE:
+                    elif o['action_target_id'] == Action.TARGET_PACKAGE:
                         file_name += 'package_'
-                    file_name += str(o.object_id) + '.log'
+                    file_name += str(o['object_id']) + '.log'
 
                     logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + file_name, level=logging.DEBUG,
                                         format='%(asctime)s %(message)s',
                                         datefmt='%d/%m/%Y %H:%M:%S')
-                    treatment.action(o.object_id, o.action_id, o.action_target_id)
+                    treatment.action(o['object_id'], o['action_id'], o['action_target_id'])
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'unrar':
