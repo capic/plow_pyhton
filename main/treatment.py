@@ -83,6 +83,7 @@ class Treatment:
             f.close()
             utils.log_debug(u'=========> Close file %s <=========' % download.file_path)
 
+            utils.log_debug(u'Replace %s by %s' % (to_replace, replace_by))
             new_data = file_data.replace(to_replace, replace_by)
 
             utils.log_debug(u'=========> Open file %s to write <=========' % download.file_path)
