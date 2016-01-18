@@ -127,9 +127,11 @@ def main(argv):
                 treatment.check_multi_downloads_alive()
         elif args[0] == 'action':
             if len(args) > 1:
+                print(args[1])
                 tab = json.loads(args[1])
-
+                print(tab)
                 for o in tab:
+                    print(o)
                     file_name = 'action_' + str(o.action_id)
                     if o.action_target_id == Action.TARGET_DOWNLOAD:
                         file_name += 'download_'
