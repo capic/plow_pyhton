@@ -8,6 +8,7 @@ import getopt
 import logging
 import utils
 import os
+import json
 
 from treatment import Treatment
 from bean.actionBean import Action
@@ -125,22 +126,21 @@ def main(argv):
             else:
                 treatment.check_multi_downloads_alive()
         elif args[0] == 'action':
-            if len(args) > 3:
-                object_id = args[1]
-                action_id = args[2]
-                action_target_id = args[3]
+            if len(args) > 1:
+                tab = json.loads(args[1])
 
-                file_name = 'action_' + str(action_id)
-                if action_target_id == Action.TARGET_DOWNLOAD:
-                    file_name += 'download_'
-                elif action_target_id == Action.TARGET_PACKAGE:
-                    file_name += 'package_'
-                file_name += str(object_id) + '.log'
+                for o in tab:
+                    file_name = 'action_' + str(o.action_id)
+                    if o.action_target_id == Action.TARGET_DOWNLOAD:
+                        file_name += 'download_'
+                    elif o.action_target_id == Action.TARGET_PACKAGE:
+                        file_name += 'package_'
+                    file_name += str(o.object_id) + '.log'
 
-                logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + file_name, level=logging.DEBUG,
-                                    format='%(asctime)s %(message)s',
-                                    datefmt='%d/%m/%Y %H:%M:%S')
-                treatment.action(object_id, action_id, action_target_id)
+                    logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + file_name, level=logging.DEBUG,
+                                        format='%(asctime)s %(message)s',
+                                        datefmt='%d/%m/%Y %H:%M:%S')
+                    treatment.action(o.object_id, o.action_id, o.action_target_id)
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'unrar':
