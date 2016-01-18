@@ -396,7 +396,8 @@ class ManageDownload:
     def download_already_exists(self, link):
         utils.log_debug(u'*** download_already_exists ***')
 
-        exists = False
+        # on considere apr defaut que le download existe pour eviter de telecharger si jamais on a pas acces ?
+        exists = True
 
         try:
             if link is not None and link != '':
