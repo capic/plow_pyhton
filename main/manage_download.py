@@ -92,6 +92,7 @@ class ManageDownload:
     def update_download(self, download):
         utils.log_debug(u'  *** update_download ***')
 
+        unirest.timeout(utils.FAST_UNIREST_TIMEOUT)
         download.lifecycle_update_date = datetime.utcnow().isoformat()
 
         try:
@@ -104,6 +105,8 @@ class ManageDownload:
                 download.logs = u"ERROR DURING DOWNLOAD UPDATE\r\n"
 
             self.update_download_log(download)
+
+            unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
 
         except Exception:
             utils.log_debug("Update download: No database connection")

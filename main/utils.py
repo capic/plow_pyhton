@@ -30,7 +30,8 @@ CONFIG_FILE = '/var/www/plow_solution/config.cfg'
 LOG_OUTPUT = True
 CONSOLE_OUTPUT = True
 
-DEFAULT_UNIREST_TIMEOUT = 3
+DEFAULT_UNIREST_TIMEOUT = 30
+FAST_UNIREST_TIMEOUT = 3
 
 
 def hms_to_seconds(t):
