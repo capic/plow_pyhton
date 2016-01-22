@@ -29,6 +29,7 @@ CONFIG_FILE = '/var/www/plow_solution/config.cfg'
 
 LOG_OUTPUT = True
 CONSOLE_OUTPUT = True
+LOG_BDD = False
 
 DEFAULT_UNIREST_TIMEOUT = 30
 FAST_UNIREST_TIMEOUT = 3

@@ -114,7 +114,7 @@ class ManageDownload:
             print(traceback.format_exc())
 
     def update_download_log(self, download):
-        if download.logs != "":
+        if utils.LOG_BDD is True and download.logs != "":
             try:
                 response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id),
                                        headers={"Accept": "application/json"},

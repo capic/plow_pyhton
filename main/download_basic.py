@@ -57,6 +57,10 @@ def main(argv):
                 utils.CONSOLE_OUTPUT = (
                     config['console_output'] == "True" or config['console_output'] == "true" or config[
                         'console_output'] == "1")
+            if 'log_bdd' in config:
+                utils.LOG_BDD = (
+                    config['log_bdd'] == "True" or config['log_bdd'] == "true" or config[
+                        'log_bdd'] == "1")
 
         utils.log_debug("Directory web log %s" % utils.DIRECTORY_WEB_LOG)
         utils.log_debug("Directory download destination temp %s" % utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP)
