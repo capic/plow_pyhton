@@ -459,7 +459,8 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
                     # Read in the next chunk.
                     chunk = ifp.read(chunk_size)
 
-                if copied == size:
+                # on verifie qu'on a copie tous les octets et qu'on a bien le fichier en destination
+                if copied == size and os.path.isfile(dst):
                     os.remove(src)
 
     except IOError as obj:
