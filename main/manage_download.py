@@ -479,7 +479,15 @@ class ManageDownload:
                                 name, size))
                             to_update = True
 
-                        if finished:
+                        action_bool = False
+                        # si on a des actions en cours ou des termines on ne change pas le statut
+                        actions_list = self.get_actions_by_parameters(download.id)
+                        for action in actions_list:
+                            if action.status != Action.STATUS_WAITING:
+                                action_bool = True
+                                break
+
+                        if finished and not action_bool:
                             download.status = Download.STATUS_FINISHED
                             to_update = True
 
