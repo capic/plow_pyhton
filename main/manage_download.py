@@ -422,97 +422,98 @@ class ManageDownload:
 
         download = None
 
-        # si la ligne n'est pas marque comme termine avec ce programme
-        if not link.startswith(self.MARK_AS_FINISHED):
-            link = link.replace('\n', '')
-            link = link.replace('\r', '')
+        if not link.startswith(self.MARK_AS_ERROR):
+            # si la ligne n'est pas marque comme termine avec ce programme
+            if not link.startswith(self.MARK_AS_FINISHED):
+                link = link.replace('\n', '')
+                link = link.replace('\r', '')
 
-            finished = False
-            # si la ligne est marque comme termine par le traitement par liste de plowdown
-            if link.startswith('#OK'):
-                finished = True
-                link = link.replace('#OK ', '')
+                finished = False
+                # si la ligne est marque comme termine par le traitement par liste de plowdown
+                if link.startswith('#OK'):
+                    finished = True
+                    link = link.replace('#OK ', '')
 
-            cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
-            exists = self.download_already_exists(link)
-            # on n'insere pas un lien qui existe deja ou qui est termine
-            if not exists:
-                utils.log_debug(u'Download finished ? %s' % (str(finished)))
-                if not finished:
-                    utils.log_debug(u'Download %s doesn''t exist -> insert' % link)
-                    utils.log_debug(u'command : %s' % cmd)
+                cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
+                exists = self.download_already_exists(link)
+                # on n'insere pas un lien qui existe deja ou qui est termine
+                if not exists:
+                    utils.log_debug(u'Download finished ? %s' % (str(finished)))
+                    if not finished:
+                        utils.log_debug(u'Download %s doesn''t exist -> insert' % link)
+                        utils.log_debug(u'command : %s' % cmd)
 
-                    name, size, host = utils.get_infos_plowprobe(cmd)
-                    if name is not None:
-                        utils.log_debug('Infos get from plowprobe %s' % name)
+                        name, size, host = utils.get_infos_plowprobe(cmd)
+                        if name is not None:
+                            utils.log_debug('Infos get from plowprobe %s' % name)
 
-                        download_host = DownloadHost()
-                        download_host.name = host
+                            download_host = DownloadHost()
+                            download_host.name = host
 
-                        download_directory = DownloadDirectory()
-                        download_directory.id = utils.DIRECTORY_DOWNLOAD_DESTINATION_ID
-                        download_directory.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
+                            download_directory = DownloadDirectory()
+                            download_directory.id = utils.DIRECTORY_DOWNLOAD_DESTINATION_ID
+                            download_directory.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
 
-                        download = Download()
-                        download.name = name
-                        download.host = download_host
-                        download.link = link
-                        download.size = size
-                        download.status = Download.STATUS_WAITING
-                        download.priority = Download.PRIORITY_NORMAL
-                        download.file_path = file_path
-                        download.directory = download_directory
-                        download.lifecycle_insert_date = datetime.utcnow().isoformat()
+                            download = Download()
+                            download.name = name
+                            download.host = download_host
+                            download.link = link
+                            download.size = size
+                            download.status = Download.STATUS_WAITING
+                            download.priority = Download.PRIORITY_NORMAL
+                            download.file_path = file_path
+                            download.directory = download_directory
+                            download.lifecycle_insert_date = datetime.utcnow().isoformat()
 
-                        self.insert_download(download)
+                            self.insert_download(download)
+                else:
+                    to_update = False
+                    utils.log_debug(u'Download %s exists -> update' % link)
+                    download = self.get_download_by_link_file_path(link, file_path)
+
+                    if download is not None:
+                        if download.status != Download.STATUS_FINISHED:
+                            if download.name is None or download.name == '':
+                                utils.log_debug(u'command : %s' % cmd)
+                                name, size = utils.get_infos_plowprobe(cmd)
+                                utils.log_debug(u'Infos get from plowprobe %s,%s' % (
+                                    name, size))
+                                to_update = True
+
+                            action_bool = False
+                            # si on a des actions en cours ou des termines on ne change pas le statut
+                            actions_list = self.get_actions_by_parameters(download.id)
+                            for action in actions_list:
+                                if action.status != Action.STATUS_WAITING:
+                                    action_bool = True
+                                    break
+
+                            if finished and not action_bool:
+                                download.status = Download.STATUS_FINISHED
+                                to_update = True
+
+                            if to_update:
+                                download.logs = 'updated by insert_update_download method\r\n'
+                                self.update_download(download)
             else:
-                to_update = False
-                utils.log_debug(u'Download %s exists -> update' % link)
+                link = link.replace('\n', '')
+                link = link.replace('\r', '')
+                link = link.replace(self.MARK_AS_FINISHED + ' ', '')
+                utils.log_debug(u'Download already marked as finished in file')
                 download = self.get_download_by_link_file_path(link, file_path)
-
                 if download is not None:
                     if download.status != Download.STATUS_FINISHED:
+                        utils.log_debug(u'Download status is not finised => To update')
+
                         if download.name is None or download.name == '':
+                            cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
                             utils.log_debug(u'command : %s' % cmd)
                             name, size = utils.get_infos_plowprobe(cmd)
-                            utils.log_debug(u'Infos get from plowprobe %s,%s' % (
-                                name, size))
-                            to_update = True
+                            utils.log_debug(u'Infos get from plowprobe %s,%s' % (name, size))
 
-                        action_bool = False
-                        # si on a des actions en cours ou des termines on ne change pas le statut
-                        actions_list = self.get_actions_by_parameters(download.id)
-                        for action in actions_list:
-                            if action.status != Action.STATUS_WAITING:
-                                action_bool = True
-                                break
+                        download.status = Download.STATUS_FINISHED
 
-                        if finished and not action_bool:
-                            download.status = Download.STATUS_FINISHED
-                            to_update = True
-
-                        if to_update:
-                            download.logs = 'updated by insert_update_download method\r\n'
-                            self.update_download(download)
-        else:
-            link = link.replace('\n', '')
-            link = link.replace('\r', '')
-            link = link.replace(self.MARK_AS_FINISHED + ' ', '')
-            utils.log_debug(u'Download already marked as finished in file')
-            download = self.get_download_by_link_file_path(link, file_path)
-            if download is not None:
-                if download.status != Download.STATUS_FINISHED:
-                    utils.log_debug(u'Download status is not finised => To update')
-
-                    if download.name is None or download.name == '':
-                        cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
-                        utils.log_debug(u'command : %s' % cmd)
-                        name, size = utils.get_infos_plowprobe(cmd)
-                        utils.log_debug(u'Infos get from plowprobe %s,%s' % (name, size))
-
-                    download.status = Download.STATUS_FINISHED
-
-                    self.update_download(download)
+                        self.update_download(download)
 
         return download
 
