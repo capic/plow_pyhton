@@ -89,10 +89,14 @@ class ManageDownload:
         else:
             logging.error("Download is none")
 
-    def update_download(self, download):
+    def update_download(self, download, timeout=None):
         utils.log_debug(u'  *** update_download ***')
 
-        unirest.timeout(utils.FAST_UNIREST_TIMEOUT)
+        if timeout is None:
+            unirest.timeout(utils.FAST_UNIREST_TIMEOUT)
+        else:
+            unirest.timeout(timeout)
+
         download.lifecycle_update_date = datetime.utcnow().isoformat()
 
         try:
@@ -566,6 +570,7 @@ class ManageDownload:
         utils.log_debug(u'*** get_download_values ***')
 
         log = ''
+        timeout = None
 
         values = values_line.split()
 
@@ -612,6 +617,7 @@ class ManageDownload:
                     directory.path = utils.DIRECTORY_DOWNLOAD_DESTINATION
                     download.directory = directory
                     download.to_move_directory = None
+                    timeout = utils.DEFAULT_UNIREST_TIMEOUT
 
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
@@ -629,7 +635,7 @@ class ManageDownload:
 
             # si on est pas en rescue mode
             if download.id != -1:
-                self.update_download(download)
+                self.update_download(download, timeout)
 
         return download
 
