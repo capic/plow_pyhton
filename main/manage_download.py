@@ -89,7 +89,7 @@ class ManageDownload:
         else:
             logging.error("Download is none")
 
-    def update_download(self, download):
+    def update_download(self, download, force_update_log=False):
         utils.log_debug(u'  *** update_download ***')
 
         unirest.timeout(utils.FAST_UNIREST_TIMEOUT)
@@ -104,7 +104,7 @@ class ManageDownload:
                 utils.log_debug(u'Error update %s => %s' % (response.code, response.body))
                 download.logs = u"ERROR DURING DOWNLOAD UPDATE\r\n"
 
-            self.update_download_log(download)
+            self.update_download_log(download, force_update_log)
 
             unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
 
@@ -112,9 +112,11 @@ class ManageDownload:
             utils.log_debug("Update download: No database connection")
             import traceback
             print(traceback.format_exc())
+            download.logs = traceback.format_exc().splitlines()[-1]
+            self.update_download_log(download, True)
 
-    def update_download_log(self, download):
-        if utils.LOG_BDD is True and download.logs != "":
+    def update_download_log(self, download, force=False):
+        if (utils.LOG_BDD is True or force) and download.logs != "":
             try:
                 response = unirest.put(utils.REST_ADRESSE + 'downloads/logs/' + str(download.id),
                                        headers={"Accept": "application/json"},
@@ -688,7 +690,7 @@ class ManageDownload:
                             utils.log_debug(traceback.format_exc())
                             download.status = Download.STATUS_ERROR_MOVING
                             download.logs = 'File moved to %s => status %s\r\n' % (download.directory.path, download.status)
-                            self.update_download(download)
+                            self.update_download(download, True)
                     else:
                         utils.log_debug(u'File does not exist')
                         download.logs = 'File %s does not exist\r\n' % src_file_path
