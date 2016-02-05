@@ -12,6 +12,7 @@ import logging
 import shutil
 import os
 import copy
+import time
 
 
 class Treatment:
@@ -150,40 +151,44 @@ class Treatment:
 
             utils.log_debug(u'=========> Start new download <=========')
             application_configuration = self.manage_download.get_application_configuration_by_id(1)
-            download = self.manage_download.start_download(download)
+            if application_configuration.download_activated:
+                download = self.manage_download.start_download(download)
 
-            utils.log_debug(u'Download Status %s' % str(download.status))
-            # mark link with # in file
-            if download.status == Download.STATUS_FINISHED:
-                if download.id != -1:
-                    download = self.manage_download.get_download_by_id(download.id)
-                self.mark_link_finished_in_file(download)
+                utils.log_debug(u'Download Status %s' % str(download.status))
+                # mark link with # in file
+                if download.status == Download.STATUS_FINISHED:
+                    if download.id != -1:
+                        download = self.manage_download.get_download_by_id(download.id)
+                    self.mark_link_finished_in_file(download)
 
-                utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
-                actions_list = self.manage_download.get_actions_by_parameters(download_id=download.id)
+                    utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
+                    actions_list = self.manage_download.get_actions_by_parameters(download_id=download.id)
 
-                for action in actions_list:
-                    object_id = None
-                    if action.download_id is not None:
-                        object_id = action.download_id
-                    elif action.download_package_id is not None:
-                        object_id = action.download_package_id
+                    for action in actions_list:
+                        object_id = None
+                        if action.download_id is not None:
+                            object_id = action.download_id
+                        elif action.download_package_id is not None:
+                            object_id = action.download_package_id
 
-                    self.action(object_id, action)
-            else:
-                if download.status == Download.STATUS_ERROR:
-                    self.mark_link_error_in_file(download)
+                        self.action(object_id, action)
                 else:
-                    download.status = Download.STATUS_WAITING
+                    if download.status == Download.STATUS_ERROR:
+                        self.mark_link_error_in_file(download)
+                    else:
+                        download.status = Download.STATUS_WAITING
 
-                download.time_left = 0
-                download.average_speed = 0
+                    download.time_left = 0
+                    download.average_speed = 0
 
-                download.logs = 'updated by start_file_treatment method\r\n'
-                self.manage_download.update_download(download)
-            utils.log_debug(u'=========< End download >=========')
-            # next download
-            download = self.manage_download.get_download_to_start(None, file_path)
+                    download.logs = 'updated by start_file_treatment method\r\n'
+                    self.manage_download.update_download(download)
+                utils.log_debug(u'=========< End download >=========')
+                # next download
+                download = self.manage_download.get_download_to_start(None, file_path)
+            else:
+                # on attend 60s avant de retenter un telechargement
+                time.sleep(60)
 
     def stop_multi_downloads(self, file_path):
         utils.log_debug(u'*** stop_file_treatment ***')

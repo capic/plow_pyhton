@@ -176,7 +176,7 @@ def json_to_application_configuration_object(json_object):
     if bool(json_object):
         application_configuration = ApplicationConfiguration()
         application_configuration.id = json_object['id']
-        application_configuration.log_activated = json_object['log_activated']
+        application_configuration.download_activated = json_object['download_activated']
 
         return application_configuration
     else:
