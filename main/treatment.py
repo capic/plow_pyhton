@@ -151,6 +151,7 @@ class Treatment:
 
             utils.log_debug(u'=========> Start new download <=========')
             application_configuration = self.manage_download.get_application_configuration_by_id(1)
+            utils.log_debug(application_configuration.to_string())
             if application_configuration.download_activated:
                 download = self.manage_download.start_download(download)
 
