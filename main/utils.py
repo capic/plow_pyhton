@@ -9,6 +9,7 @@ from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
 from bean.downloadHostBean import DownloadHost
+from bean.applicationConfigurationBean import ApplicationConfiguration
 from bean.actionBean import Action
 from bean.propertyBean import Property
 import logging
@@ -169,6 +170,27 @@ def change_action_property(action, attribute_to_find, value_to_find, attribute_t
         prop.property_id = value_to_find
         prop.property_value = value_to_change
         action.properties.append(prop)
+
+
+def json_to_application_configuration_object(json_object):
+    if bool(json_object):
+        application_configuration = ApplicationConfiguration()
+        application_configuration.id = json_object['id']
+        application_configuration.log_activated = json_object['log_activated']
+
+        return application_configuration
+    else:
+        return None
+
+
+def json_to_application_configuration_list(json_array):
+    list_application_configuration = []
+
+    for json_object in json_array:
+        application_configuration = json_to_application_configuration_object(json_object)
+        list_application_configuration.append(application_configuration)
+
+    return list_application_configuration
 
 
 def json_to_download_object(json_object):

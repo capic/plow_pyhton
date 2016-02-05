@@ -149,6 +149,7 @@ class Treatment:
             logger.addHandler(file_handler)
 
             utils.log_debug(u'=========> Start new download <=========')
+            application_configuration = self.manage_download.get_application_configuration_by_id(1)
             download = self.manage_download.start_download(download)
 
             utils.log_debug(u'Download Status %s' % str(download.status))
