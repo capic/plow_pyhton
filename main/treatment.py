@@ -8,6 +8,7 @@ import utils
 from bean.downloadBean import Download
 from bean.actionBean import Action
 from manage_download import ManageDownload
+from bean.applicationConfigurationBean import ApplicationConfiguration
 import logging
 import shutil
 import os
@@ -156,7 +157,7 @@ class Treatment:
                 utils.log_debug(application_configuration.to_string())
             else:
                 # si on est en rescue mode on a pas acces a la base donc on considere que le telechargement est active
-                application_configuration = {}
+                application_configuration = ApplicationConfiguration()
                 application_configuration.download_activated = True
 
             if application_configuration.download_activated:
