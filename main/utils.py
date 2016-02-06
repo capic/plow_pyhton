@@ -25,8 +25,8 @@ DIRECTORY_DOWNLOAD_DESTINATION_TEMP = '/mnt/HD/HD_a2/telechargement/temp_plowdow
 DIRECTORY_DOWNLOAD_DESTINATION_ID = 1
 DIRECTORY_DOWNLOAD_DESTINATION = '/mnt/HD/HD_a2/telechargement/'
 
-# CONFIG_FILE = '/var/www/plow_solution/config.cfg'
-CONFIG_FILE = '/var/www/plow_solution_test/config.cfg'
+CONFIG_FILE = '/var/www/plow_solution/config.cfg'
+# CONFIG_FILE = '/var/www/plow_solution_test/config.cfg'
 
 LOG_OUTPUT = True
 CONSOLE_OUTPUT = True
@@ -201,6 +201,11 @@ def json_to_download_object(json_object):
         download = Download()
         download.id = json_object['id']
         download.name = json_object['name']
+        if json_object['host_id']:
+            host = json_to_download_host_object(json_object['download_host'])
+        else:
+            host = None
+        download.host = host
         if json_object['package_id']:
             download_package = DownloadPackage()
             download_package.id = json_object['download_package']['id']
