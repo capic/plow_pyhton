@@ -177,6 +177,7 @@ def json_to_application_configuration_object(json_object):
         application_configuration = ApplicationConfiguration()
         application_configuration.id = json_object['id']
         application_configuration.download_activated = json_object['download_activated']
+        application_configuration.log_debug_activated = json_object['log_debug_activated']
 
         return application_configuration
     else:
