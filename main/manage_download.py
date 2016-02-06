@@ -656,7 +656,7 @@ class ManageDownload:
             download.logs = log
 
             # si on est pas en rescue mode
-            if not utils.RESCUE_MODE:
+            if utils.RESCUE_MODE is False:
                 self.update_download(download)
 
         return download

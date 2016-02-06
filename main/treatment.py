@@ -150,7 +150,7 @@ class Treatment:
             logger.addHandler(file_handler)
 
             utils.log_debug(u'=========> Start new download <=========')
-            if not utils.RESCUE_MODE:
+            if utils.RESCUE_MODE is False:
                 application_configuration = self.manage_download.get_application_configuration_by_id(1)
                 utils.LOG_BDD = application_configuration.log_debug_activated
                 utils.log_debug(application_configuration.to_string())
@@ -165,12 +165,12 @@ class Treatment:
                 utils.log_debug(u'Download Status %s' % str(download.status))
                 # mark link with # in file
                 if download.status == Download.STATUS_FINISHED:
-                    if not utils.RESCUE_MODE:
+                    if utils.RESCUE_MODE is False:
                         download = self.manage_download.get_download_by_id(download.id)
                     self.mark_link_finished_in_file(download)
 
                     utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
-                    if not utils.RESCUE_MODE:
+                    if utils.RESCUE_MODE is False:
                         actions_list = self.manage_download.get_actions_by_parameters(download_id=download.id)
 
                         for action in actions_list:
