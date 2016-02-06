@@ -115,6 +115,29 @@ class ManageDownload:
             download.logs = traceback.format_exc().splitlines()[-1]
             self.update_download_log(download, True)
 
+    def get_application_configuration_by_id(self, application_configuration_id):
+        utils.log_debug(u'   *** get_application_configuration_by_id ***')
+        application_configuration = None
+
+        if application_configuration_id is not None:
+            try:
+                response = unirest.get(utils.REST_ADRESSE + 'applicationConfiguration/' + str(application_configuration_id),
+                                       headers={"Accept": "application/json"})
+
+                if response.code == 200:
+                    utils.log_debug('application_configuration got: %s' % response.body)
+                    application_configuration = utils.json_to_application_configuration_object(response.body)
+                else:
+                    utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+            except Exception:
+                utils.log_debug("Get application_configuration by id: No database connection")
+                import traceback
+                print(traceback.format_exc())
+        else:
+            logging.error('Id is none')
+
+        return application_configuration
+
     def update_download_log(self, download, force=False):
         if (utils.LOG_BDD is True or force) and download.logs != "":
             try:
