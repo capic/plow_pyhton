@@ -150,30 +150,37 @@ class Treatment:
             logger.addHandler(file_handler)
 
             utils.log_debug(u'=========> Start new download <=========')
-            application_configuration = self.manage_download.get_application_configuration_by_id(1)
-            utils.LOG_BDD = application_configuration.log_debug_activated
-            utils.log_debug(application_configuration.to_string())
+            if not utils.RESCUE_MODE:
+                application_configuration = self.manage_download.get_application_configuration_by_id(1)
+                utils.LOG_BDD = application_configuration.log_debug_activated
+                utils.log_debug(application_configuration.to_string())
+            else:
+                # si on est en rescue mode on a pas acces a la base donc on considere que le telechargement est active
+                application_configuration = {}
+                application_configuration.download_activated = True
+
             if application_configuration.download_activated:
                 download = self.manage_download.start_download(download)
 
                 utils.log_debug(u'Download Status %s' % str(download.status))
                 # mark link with # in file
                 if download.status == Download.STATUS_FINISHED:
-                    if download.id != -1:
+                    if not utils.RESCUE_MODE:
                         download = self.manage_download.get_download_by_id(download.id)
                     self.mark_link_finished_in_file(download)
 
                     utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))
-                    actions_list = self.manage_download.get_actions_by_parameters(download_id=download.id)
+                    if not utils.RESCUE_MODE:
+                        actions_list = self.manage_download.get_actions_by_parameters(download_id=download.id)
 
-                    for action in actions_list:
-                        object_id = None
-                        if action.download_id is not None:
-                            object_id = action.download_id
-                        elif action.download_package_id is not None:
-                            object_id = action.download_package_id
+                        for action in actions_list:
+                            object_id = None
+                            if action.download_id is not None:
+                                object_id = action.download_id
+                            elif action.download_package_id is not None:
+                                object_id = action.download_package_id
 
-                        self.action(object_id, action)
+                            self.action(object_id, action)
                 else:
                     if download.status == Download.STATUS_ERROR:
                         self.mark_link_error_in_file(download)

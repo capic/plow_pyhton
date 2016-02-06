@@ -374,6 +374,8 @@ class ManageDownload:
                     download = utils.json_to_download_object(response.body)
                 else:
                     utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+
+                utils.RESCUE_MODE = False
             except Exception:
                 utils.log_debug(u'no database connection => use rescue mode')
                 import traceback
@@ -393,6 +395,8 @@ class ManageDownload:
                             break
 
                 file.close()
+                utils.RESCUE_MODE = True
+                utils.log_debug(u'===== Rescue Mode Activated =====')
 
         else:
             download = self.get_download_by_id(download_id)
@@ -652,7 +656,7 @@ class ManageDownload:
             download.logs = log
 
             # si on est pas en rescue mode
-            if download.id != -1:
+            if not utils.RESCUE_MODE:
                 self.update_download(download)
 
         return download

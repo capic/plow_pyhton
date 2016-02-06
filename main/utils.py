@@ -35,6 +35,8 @@ LOG_BDD = False
 DEFAULT_UNIREST_TIMEOUT = 30
 FAST_UNIREST_TIMEOUT = 3
 
+RESCUE_MODE = False
+
 
 def hms_to_seconds(t):
     log_debug(u'*** hms_to_seconds ***')
