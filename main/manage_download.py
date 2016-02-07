@@ -365,42 +365,52 @@ class ManageDownload:
         download = None
 
         if download_id is None:
-            try:
-                if file_path is not None:
-                    response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
-                                           headers={"Accept": "application/json"}, params={"file_path": file_path})
-                else:
-                    response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
-                                           headers={"Accept": "application/json"})
+            already_downloaded = True
 
-                if response.code == 200:
-                    print("json: %s" % response.body)
-                    download = utils.json_to_download_object(response.body)
-                else:
-                    utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+            while already_downloaded is True:
+                already_downloaded = False
+                try:
+                    if file_path is not None:
+                        response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
+                                               headers={"Accept": "application/json"}, params={"file_path": file_path})
+                    else:
+                        response = unirest.get(utils.REST_ADRESSE + 'downloads/next',
+                                               headers={"Accept": "application/json"})
 
-                utils.RESCUE_MODE = False
-            except Exception:
-                utils.log_debug(u'no database connection => use rescue mode')
-                import traceback
-                print(traceback.format_exc())
-                file = open(file_path, 'r')
-                for line in file:
-                    line = line.decode("utf-8")
-                    if 'http' in line:
-                        utils.log_debug(u'Line %s contains http' % line)
-                        if not line.startswith('#'):
-                            line = line.replace('\n', '')
-                            line = line.replace('\r', '')
-                            download = Download()
-                            download.link = line
-                            download.name = "UNKNOWN"
-                            download.file_path = file_path
-                            break
+                    if response.code == 200:
+                        print("json: %s" % response.body)
+                        download = utils.json_to_download_object(response.body)
 
-                file.close()
-                utils.RESCUE_MODE = True
-                utils.log_debug(u'===== Rescue Mode Activated =====')
+                        if '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link) in open('example.txt').read():
+                            download.status = Download.STATUS_FINISHED
+                            download.size_file_downloaded = download.size_file
+                            self.update_download(download, timeout=utils.DEFAULT_UNIREST_TIMEOUT)
+                            already_downloaded = True
+                    else:
+                        utils.log_debug(u'Error get %s => %s' % (response.code, response.body))
+
+                    utils.RESCUE_MODE = False
+                except Exception:
+                    utils.log_debug(u'no database connection => use rescue mode')
+                    import traceback
+                    print(traceback.format_exc())
+                    file = open(file_path, 'r')
+                    for line in file:
+                        line = line.decode("utf-8")
+                        if 'http' in line:
+                            utils.log_debug(u'Line %s contains http' % line)
+                            if not line.startswith('#'):
+                                line = line.replace('\n', '')
+                                line = line.replace('\r', '')
+                                download = Download()
+                                download.link = line
+                                download.name = "UNKNOWN"
+                                download.file_path = file_path
+                                break
+
+                    file.close()
+                    utils.RESCUE_MODE = True
+                    utils.log_debug(u'===== Rescue Mode Activated =====')
 
         else:
             download = self.get_download_by_id(download_id)
@@ -728,7 +738,7 @@ class ManageDownload:
                             utils.log_debug(traceback.format_exc())
                             download.status = Download.STATUS_ERROR_MOVING
                             download.logs = 'File moved to %s => status %s\r\n' % (download.directory.path, download.status)
-                            self.update_download(download, True)
+                            self.update_download(download, force_update_log=True)
                     else:
                         utils.log_debug(u'File does not exist')
                         download.logs = 'File %s does not exist\r\n' % src_file_path

@@ -253,7 +253,7 @@ class Treatment:
             except OSError:
                 download.log = 'delete file error'
                 download.status = Download.STATUS_FILE_DELETE_ERROR
-                self.manage_download.update_download(download, True)
+                self.manage_download.update_download(download, force_update_log=True)
 
     def disconnect(self):
         self.manage_download.disconnect()
