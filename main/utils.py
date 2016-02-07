@@ -42,11 +42,9 @@ def hms_to_seconds(t):
     log_debug(u'*** hms_to_seconds ***')
 
     if ':' in t:
-        log_debug(u': in string')
         h, m, s = [int(i) for i in t.split(':')]
         d = 0
     elif 'd' in t:
-        log_debug(u'd in string')
         m = 0
         s = 0
         log_debug(t.split())

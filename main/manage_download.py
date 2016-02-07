@@ -618,7 +618,6 @@ class ManageDownload:
                     line += out
                 else:
                     line = utils.clean_plowdown_line(line)
-                    utils.log_debug(line)
                     download = self.get_download_values(line, download)
                     line = ''
 
@@ -633,6 +632,8 @@ class ManageDownload:
         log = ''
         timeout = None
 
+        utils.log_debug("Rescue mode: %s" % str(utils.RESCUE_MODE))
+        utils.log_debug(line)
         values = values_line.split()
 
         if len(values) > 0:
@@ -696,7 +697,7 @@ class ManageDownload:
 
             # si on est pas en rescue mode
             if utils.RESCUE_MODE is False:
-                self.update_download(download)
+                self.update_download(download, timeout)
 
         return download
 
