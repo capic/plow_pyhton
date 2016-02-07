@@ -633,7 +633,7 @@ class ManageDownload:
         timeout = None
 
         utils.log_debug("Rescue mode: %s" % str(utils.RESCUE_MODE))
-        utils.log_debug(line)
+        utils.log_debug(values_line)
         values = values_line.split()
 
         if len(values) > 0:
