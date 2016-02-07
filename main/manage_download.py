@@ -381,7 +381,7 @@ class ManageDownload:
                         print("json: %s" % response.body)
                         download = utils.json_to_download_object(response.body)
 
-                        if '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link) in open('example.txt').read():
+                        if '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link) in open(download.file_path).read():
                             download.status = Download.STATUS_FINISHED
                             download.size_file_downloaded = download.size_file
                             self.update_download(download, timeout=utils.DEFAULT_UNIREST_TIMEOUT)
