@@ -122,6 +122,7 @@ class ManageDownload:
             print(traceback.format_exc())
             download.logs = traceback.format_exc().splitlines()[-1]
             self.update_download_log(download, True)
+            raise
     
     def get_application_configuration_by_id(self, application_configuration_id):
         utils.log_debug(u'   *** get_application_configuration_by_id ***')
@@ -697,7 +698,10 @@ class ManageDownload:
 
             # si on est pas en rescue mode
             if utils.RESCUE_MODE is False:
-                self.update_download(download, timeout)
+                try:
+                    self.update_download(download, timeout)
+                except Exception:
+                    utils.RESCUE_MODE = True
 
         return download
 
