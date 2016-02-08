@@ -701,7 +701,8 @@ class ManageDownload:
                 try:
                     self.update_download(download, timeout)
                 except Exception:
-                    utils.RESCUE_MODE = True
+                    if download.status == Download.STATUS_FINISHED:
+                        utils.RESCUE_MODE = True
 
         return download
 
