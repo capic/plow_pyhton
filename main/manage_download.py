@@ -702,6 +702,7 @@ class ManageDownload:
                     self.update_download(download, timeout)
                 except Exception:
                     if download.status == Download.STATUS_FINISHED:
+                        print('On force en rescue mode')
                         utils.RESCUE_MODE = True
 
         return download
