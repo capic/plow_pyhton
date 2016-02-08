@@ -399,7 +399,7 @@ def log_debug(value):
         logging.debug(value)
 
     if CONSOLE_OUTPUT:
-        print(value)
+        print(time.strftime('%d/%m/%y %H:%M', time.localtime()) + " " + value)
 
 
 def find_this_process(process_name):
