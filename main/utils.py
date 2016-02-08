@@ -43,11 +43,9 @@ def hms_to_seconds(t):
     log_debug(u'*** hms_to_seconds ***')
 
     if ':' in t:
-        log_debug(u': in string')
         h, m, s = [int(i) for i in t.split(':')]
         d = 0
     elif 'd' in t:
-        log_debug(u'd in string')
         m = 0
         s = 0
         log_debug(t.split())
@@ -402,7 +400,7 @@ def log_debug(value):
         logging.debug(value)
 
     if CONSOLE_OUTPUT:
-        print(value)
+        print(time.strftime('%d/%m/%y %H:%M', time.localtime()) + " " + value)
 
 
 def find_this_process(process_name):
