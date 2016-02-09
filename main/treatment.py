@@ -167,10 +167,8 @@ class Treatment:
                 # mark link with # in file
                 if download.status == Download.STATUS_FINISHED:
                     if utils.RESCUE_MODE is False:
-                        print('before error %s' % download.to_string())
                         download = self.manage_download.get_download_by_id(download.id)
 
-                    print('before mark as finished %s' % download.to_string())
                     self.mark_link_finished_in_file(download)
 
                     utils.log_debug(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path))

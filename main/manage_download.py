@@ -607,7 +607,8 @@ class ManageDownload:
         download.pid_python = os.getpid()
         download.status = Download.STATUS_IN_PROGRESS
         download.logs = 'updated by start_download method\r\n'
-        self.update_download(download)
+        if utils.RESCUE_MODE is False:
+            self.update_download(download)
 
         line = ''
         while True:
@@ -702,7 +703,6 @@ class ManageDownload:
                     self.update_download(download, timeout)
                 except Exception:
                     if download.status == Download.STATUS_FINISHED:
-                        print('On force en rescue mode')
                         utils.RESCUE_MODE = True
 
         return download
