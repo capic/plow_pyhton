@@ -12,35 +12,15 @@ from bean.downloadHostBean import DownloadHost
 from bean.applicationConfigurationBean import ApplicationConfiguration
 from bean.actionBean import Action
 from bean.propertyBean import Property
-import logging
 import os
 import sys
 import time
 import json
-
-REST_ADRESSE = 'http://192.168.1.101:3000/'
-# REST_ADRESSE = 'http://192.168.1.101:3001/'
-
-DIRECTORY_WEB_LOG = '.'
-DIRECTORY_DOWNLOAD_DESTINATION_TEMP = '/mnt/HD/HD_a2/telechargement/temp_plowdown/'
-DIRECTORY_DOWNLOAD_DESTINATION_ID = 1
-DIRECTORY_DOWNLOAD_DESTINATION = '/mnt/HD/HD_a2/telechargement/'
-
-CONFIG_FILE = '/var/www/plow_solution/config.cfg'
-# CONFIG_FILE = '/var/www/plow_solution_test/config.cfg'
-
-LOG_OUTPUT = True
-CONSOLE_OUTPUT = True
-LOG_BDD = False
-
-DEFAULT_UNIREST_TIMEOUT = 30
-FAST_UNIREST_TIMEOUT = 3
-
-RESCUE_MODE = False
+import log
 
 
 def hms_to_seconds(t):
-    log_debug(u'*** hms_to_seconds ***')
+    log.log(u'*** hms_to_seconds ***', log.LEVEL_INFO)
 
     if ':' in t:
         h, m, s = [int(i) for i in t.split(':')]
@@ -48,13 +28,7 @@ def hms_to_seconds(t):
     elif 'd' in t:
         m = 0
         s = 0
-        log_debug(t.split())
-        log_debug(t.split()[1])
-        log_debug(t.split()[1].replace('h', ''))
         h = int(t.split()[1].replace('h', ''))
-        log_debug(t.split())
-        log_debug(t.split()[0])
-        log_debug(t.split()[0].replace('d', ''))
         d = int(t.split()[0].replace('d', ''))
 
     return int(d * 24 * 3600 + 3600 * h + 60 * m + s)
@@ -110,20 +84,17 @@ def clean_plowdown_line(line):
 
 
 def get_infos_plowprobe(cmd):
-    log_debug(u'Command plowprobe %s' % cmd)
+    log.log(u'Command plowprobe %s' % cmd, log.LEVEL_DEBUG)
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
 
     if output.startswith('==>'):
         tab_infos = output.split('=$=')
         name = tab_infos[0].replace('==>', '')
-        log_debug('name before modification %s' % name)
         name = clean_string_console(name)
-        log_debug('name after modification %s' % name)
 
         size = 0
         if tab_infos[1] is not None and tab_infos[1] != '':
             size = int(tab_infos[1])
-            log_debug(u'Size %s' % str(size))
 
         host = tab_infos[2]
 
@@ -376,7 +347,7 @@ def json_to_download_host_object(json_object):
 def package_name_from_download_name(download_name):
     ext = download_name.split(".")[-1]
     ext2 = download_name.split(".")[-2]
-    log_debug('Extensions %s | %s ' % (ext, ext2))
+    log.log('Extensions %s | %s ' % (ext, ext2), log.LEVEL_DEBUG)
     if ext == 'rar':
         if 'part' in ext2:
             return download_name.split(".part")[0]
@@ -395,19 +366,11 @@ def get_action_by_property(actions_list, property_id):
     return action_returned
 
 
-def log_debug(value):
-    if LOG_OUTPUT:
-        logging.debug(value)
-
-    if CONSOLE_OUTPUT:
-        print(time.strftime('%d/%m/%y %H:%M', time.localtime()) + " " + value)
-
-
 def find_this_process(process_name):
-    log_debug(u'*** find_this_process ***')
+    log.log(u'*** find_this_process ***', log.LEVEL_INFO)
 
     command = "ps -eaf | grep \"" + process_name + "\""
-    log_debug(u'command: %s' % command)
+    log.log(u'command: %s' % command, log.LEVEL_DEBUG)
     ps = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     output = ps.stdout.read()
     ps.stdout.close()
@@ -416,14 +379,12 @@ def find_this_process(process_name):
 
 
 def is_this_running(process_name):
-    log_debug(u'*** is_this_running ***')
+    log.log(u'*** is_this_running ***', log.LEVEL_INFO)
     output = find_this_process(process_name)
 
     if re.search(process_name, output) is None:
-        log_debug(u' ===> False')
         return False
     else:
-        log_debug(u' ===> True')
         return True
 
 
@@ -481,7 +442,6 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
                         sys.stdout.flush()
                     else:
                         eststr = 'ela={:>.1f}s, rem={:>.1f}s, tot={:>.1f}s'.format(elapsed, est, est1)
-                        log_debug('\r\033[K{:>6.1f}%  {}  {} --> {} '.format(per, eststr, src, dst))
 
                         properties_treatment(action, status, per, est, elapsed)
 

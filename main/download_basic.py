@@ -9,6 +9,8 @@ import logging
 import utils
 import os
 import json
+import log
+import config
 
 from treatment import Treatment
 from bean.actionBean import Action
@@ -31,51 +33,47 @@ def main(argv):
         if os.path.isfile(utils.CONFIG_FILE):
             config = {}
             execfile(utils.CONFIG_FILE, config)
-            utils.log_debug("config file found")
+
             if 'rest_adresse' in config:
-                utils.REST_ADRESSE = config['rest_adresse']
-            if 'mysql_login' in config:
-                utils.MYSQL_LOGIN = config['mysql_login']
-            if 'mysql_pass' in config:
-                utils.MYSQL_PASS = config['mysql_pass']
-            if 'mysql_host' in config:
-                utils.MYSQL_HOST = config['mysql_host']
-            if 'mysql_database' in config:
-                utils.MYSQL_DATABASE = config['mysql_database']
+                config.REST_ADRESSE = config['rest_adresse']
             if 'repertoire_web_log' in config:
-                utils.DIRECTORY_WEB_LOG = config['repertoire_web_log']
+                config.DIRECTORY_WEB_LOG = config['repertoire_web_log']
             if 'repertoire_telechargement_temporaire' in config:
-                utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config['repertoire_telechargement_temporaire']
+                config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config['repertoire_telechargement_temporaire']
             if 'repertoire_telechargement_id' in config:
-                utils.DIRECTORY_DOWNLOAD_DESTINATION_ID = config['repertoire_telechargement_id']
+                config.DIRECTORY_DOWNLOAD_DESTINATION_ID = config['repertoire_telechargement_id']
             if 'repertoire_telechargement' in config:
-                utils.DIRECTORY_DOWNLOAD_DESTINATION = config['repertoire_telechargement']
+                config.DIRECTORY_DOWNLOAD_DESTINATION = config['repertoire_telechargement']
             if 'log_output' in config:
-                utils.LOG_OUTPUT = (
+                config.LOG_OUTPUT = (
                     config['log_output'] == "True" or config['log_output'] == "true" or config['log_output'] == "1")
             if 'console_output' in config:
-                utils.CONSOLE_OUTPUT = (
+                config.CONSOLE_OUTPUT = (
                     config['console_output'] == "True" or config['console_output'] == "true" or config[
                         'console_output'] == "1")
             if 'log_bdd' in config:
-                utils.LOG_BDD = (
+                config.LOG_BDD = (
                     config['log_bdd'] == "True" or config['log_bdd'] == "true" or config[
                         'log_bdd'] == "1")
+            if 'log_level' in config:
+                config.CONFIG_LOG_LEVEL = config['log_level']
+                log.convert_log_level_to_logging_level()
 
-        utils.log_debug("Directory web log %s" % utils.DIRECTORY_WEB_LOG)
-        utils.log_debug("Directory download destination temp %s" % utils.DIRECTORY_DOWNLOAD_DESTINATION_TEMP)
-        utils.log_debug("Directory download destination %s" % utils.DIRECTORY_DOWNLOAD_DESTINATION)
-        utils.log_debug("Log output %s" % str(utils.LOG_OUTPUT))
-        utils.log_debug("Console output %s" % str(utils.CONSOLE_OUTPUT))
+        log.log("Rest Address: %s" % config.REST_ADRESSE, log.LEVEL_DEBUG)
+        log.log("Directory web log %s" % config.DIRECTORY_WEB_LOG, log.LEVEL_DEBUG)
+        log.log("Directory download destination temp %s" % config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, log.LEVEL_DEBUG)
+        log.log("Directory download destination %s" % config.DIRECTORY_DOWNLOAD_DESTINATION, log.LEVEL_DEBUG)
+        log.log("Log output %s" % str(log.log_OUTPUT), log.LEVEL_DEBUG)
+        log.log("Console output %s" % str(config.CONSOLE_OUTPUT), log.LEVEL_DEBUG)
 
         treatment = Treatment()
 
         # start a download
         if args[0] == 'start':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'log_start.log', level=logging.DEBUG,
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_start.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            utils.log_debug(u"*** Start application ***")
+            log.log(u"*** Start application ***", log.LEVEL_INFO)
 
             if len(args) > 1:
                 download_id = args[1]
@@ -84,46 +82,46 @@ def main(argv):
                 print(COMMAND_USAGE)
         # stop a download
         elif args[0] == 'stop':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'log_stop.log', level=logging.DEBUG,
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            utils.log_debug(u"*** Start application ***")
+            log.log(u"*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 download_id = args[1]
                 treatment.stop_download(download_id)
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'start_file_treatment':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'log_start_file_treatment.log', level=logging.DEBUG,
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_start_file_treatment.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            utils.log_debug(u"*** Start application ***")
+            log.log(u"*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 file_path = args[1]
                 treatment.start_file_treatment(file_path)
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'start_multi_downloads':
-            # logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG +'log_start_multi_downloads.log', level=logging.DEBUG,
+            # logging.basicConfig(filename=config.DIRECTORY_WEB_LOG +'log_start_multi_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
             # format='%(asctime)s %(message)s',
             # datefmt='%d/%m/%Y %H:%M:%S')
-            # utils.log_debug(u"*** Start application ***")
+            # log.log_debug(u"*** Start application ***")
             if len(args) > 1:
                 file_path = args[1]
                 treatment.start_multi_downloads(file_path)
         elif args[0] == 'stop_multi_downloads':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'log_stop_multi_downloads.log', level=logging.DEBUG,
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop_multi_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            utils.log_debug(u"*** Start application ***")
+            log.log(u"*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 file_path = args[1]
                 treatment.stop_multi_downloads(file_path)
         elif args[0] == 'check_download_alive':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'log_check_download_alive.log', level=logging.DEBUG,
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_check_download_alive.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            utils.log_debug(u"*** Start application ***")
+            log.log(u"*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 download_id = args[1]
                 treatment.check_download_alive(download_id)
@@ -143,14 +141,14 @@ def main(argv):
                         file_name += 'package_'
                     file_name += str(o['object_id']) + '.log'
 
-                    logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + file_name, level=logging.DEBUG,
+                    logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + file_name, level=config.CONFIG_LOG_LEVEL_LOGGING,
                                         format='%(asctime)s %(message)s',
                                         datefmt='%d/%m/%Y %H:%M:%S')
                     treatment.action(o['object_id'], o['action_id'], o['action_target_id'])
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'unrar':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'unrar.log', level=logging.DEBUG,
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'unrar.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 1:
@@ -159,7 +157,7 @@ def main(argv):
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'reset':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'reset.log', level=logging.DEBUG,
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'reset.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 2:
@@ -169,7 +167,7 @@ def main(argv):
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'delete_package_files':
-            logging.basicConfig(filename=utils.DIRECTORY_WEB_LOG + 'delete_package_files.log', level=logging.DEBUG,
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'delete_package_files.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 1:
