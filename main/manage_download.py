@@ -406,8 +406,6 @@ class ManageDownload:
                                 download.size_file_downloaded = download.size_file
                                 self.update_download(download, timeout=config.DEFAULT_UNIREST_TIMEOUT)
                                 already_downloaded = True
-                        else:
-                            already_downloaded = True
                     else:
                         log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
 
