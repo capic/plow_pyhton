@@ -392,20 +392,20 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
     '''
     Copy a large file showing progress.
     '''
-    print('copying "{}" --> "{}"'.format(src, dst))
+    log.log('copying "{}" --> "{}"'.format(src, dst), log.LEVEL_DEBUG)
     if os.path.exists(src) is False:
-        print('ERROR: file does not exist: "{}"'.format(src))
+        log.log('ERROR: file does not exist: "{}"'.format(src), log.LEVEL_ERROR)
         sys.exit(1)
     if os.path.exists(dst) is True:
         os.remove(dst)
     if os.path.exists(dst) is True:
-        print('ERROR: file exists, cannot overwrite it: "{}"'.format(dst))
+        log.log('ERROR: file exists, cannot overwrite it: "{}"'.format(dst), log.LEVEL_ERROR)
         sys.exit(1)
 
     # Start the timer and get the size.
     start = time.time()
     size = os.stat(src).st_size
-    print('{} bytes'.format(size))
+    log.log('{} bytes'.format(size), log.LEVEL_DEBUG)
 
     # Adjust the chunk size to the input size.
     divisor = 10000  # .1%
@@ -413,7 +413,7 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
     while chunk_size == 0 and divisor > 0:
         divisor /= 10
         chunk_size = size / divisor
-    print('chunk size is {}'.format(chunk_size))
+    log.log('chunk size is {}'.format(chunk_size), log.LEVEL_DEBUG)
 
     # Copy.
     try:
@@ -453,9 +453,9 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
                     os.remove(src)
 
     except IOError as obj:
-        print('\nERROR: {}'.format(obj))
+        log.log('\nERROR: {}'.format(obj), log.LEVEL_ERROR)
         sys.exit(1)
 
     sys.stdout.write('\r\033[K')  # clear to EOL
     elapsed = time.time() - start
-    print('copied "{}" --> "{}" in {:>.1f}s"'.format(src, dst, elapsed))
+    log.log('copied "{}" --> "{}" in {:>.1f}s"'.format(src, dst, elapsed), log.LEVEL_INFO)

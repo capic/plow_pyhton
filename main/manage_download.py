@@ -88,9 +88,9 @@ class ManageDownload:
                     raise Exception(u'Error insert %s => %s' % (response.code, response.body))
 
             except Exception:
-                log.log("Insert download: No database connection", log.LEVEL_ERROR)
                 import traceback
-                print(traceback.format_exc())
+                log.log("Insert download: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
             logging.error("Download is none")
 
@@ -119,9 +119,9 @@ class ManageDownload:
             unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
 
         except Exception:
-            log.log("Update download: No database connection", log.LEVEL_ERROR)
             import traceback
-            print(traceback.format_exc())
+            log.log("Update download: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+            log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
             download.logs = traceback.format_exc().splitlines()[-1]
             self.update_download_log(download, True)
             raise
@@ -142,9 +142,9 @@ class ManageDownload:
                 else:
                     log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
-                log.log("Get application_configuration by id: No database connection", log.LEVEL_ERROR)
                 import traceback
-                print(traceback.format_exc())
+                log.log("Get application_configuration by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
             logging.error('Id is none')
 
@@ -161,9 +161,9 @@ class ManageDownload:
                 if response.code != 200:
                     log.log(u'Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
-                log.log("Update download log: No database connection", log.LEVEL_ERROR)
                 import traceback
-                print(traceback.format_exc())
+                log.log("Update download log: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
     def update_action_callback(self, response):
         log.log(u'*** update_action_callback ***', log.LEVEL_INFO)
@@ -187,10 +187,9 @@ class ManageDownload:
             # else:
             # action_property_returned = utils.json_to_action_object(response.body)
         except Exception:
-            log.log("Update action: No database connection", log.LEVEL_ERROR)
             import traceback
-            print(traceback.format_exc())
-
+            log.log("Update action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+            log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
     def get_download_by_id(self, download_id):
         log.log(u'   *** get_download_by_id ***', log.LEVEL_INFO)
@@ -208,9 +207,9 @@ class ManageDownload:
                 else:
                     log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
-                log.log("Get download by id: No database connection", log.LEVEL_ERROR)
                 import traceback
-                print(traceback.format_exc())
+                log.log("Get download by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
             logging.error('Id is none')
 
@@ -231,9 +230,9 @@ class ManageDownload:
                 else:
                     log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
-                log.log("Get download by id: No database connection", log.LEVEL_ERROR)
                 import traceback
-                print(traceback.format_exc())
+                log.log("Get download by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
             logging.error('Id is none')
 
@@ -254,9 +253,9 @@ class ManageDownload:
                 else:
                     log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
-                log.log("Get download directory by id: No database connection", log.LEVEL_ERROR)
                 import traceback
-                print(traceback.format_exc())
+                log.log("Get download directory by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
             log.log('Id is none', log.LEVEL_ERROR)
 
@@ -282,9 +281,9 @@ class ManageDownload:
                 log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
 
         except Exception:
-            log.log("Get action: No database connection", log.LEVEL_ERROR)
             import traceback
-            print(traceback.format_exc())
+            log.log("Get action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+            log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
         return action_list
 
@@ -304,10 +303,9 @@ class ManageDownload:
                 else:
                     log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
-                log.log("Get action: No database connection", log.LEVEL_ERROR)
                 import traceback
-
-                print(traceback.format_exc())
+                log.log("Get action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
             logging.error('Id is none')
 
@@ -341,9 +339,9 @@ class ManageDownload:
                     log.log('Too many download found with link %s and file_path %s' % (link, file_path), log.LEVEL_ERROR)
 
         except Exception:
-            log.log("Get download by link file path: No database connection", log.LEVEL_ERROR)
             import traceback
-            print(traceback.format_exc())
+            log.log("Get download by link file path: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+            log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
         return download
 
@@ -368,9 +366,9 @@ class ManageDownload:
                 if len(downloads_list) == 0:
                     logging.info('No download found with package_id %s' % str(package_id))
         except Exception:
-            log.log("Get download by package: No database connection", log.LEVEL_ERROR)
             import traceback
-            print(traceback.format_exc())
+            log.log("Get download by package: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+            log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
         return downloads_list
 
@@ -411,9 +409,10 @@ class ManageDownload:
 
                     config.RESCUE_MODE = False
                 except Exception:
-                    log.log(u'no database connection => use rescue mode', log.LEVEL_ERROR)
                     import traceback
-                    print(traceback.format_exc())
+                    log.log(u"no database connection => use rescue mode \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                    log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+
                     file = open(file_path, 'r')
                     for line in file:
                         line = line.decode("utf-8")
@@ -453,9 +452,9 @@ class ManageDownload:
             else:
                 log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
         except Exception:
-            log.log("Get download in progress: No database connection", log.LEVEL_ERROR)
             import traceback
-            print(traceback.format_exc())
+            log.log("Get download in progress: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+            log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
         return downloads_list
 
@@ -476,9 +475,9 @@ class ManageDownload:
             else:
                 logging.error('Link is none')
         except Exception:
-            log.log("Download already exists: No database connection", log.LEVEL_ERROR)
             import traceback
-            print(traceback.format_exc())
+            log.log("Download already exists: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+            log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
         return exists
 
@@ -847,12 +846,12 @@ class ManageDownload:
                             if out != '%':
                                 line += out
                             else:
-                                print('Line %s' % line)
+                                log.log('Line %s' % line, log.LEVEL_DEBUG)
                                 download.logs = line
                                 values = line.split()
                                 if len(values) > 1:
                                     percent = values[int(len(values) - 1)]
-                                    print('percent ' + percent)
+                                    log.log('percent ' + percent, log.LEVEL_DEBUG)
                                     self.treatment_update_action(action, None, percent, None, None)
                                     self.update_download_log(download)
 
