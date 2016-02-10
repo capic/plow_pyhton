@@ -31,7 +31,7 @@ class ManageDownload:
     MARK_AS_ERROR = "# ERROR"
 
     def __init__(self):
-        unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
+        unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
         self.action_update_in_progress = False
 
     def insert_download(self, download):
@@ -97,7 +97,7 @@ class ManageDownload:
         log.log(u'  *** update_download ***', log.LEVEL_INFO)
 
         if timeout is None:
-            unirest.timeout(utils.FAST_UNIREST_TIMEOUT)
+            unirest.timeout(config.FAST_UNIREST_TIMEOUT)
         else:
             unirest.timeout(timeout)
 
@@ -115,7 +115,7 @@ class ManageDownload:
 
             self.update_download_log(download, force_update_log)
 
-            unirest.timeout(utils.DEFAULT_UNIREST_TIMEOUT)
+            unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
 
         except Exception:
             log.log("Update download: No database connection", log.LEVEL_ERROR)
@@ -402,12 +402,12 @@ class ManageDownload:
                             log.log(u'Download got already downloaded in file => update to finish in database', log.LEVEL_INFO)
                             download.status = Download.STATUS_FINISHED
                             download.size_file_downloaded = download.size_file
-                            self.update_download(download, timeout=utils.DEFAULT_UNIREST_TIMEOUT)
+                            self.update_download(download, timeout=config.DEFAULT_UNIREST_TIMEOUT)
                             already_downloaded = True
                     else:
                         log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
 
-                    utils.RESCUE_MODE = False
+                    config.RESCUE_MODE = False
                 except Exception:
                     log.log(u'no database connection => use rescue mode', log.LEVEL_ERROR)
                     import traceback
@@ -427,7 +427,7 @@ class ManageDownload:
                                 break
 
                     file.close()
-                    utils.RESCUE_MODE = True
+                    config.RESCUE_MODE = True
                     log.log(u'===== Rescue Mode Activated =====', log.LEVEL_INFO)
 
         else:
@@ -608,7 +608,7 @@ class ManageDownload:
         download.pid_python = os.getpid()
         download.status = Download.STATUS_IN_PROGRESS
         download.logs = 'updated by start_download method\r\n'
-        if utils.RESCUE_MODE is False:
+        if config.RESCUE_MODE is False:
             self.update_download(download)
 
         line = ''
@@ -635,7 +635,7 @@ class ManageDownload:
         log = ''
         timeout = None
 
-        log.log("Rescue mode: %s" % str(utils.RESCUE_MODE), log.LEVEL_INFO)
+        log.log("Rescue mode: %s" % str(config.RESCUE_MODE), log.LEVEL_INFO)
         log.log(values_line, log.LEVEL_DEBUG)
         values = values_line.split()
 
@@ -682,7 +682,7 @@ class ManageDownload:
                     directory.path = config.DIRECTORY_DOWNLOAD_DESTINATION
                     download.directory = directory
                     download.to_move_directory = None
-                    timeout = utils.DEFAULT_UNIREST_TIMEOUT
+                    timeout = config.DEFAULT_UNIREST_TIMEOUT
 
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
@@ -699,12 +699,12 @@ class ManageDownload:
             download.logs = log
 
             # si on est pas en rescue mode
-            if utils.RESCUE_MODE is False:
+            if config.RESCUE_MODE is False:
                 try:
                     self.update_download(download, timeout)
                 except Exception:
                     if download.status == Download.STATUS_FINISHED:
-                        utils.RESCUE_MODE = True
+                        config.RESCUE_MODE = True
 
         return download
 
