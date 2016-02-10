@@ -628,10 +628,10 @@ class ManageDownload:
 
         return download
 
-
     # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
     # 6 => vitesse moyenne recu, 7 => vitesse moyenne envoye, 8 => temps total, 9 => temps passe, 10 => temps restant, 11 => vitesse courante
     def get_download_values(self, values_line, download):
+        print('dedans')
         log.log(u'*** get_download_values ***', log.LEVEL_INFO)
 
         log = ''
