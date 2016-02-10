@@ -31,32 +31,32 @@ def main(argv):
         exit()
     else:
         if os.path.isfile(config.CONFIG_FILE):
-            config = {}
+            config_object = {}
             execfile(config.CONFIG_FILE, config)
 
-            if 'rest_adresse' in config:
-                config.REST_ADRESSE = config['rest_adresse']
-            if 'repertoire_web_log' in config:
-                config.DIRECTORY_WEB_LOG = config['repertoire_web_log']
-            if 'repertoire_telechargement_temporaire' in config:
-                config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config['repertoire_telechargement_temporaire']
-            if 'repertoire_telechargement_id' in config:
-                config.DIRECTORY_DOWNLOAD_DESTINATION_ID = config['repertoire_telechargement_id']
-            if 'repertoire_telechargement' in config:
-                config.DIRECTORY_DOWNLOAD_DESTINATION = config['repertoire_telechargement']
-            if 'log_output' in config:
+            if 'rest_adresse' in config_object:
+                config.REST_ADRESSE = config_object['rest_adresse']
+            if 'repertoire_web_log' in config_object:
+                config.DIRECTORY_WEB_LOG = config_object['repertoire_web_log']
+            if 'repertoire_telechargement_temporaire' in config_object:
+                config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config_object['repertoire_telechargement_temporaire']
+            if 'repertoire_telechargement_id' in config_object:
+                config.DIRECTORY_DOWNLOAD_DESTINATION_ID = config_object['repertoire_telechargement_id']
+            if 'repertoire_telechargement' in config_object:
+                config.DIRECTORY_DOWNLOAD_DESTINATION = config_object['repertoire_telechargement']
+            if 'log_output' in config_object:
                 config.LOG_OUTPUT = (
-                    config['log_output'] == "True" or config['log_output'] == "true" or config['log_output'] == "1")
-            if 'console_output' in config:
+                    config_object['log_output'] == "True" or config_object['log_output'] == "true" or config_object['log_output'] == "1")
+            if 'console_output' in config_object:
                 config.CONSOLE_OUTPUT = (
-                    config['console_output'] == "True" or config['console_output'] == "true" or config[
+                    config_object['console_output'] == "True" or config_object['console_output'] == "true" or config_object[
                         'console_output'] == "1")
-            if 'log_bdd' in config:
+            if 'log_bdd' in config_object:
                 config.LOG_BDD = (
-                    config['log_bdd'] == "True" or config['log_bdd'] == "true" or config[
+                    config_object['log_bdd'] == "True" or config_object['log_bdd'] == "true" or config_object[
                         'log_bdd'] == "1")
-            if 'log_level' in config:
-                config.CONFIG_LOG_LEVEL = config['log_level']
+            if 'log_level' in config_object:
+                config.CONFIG_LOG_LEVEL = config_object['log_level']
                 log.convert_log_level_to_logging_level()
 
         log.log("Rest Address: %s" % config.REST_ADRESSE, log.LEVEL_DEBUG)
