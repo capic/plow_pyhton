@@ -43,7 +43,7 @@ class ManageDownload:
 
             try:
                 log.log("Insert host ....", log.LEVEL_INFO)
-                log.log("Host %s" % download.host.to_insert_json(), log.LEVEL_DEBUF)
+                log.log("Host %s" % download.host.to_insert_json(), log.LEVEL_DEBUG)
                 log.log(config.REST_ADRESSE + 'downloadHosts \r\n params: %s' % download.host.to_insert_json(), log.LEVEL_DEBUG)
                 response = unirest.post(config.REST_ADRESSE + 'downloadHosts',
                                         headers={"Accept": "application/json"},
