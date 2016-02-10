@@ -185,7 +185,7 @@ class Treatment:
                             elif action.download_package_id is not None:
                                 object_id = action.download_package_id
 
-                            self.action(object_id, action)
+                            self.action(object_id, action.id)
                 else:
                     if download.status == Download.STATUS_ERROR:
                         self.mark_link_error_in_file(download)
