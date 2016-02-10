@@ -30,9 +30,9 @@ def main(argv):
         print(COMMAND_USAGE)
         exit()
     else:
-        if os.path.isfile(utils.CONFIG_FILE):
+        if os.path.isfile(config.CONFIG_FILE):
             config = {}
-            execfile(utils.CONFIG_FILE, config)
+            execfile(config.CONFIG_FILE, config)
 
             if 'rest_adresse' in config:
                 config.REST_ADRESSE = config['rest_adresse']
