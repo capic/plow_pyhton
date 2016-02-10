@@ -32,7 +32,7 @@ def main(argv):
     else:
         if os.path.isfile(config.CONFIG_FILE):
             config_object = {}
-            execfile(config.CONFIG_FILE, config)
+            execfile(config.CONFIG_FILE, config_object)
 
             if 'rest_adresse' in config_object:
                 config.REST_ADRESSE = config_object['rest_adresse']
