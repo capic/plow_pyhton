@@ -399,11 +399,14 @@ class ManageDownload:
                         log.log("json: %s" % response.body, log.LEVEL_DEBUG)
                         download = utils.json_to_download_object(response.body)
 
-                        if '# %s \r\n%s %s' % (download.name, self.MARK_AS_FINISHED, download.link) in open(download.file_path).read():
-                            log.log(u'Download got already downloaded in file => update to finish in database', log.LEVEL_INFO)
-                            download.status = Download.STATUS_FINISHED
-                            download.size_file_downloaded = download.size_file
-                            self.update_download(download, timeout=config.DEFAULT_UNIREST_TIMEOUT)
+                        if download is not None:
+                            if '# %s \r\n%s %s' % (download.name, self.MARK_AS_FINISHED, download.link) in open(download.file_path).read():
+                                log.log(u'Download got already downloaded in file => update to finish in database', log.LEVEL_INFO)
+                                download.status = Download.STATUS_FINISHED
+                                download.size_file_downloaded = download.size_file
+                                self.update_download(download, timeout=config.DEFAULT_UNIREST_TIMEOUT)
+                                already_downloaded = True
+                        else:
                             already_downloaded = True
                     else:
                         log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
