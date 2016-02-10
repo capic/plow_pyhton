@@ -63,7 +63,7 @@ def main(argv):
         log.log("Directory web log %s" % config.DIRECTORY_WEB_LOG, log.LEVEL_DEBUG)
         log.log("Directory download destination temp %s" % config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, log.LEVEL_DEBUG)
         log.log("Directory download destination %s" % config.DIRECTORY_DOWNLOAD_DESTINATION, log.LEVEL_DEBUG)
-        log.log("Log output %s" % str(log.log_OUTPUT), log.LEVEL_DEBUG)
+        log.log("Log output %s" % str(config.LOG_OUTPUT), log.LEVEL_DEBUG)
         log.log("Console output %s" % str(config.CONSOLE_OUTPUT), log.LEVEL_DEBUG)
 
         treatment = Treatment()
