@@ -15,6 +15,7 @@ import os
 import copy
 import time
 import log
+import config
 
 
 class Treatment:

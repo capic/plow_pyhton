@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import unirest
 import utils
 import log
+import config
 from bean.downloadBean import Download
 from bean.actionBean import Action
 from bean.downloadPackageBean import DownloadPackage
