@@ -124,7 +124,7 @@ class Treatment:
         download = self.manage_download.get_download_by_id(download_id)
         self.manage_download.move_download(download)
 
-    def action(self, object_id, action_id, action_target_id):
+    def action(self, object_id, action_id):
         log.log(u'*** action ***', log.LEVEL_INFO)
         action = self.manage_download.get_action_by_id(action_id)
 
