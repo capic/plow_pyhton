@@ -631,10 +631,9 @@ class ManageDownload:
     # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
     # 6 => vitesse moyenne recu, 7 => vitesse moyenne envoye, 8 => temps total, 9 => temps passe, 10 => temps restant, 11 => vitesse courante
     def get_download_values(self, values_line, download):
-        print('dedans')
         log.log(u'*** get_download_values ***', log.LEVEL_INFO)
 
-        log = ''
+        download_log = ''
         timeout = None
 
         log.log("Rescue mode: %s" % str(config.RESCUE_MODE), log.LEVEL_INFO)
@@ -691,14 +690,14 @@ class ManageDownload:
                 download.name = utils.clean_string_console(tab_name[len(tab_name) - 1])
             elif "Waiting" in values[0]:
                 download.theorical_start_datetime = (datetime.utcnow() + timedelta(0, int(values[1]))).isoformat()
-                log += 'Theorical start date time %s \r\n' % str(download.theorical_start_datetime)
+                download_log += 'Theorical start date time %s \r\n' % str(download.theorical_start_datetime)
             elif "Link" in values[0] and "is" in values[1] and "not" in values[2] and "alive" in values[3]:
-                log += 'Theorical start date time Link is not alive'
+                download_log += 'Theorical start date time Link is not alive'
                 download.status = Download.STATUS_ERROR
 
-            log += time.strftime('%d/%m/%y %H:%M:%S',
+            download_log += time.strftime('%d/%m/%y %H:%M:%S',
                                  time.localtime()) + ': ' + values_line + '\r\n'
-            download.logs = log
+            download.logs = download_log
 
             # si on est pas en rescue mode
             if config.RESCUE_MODE is False:
