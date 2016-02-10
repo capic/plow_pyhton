@@ -36,4 +36,4 @@ def log(value, level):
 
         if config.CONSOLE_OUTPUT:
             if level <= config.CONFIG_LOG_LEVEL:
-                print(time.strftime('%d/%m/%y %H:%M', time.localtime()) + " " + value)
+                print(time.strftime('%d/%m/%y %H:%M:%S', time.localtime()) + " " + value)
