@@ -500,7 +500,7 @@ class ManageDownload:
 
                 cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
                 #exists = self.download_already_exists(link)
-                download = get_download_by_link_file_path(link, file_path)
+                download = self.get_download_by_link_file_path(link, file_path)
                 # on n'insere pas un lien qui existe deja ou qui est termine
                 if download is not None:
                     log.log(u'Download finished ? %s' % (str(finished)), log.LEVEL_DEBUG)
