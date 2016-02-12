@@ -71,7 +71,8 @@ class Treatment:
                             u'Download id %s already finished in database but not marked in file => mark as finished', log.LEVEL_INFO)
                         downloads_to_mark_as_finished_in_file.append(download)
                 else:
-                    links_to_mark_as_error_in_file.append(line)
+                    if ManageDownload.MARK_AS_ERROR not in line:
+                        links_to_mark_as_error_in_file.append(line)
 
         file.close()
 
