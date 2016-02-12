@@ -79,7 +79,7 @@ class Treatment:
             self.mark_download_finished_in_file(download_to_mark_as_finished)
 
         for link_to_mark_as_finished in links_to_mark_as_error_in_file:
-            self.mark_link_error_in_file(link_to_mark_as_finished)
+            self.mark_link_error_in_file(file_path, link_to_mark_as_finished)
 
         log.log(u'%s =========< End insert new links or update old in database >=========', log.LEVEL_INFO)
 
