@@ -87,21 +87,23 @@ def get_infos_plowprobe(cmd):
     log.log(u'Command plowprobe %s' % cmd, log.LEVEL_DEBUG)
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
 
-    if output.startswith('==>'):
-        tab_infos = output.split('=$=')
-        name = tab_infos[0].replace('==>', '')
-        name = clean_string_console(name)
+    if 'Link is not alive' not in output:
+        if output.startswith('==>'):
+            tab_infos = output.split('=$=')
+            name = tab_infos[0].replace('==>', '')
+            name = clean_string_console(name)
 
-        size = 0
-        if tab_infos[1] is not None and tab_infos[1] != '':
-            size = int(tab_infos[1])
+            size = 0
+            if tab_infos[1] is not None and tab_infos[1] != '':
+                size = int(tab_infos[1])
 
-        host = tab_infos[2]
+            host = tab_infos[2]
 
-        return [name, size, host]
+            return [name, size, host]
+        else:
+            return [None, None, None]
     else:
-        return [None, None]
-
+        return [None, None, None]
 
 def clean_string_console(string):
     string = string.strip()

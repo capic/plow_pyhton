@@ -307,7 +307,7 @@ class ManageDownload:
                 log.log("Get action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
                 log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
-            logging.error('Id is none')
+            log.log('Id is none', log.LEVEL_ERROR)
 
         return action
 
@@ -691,7 +691,7 @@ class ManageDownload:
                 download.theorical_start_datetime = (datetime.utcnow() + timedelta(0, int(values[1]))).isoformat()
                 download_log += 'Theorical start date time %s \r\n' % str(download.theorical_start_datetime)
             elif "Link" in values[0] and "is" in values[1] and "not" in values[2] and "alive" in values[3]:
-                download_log += 'Theorical start date time Link is not alive'
+                download_log += 'Link is not alive'
                 download.status = Download.STATUS_ERROR
 
             download_log += time.strftime('%d/%m/%y %H:%M:%S',
