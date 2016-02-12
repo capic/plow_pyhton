@@ -56,6 +56,7 @@ class Treatment:
 
         log.log(u'=========> Insert new links or update old in database <=========', log.LEVEL_INFO)
         downloads_to_mark_as_finished_in_file = []
+        links_to_mark_as_error_in_file = []
         # insert links in database
         file = open(file_path, 'r')
         for line in file:
@@ -64,54 +65,61 @@ class Treatment:
                 log.log(u'Line %s contains http' % line, log.LEVEL_DEBUG)
                 download = self.manage_download.insert_update_download(line, file_path)
 
-                if download is not None and download.status == Download.STATUS_FINISHED and self.manage_download.MARK_AS_FINISHED not in line:
-                    log.log(
-                        u'Download id %s already finished in database but not marked in file => mark as finished', log.LEVEL_INFO)
-                    downloads_to_mark_as_finished_in_file.append(download)
+                if download is not None:
+                    if download.status == Download.STATUS_FINISHED and self.manage_download.MARK_AS_FINISHED not in line:
+                        log.log(
+                            u'Download id %s already finished in database but not marked in file => mark as finished', log.LEVEL_INFO)
+                        downloads_to_mark_as_finished_in_file.append(download)
+                else:
+                    links_to_mark_as_error_in_file.append(line)
 
         file.close()
 
-        for to_mark_as_finished in downloads_to_mark_as_finished_in_file:
-            self.mark_link_finished_in_file(to_mark_as_finished)
+        for download_to_mark_as_finished in downloads_to_mark_as_finished_in_file:
+            self.mark_download_finished_in_file(download_to_mark_as_finished)
+
+        for link_to_mark_as_finished in links_to_mark_as_error_in_file:
+            self.mark_link_error_in_file(link_to_mark_as_finished)
 
         log.log(u'%s =========< End insert new links or update old in database >=========', log.LEVEL_INFO)
 
-    def mark_link_in_file(self, download, to_replace, replace_by):
+    def mark_link_in_file(self, file_path, to_replace, replace_by):
         log.log(u'*** mark_link_in_file ***', log.LEVEL_INFO)
 
-        if download is not None:
+        if file_path is not None and file_path != '':
             # try:
-            log.log(u'=========> Open file %s to read <=========' % download.file_path, log.LEVEL_INFO)
-            f = open(download.file_path, 'r')
+            log.log(u'=========> Open file %s to read <=========' % file_path, log.LEVEL_INFO)
+            f = open(file_path, 'r')
             file_data = f.read()
             f.close()
-            log.log(u'=========> Close file %s <=========' % download.file_path, log.LEVEL_INFO)
+            log.log(u'=========> Close file %s <=========' % file_path, log.LEVEL_INFO)
 
             log.log(u'Replace %s by %s' % (to_replace, replace_by), log.LEVEL_DEBUG)
             new_data = file_data.replace(to_replace, replace_by)
 
-            log.log(u'=========> Open file %s to write <=========' % download.file_path, log.LEVEL_INFO)
-            f = open(download.file_path, 'w')
+            log.log(u'=========> Open file %s to write <=========' % file_path, log.LEVEL_INFO)
+            f = open(file_path, 'w')
             f.write(new_data)
             f.close()
-            log.log(u'=========> Close file %s <=========' % download.file_path, log.LEVEL_INFO)
-
-            download.logs += 'Text %s replaced by %s in file %s\r\n' % (to_replace, replace_by, download.file_path)
-            self.manage_download.update_download_log(download)
-            # except:
-            # logging.error('Unexpected error:', sys.exc_info()[0])
+            log.log(u'=========> Close file %s <=========' % file_path, log.LEVEL_INFO)
         else:
             logging.error('Download is none')
 
-    def mark_link_error_in_file(self, download):
-        log.log(u'*** mark_link_error_in_file ***', log.LEVEL_INFO)
-        self.mark_link_in_file(download, download.link,
+    def mark_download_error_in_file(self, download):
+        log.log(u'*** mark_download_error_in_file ***', log.LEVEL_INFO)
+        self.mark_link_in_file(download.file_path, download.link,
                                '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_ERROR, download.link))
 
-    def mark_link_finished_in_file(self, download):
-        log.log(u'*** mark_link_finished_in_file ***', log.LEVEL_INFO)
-        self.mark_link_in_file(download, download.link,
+    def mark_download_finished_in_file(self, download):
+        log.log(u'*** mark_download_finished_in_file ***', log.LEVEL_INFO)
+        self.mark_link_in_file(download.file_path, download.link,
                                '# %s \r\n%s %s' % (download.name, self.manage_download.MARK_AS_FINISHED, download.link))
+
+    def mark_link_error_in_file(self, file_path, link):
+        log.log(u'*** mark_link_finished_in_file ***', log.LEVEL_INFO)
+        self.mark_link_in_file(file_path, link,
+                               '# %s %s' % (self.manage_download.MARK_AS_ERROR, link))
+
 
     def reset_link_finished_in_file(self, download):
         log.log(u'*** reset_link_finished_in_file ***', log.LEVEL_INFO)
@@ -172,7 +180,7 @@ class Treatment:
                     if config.RESCUE_MODE is False:
                         download = self.manage_download.get_download_by_id(download.id)
 
-                    self.mark_link_finished_in_file(download)
+                    self.mark_download_finished_in_file(download)
 
                     log.log(u'download => %s | Directory => %s' % (download.to_string(), download.directory.path), log.LEVEL_DEBUG)
                     if config.RESCUE_MODE is False:
@@ -188,7 +196,7 @@ class Treatment:
                             self.action(object_id, action.id)
                 else:
                     if download.status == Download.STATUS_ERROR:
-                        self.mark_link_error_in_file(download)
+                        self.mark_download_error_in_file(download)
                     else:
                         download.status = Download.STATUS_WAITING
 
