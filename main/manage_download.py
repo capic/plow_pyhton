@@ -484,7 +484,7 @@ class ManageDownload:
     def insert_update_download(self, link, file_path):
         log.log(u'*** insert_update_download ***', log.LEVEL_INFO)
 
-        download = None
+        # download = None
 
         if not link.startswith(self.MARK_AS_ERROR):
             # si la ligne n'est pas marque comme termine avec ce programme
@@ -499,9 +499,10 @@ class ManageDownload:
                     link = link.replace('#OK ', '')
 
                 cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
-                exists = self.download_already_exists(link)
+                #exists = self.download_already_exists(link)
+                download = get_download_by_link_file_path(link, file_path)
                 # on n'insere pas un lien qui existe deja ou qui est termine
-                if not exists:
+                if download is not None:
                     log.log(u'Download finished ? %s' % (str(finished)), log.LEVEL_DEBUG)
                     if not finished:
                         log.log(u'Download %s doesn''t exist -> insert' % link, log.LEVEL_DEBUG)
