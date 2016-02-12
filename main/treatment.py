@@ -118,7 +118,7 @@ class Treatment:
     def mark_link_error_in_file(self, file_path, link):
         log.log(u'*** mark_link_finished_in_file ***', log.LEVEL_INFO)
         self.mark_link_in_file(file_path, link,
-                               '# %s %s' % (self.manage_download.MARK_AS_ERROR, link))
+                               '%s %s' % (self.manage_download.MARK_AS_ERROR, link))
 
 
     def reset_link_finished_in_file(self, download):
