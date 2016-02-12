@@ -486,9 +486,9 @@ class ManageDownload:
 
         # download = None
 
-        if not link.startswith(self.MARK_AS_ERROR):
-            # si la ligne n'est pas marque comme termine avec ce programme
-            if not link.startswith(self.MARK_AS_FINISHED) and not link.startswith(self.MARK_AS_ERROR):
+        # si la ligne n'est pas marque comme termine avec ce programme
+        if not link.startswith(self.MARK_AS_FINISHED):
+            if not link.startswith(self.MARK_AS_ERROR):
                 link = link.replace('\n', '')
                 link = link.replace('\r', '')
 
