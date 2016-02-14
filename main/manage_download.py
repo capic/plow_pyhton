@@ -336,6 +336,7 @@ class ManageDownload:
                     download = downloads_list[0]
                     log.log(u'download : %s' % (download.to_string()), log.LEVEL_DEBUG)
                 else:
+                    download = downloads_list[0]
                     log.log('Too many download found with link %s and file_path %s' % (link, file_path), log.LEVEL_ERROR)
 
         except Exception:
