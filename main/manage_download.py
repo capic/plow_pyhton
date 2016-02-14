@@ -502,7 +502,7 @@ class ManageDownload:
                 #exists = self.download_already_exists(link)
                 download = self.get_download_by_link_file_path(link, file_path)
                 # on n'insere pas un lien qui existe deja ou qui est termine
-                if download is None:
+                if config.RESCUE_MODE is False and download is None:
                     log.log(u'Download finished ? %s' % (str(finished)), log.LEVEL_DEBUG)
                     if not finished:
                         log.log(u'Download %s doesn''t exist -> insert' % link, log.LEVEL_DEBUG)
