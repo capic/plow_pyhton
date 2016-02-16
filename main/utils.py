@@ -57,6 +57,7 @@ def kill_proc_tree(pid, including_parent=True):
         if including_parent:
             parent.kill()
     except psutil.NoSuchProcess:
+        log.log(u'Process %s does not exist' % str(pid))
         pass
 
 

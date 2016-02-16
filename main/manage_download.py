@@ -591,6 +591,7 @@ class ManageDownload:
         log.log(u'*** stop_download ***', log.LEVEL_INFO)
         log.log(u'pid python: %s' % str(download.pid_python), log.LEVEL_DEBUG)
         utils.kill_proc_tree(download.pid_python)
+        utils.kill_proc_tree(download.pid_plowdown)
 
         download.pid_python = 0
         download.pid_plowdown = 0
