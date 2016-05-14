@@ -174,12 +174,12 @@ def json_to_download_object(json_object):
         download = Download()
         download.id = json_object['id']
         download.name = json_object['name']
-        if json_object['host_id']:
+        if json_object['download_host']:
             host = json_to_download_host_object(json_object['download_host'])
         else:
             host = None
         download.host = host
-        if json_object['package_id']:
+        if json_object['download_package']:
             download_package = DownloadPackage()
             download_package.id = json_object['download_package']['id']
             download_package.name = json_object['download_package']['name']
@@ -200,7 +200,7 @@ def json_to_download_object(json_object):
         download.time_left = json_object['time_left']
         download.pid_plowdown = json_object['pid_plowdown']
         download.pid_python = json_object['pid_python']
-        if json_object['directory_id']:
+        if json_object['directory']:
             download_directory = json_to_download_directory_object(json_object['directory'])
         else:
             download_directory = None
