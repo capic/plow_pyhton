@@ -16,6 +16,7 @@ import log
 import config
 from bean.downloadBean import Download
 from bean.actionBean import Action
+from bean.propertyBean import Property
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
 from bean.downloadHostBean import DownloadHost
