@@ -108,6 +108,8 @@ class ManageDownload:
                 if response.code != 200:
                     log.log(u'Error insert %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                     raise Exception(u'Error insert %s => %s' % (response.code, response.body))
+                else:
+                    download = self.get_download_by_id(response.body.id)
 
             except Exception:
                 import traceback
@@ -116,7 +118,7 @@ class ManageDownload:
         else:
             logging.error("Download is none")
 
-        return utils.json_to_download_object(response.body)
+        return download
 
     def update_download(self, download, force_update_log=False, timeout=None):
         log.log(u'  *** update_download ***', log.LEVEL_INFO)
