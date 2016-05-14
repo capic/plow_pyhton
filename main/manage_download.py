@@ -46,7 +46,7 @@ class ManageDownload:
                 log.log(config.REST_ADRESSE + 'actions \r\n params: %s' % action.to_insert_json(), log.LEVEL_DEBUG)
                 response = unirest.post(config.REST_ADRESSE + 'actions',
                                         headers={"Accept": "application/json"},
-                                        params=actions.to_insert_json())
+                                        params=action.to_insert_json())
 
                 if response.code != 200:
                     log.log(u'Error insert actop, %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
