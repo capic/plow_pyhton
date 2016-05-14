@@ -6,6 +6,8 @@ import json
 
 
 class Property:
+    PROPERTY_DIRECTORY_SRC = 2
+
     def __init__(self):
         self.action_id = None
         self.property_id = None

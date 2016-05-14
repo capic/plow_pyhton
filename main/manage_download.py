@@ -35,6 +35,28 @@ class ManageDownload:
         unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
         self.action_update_in_progress = False
 
+    def insert_action(self, action):
+        log.log(u'  *** insert_action ***', log.LEVEL_INFO)
+
+        if action is not None:
+            try:
+                log.log("Insert action ....", log.LEVEL_INFO)
+                log.log("Action %s" % action.to_insert_json(), log.LEVEL_DEBUG)
+                log.log(config.REST_ADRESSE + 'actions \r\n params: %s' % action.to_insert_json(), log.LEVEL_DEBUG)
+                response = unirest.post(config.REST_ADRESSE + 'actions',
+                                        headers={"Accept": "application/json"},
+                                        params=actions.to_insert_json())
+
+                if response.code != 200:
+                    log.log(u'Error insert actop, %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    raise Exception(u'Error insert actop, %s => %s' % (response.code, response.body))
+            except Exception:
+                import traceback
+                log.log("Insert action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+        else:
+            logging.error("action is none")
+
     def insert_download(self, download):
         log.log(u'  *** insert_download ***', log.LEVEL_INFO)
 
@@ -93,6 +115,8 @@ class ManageDownload:
                 log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
             logging.error("Download is none")
+
+        return utils.json_to_download_object(response.body)
 
     def update_download(self, download, force_update_log=False, timeout=None):
         log.log(u'  *** update_download ***', log.LEVEL_INFO)
@@ -493,20 +517,23 @@ class ManageDownload:
                 link = link.replace('\n', '')
                 link = link.replace('\r', '')
 
+                #on recupere le lien et le nom si jamais on veut renommer
+                tabLinkName = link.split(' ')
+
                 finished = False
                 # si la ligne est marque comme termine par le traitement par liste de plowdown
                 if link.startswith('#OK'):
                     finished = True
                     link = link.replace('#OK ', '')
 
-                cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
+                cmd = (self.COMMAND_DOWNLOAD_INFOS % tabLinkName[0])
                 #exists = self.download_already_exists(link)
-                download = self.get_download_by_link_file_path(link, file_path)
+                download = self.get_download_by_link_file_path(tabLinkName[0], file_path)
                 # on n'insere pas un lien qui existe deja ou qui est termine
                 if config.RESCUE_MODE is False and download is None:
                     log.log(u'Download finished ? %s' % (str(finished)), log.LEVEL_DEBUG)
                     if not finished:
-                        log.log(u'Download %s doesn''t exist -> insert' % link, log.LEVEL_DEBUG)
+                        log.log(u'Download %s doesn''t exist -> insert' % tabLinkName[0], log.LEVEL_DEBUG)
                         log.log(u'command : %s' % cmd, log.LEVEL_DEBUG)
 
                         name, size, host = utils.get_infos_plowprobe(cmd)
@@ -523,7 +550,7 @@ class ManageDownload:
                             download = Download()
                             download.name = name
                             download.host = download_host
-                            download.link = link
+                            download.link = tabLinkName[0]
                             download.size = size
                             download.status = Download.STATUS_WAITING
                             download.priority = Download.PRIORITY_NORMAL
@@ -531,7 +558,23 @@ class ManageDownload:
                             download.directory = download_directory
                             download.lifecycle_insert_date = datetime.utcnow().isoformat()
 
-                            self.insert_download(download)
+                            download = self.insert_download(download)
+
+                            if len(tabLinkName) > 1:
+                                log.log("There is a name for rename")
+                                action = Action()
+                                action.download_id = download.id
+                                action.action_type_id = Action.ACTION_RENAME_DOWNLOAD
+                                action.action_status_id = Action.STATUS_WAITING
+
+                                property_directory_src = Property()
+                                property_directory_src.property_id = Property.PROPERTY_DIRECTORY_SRC
+                                property_directory_src.directory_id = download.directory
+
+                                action.properties = [
+                                    property_directory_src
+                                ]
+                                self.insert_action(action)
             else:
                 link = link.replace('\n', '')
                 link = link.replace('\r', '')
