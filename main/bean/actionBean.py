@@ -54,10 +54,6 @@ class Action:
             "action":
                 json.dumps({
                     "download_id": self.download_id,
-                    "lifecycle_insert_date": self.lifecycle_insert_date,
-                    "lifecycle_update_date": self.lifecycle_update_date,
-                    "download_id": self.download_id,
-                    "download_package_id": self.download_package_id,
                     "action_status_id": self.action_status_id,
                     "action_type_id": self.action_type_id,
                     "action_has_properties": self.properties

@@ -574,8 +574,7 @@ class ManageDownload:
                                 property_directory_src.property_id = Property.PROPERTY_DIRECTORY_SRC
                                 property_directory_src.directory_id = download.directory
 
-                                properties = []
-                                properties.append(property_directory_src)
+                                properties = [property_directory_src]
 
                                 action.properties = properties
                                 self.insert_action(action)
