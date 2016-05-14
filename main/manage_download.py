@@ -563,7 +563,7 @@ class ManageDownload:
                             download = self.insert_download(download)
 
                             if len(tabLinkName) > 1:
-                                log.log("There is a name for rename")
+                                log.log("There is a name for rename", log.LEVEL_DEBUG)
                                 action = Action()
                                 action.download_id = download.id
                                 action.action_type_id = Action.ACTION_RENAME_DOWNLOAD
