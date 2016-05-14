@@ -75,7 +75,7 @@ class ManageDownload:
                     log.log(u'Error insert host %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                     raise Exception(u'Error insert host %s => %s' % (response.code, response.body))
 
-                download.host = utils.json_to_download_host_object(response.body)
+                download.host = utils.json_to_download_host_object(response.body['id'])
 
                 if utils.package_name_from_download_name(download.name) is not None:
                     download_package = DownloadPackage()
