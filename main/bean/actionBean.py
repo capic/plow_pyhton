@@ -49,17 +49,17 @@ class Action:
                     "action_has_properties": self.properties})
         }
 
-    # def to_insert_json(self):
-    #     return {
-    #         "action":
-    #             json.dumps({
-    #                 "download_id": self.download_id,
-    #                 "action_type_id": self.action_type_id,
-    #                 "property_id": self.property_id,
-    #                 "num": self.num,
-    #                 "property_value": self.property_value,
-    #                 "lifecycle_insert_date": self.lifecycle_insert_date,
-    #                 "lifecycle_update_date": self.lifecycle_update_date,
-    #                 "action_status_id": self.action_status_id,
-    #                 "directory_id": self.directory.id if self.directory is not None else None})
-    #     }
+    def to_insert_json(self):
+        return {
+            "action":
+                json.dumps({
+                    "download_id": self.download_id,
+                    "lifecycle_insert_date": self.lifecycle_insert_date,
+                    "lifecycle_update_date": self.lifecycle_update_date,
+                    "download_id": self.download_id,
+                    "download_package_id": self.download_package_id,
+                    "action_status_id": self.action_status_id,
+                    "action_type_id": self.action_type_id,
+                    "action_has_properties": self.properties
+                })
+        }
