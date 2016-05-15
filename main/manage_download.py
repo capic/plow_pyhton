@@ -573,7 +573,7 @@ class ManageDownload:
                                 action.action_status_id = Action.STATUS_WAITING
 
                                 property_directory_src = Property()
-                                property_directory_src.property_id = Property.PROPERTY_DIRECTORY_SRC
+                                property_directory_src.property_id = 2
                                 # property_directory_src.directory_id = download.directory
 
                                 properties = [property_directory_src]
