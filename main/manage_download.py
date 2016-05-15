@@ -563,6 +563,7 @@ class ManageDownload:
                             download.lifecycle_insert_date = datetime.utcnow().isoformat()
 
                             download = self.insert_download(download)
+                            print(download.to_string())
 
                             if len(tab_link_name) > 1:
                                 log.log("There is a name for rename", log.LEVEL_DEBUG)
