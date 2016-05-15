@@ -10,7 +10,7 @@ class Property:
 
     def __init__(self):
         # self.action_id = None
-        self.property_id = None
+        self.property_id = -1
         # self.property_value = None
         # self.directory = None
 
