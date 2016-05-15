@@ -33,7 +33,7 @@ class Action:
         self.download_package_id = None
         self.action_status_id = None
         self.action_type_id = None
-        self.properties = None
+        self.properties = []
 
     def to_string(self):
         return 'id: %s | download_id: %s | download_package_id: %s | action_status_id: %s | action_type_id: %s ' % (
