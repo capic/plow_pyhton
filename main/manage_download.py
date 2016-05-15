@@ -521,7 +521,8 @@ class ManageDownload:
                 link = link.replace('\r', '')
 
                 #on recupere le lien et le nom si jamais on veut renommer
-                tabLinkName = link.split(' ')
+                tab_link_name = link.split(' ')
+                print(tab_link_name)
 
                 finished = False
                 # si la ligne est marque comme termine par le traitement par liste de plowdown
@@ -529,14 +530,14 @@ class ManageDownload:
                     finished = True
                     link = link.replace('#OK ', '')
 
-                cmd = (self.COMMAND_DOWNLOAD_INFOS % tabLinkName[0])
+                cmd = (self.COMMAND_DOWNLOAD_INFOS % tab_link_name[0])
                 #exists = self.download_already_exists(link)
-                download = self.get_download_by_link_file_path(tabLinkName[0], file_path)
+                download = self.get_download_by_link_file_path(tab_link_name[0], file_path)
                 # on n'insere pas un lien qui existe deja ou qui est termine
                 if config.RESCUE_MODE is False and download is None:
                     log.log(u'Download finished ? %s' % (str(finished)), log.LEVEL_DEBUG)
                     if not finished:
-                        log.log(u'Download %s doesn''t exist -> insert' % tabLinkName[0], log.LEVEL_DEBUG)
+                        log.log(u'Download %s doesn''t exist -> insert' % tab_link_name[0], log.LEVEL_DEBUG)
                         log.log(u'command : %s' % cmd, log.LEVEL_DEBUG)
 
                         name, size, host = utils.get_infos_plowprobe(cmd)
@@ -553,7 +554,7 @@ class ManageDownload:
                             download = Download()
                             download.name = name
                             download.host = download_host
-                            download.link = tabLinkName[0]
+                            download.link = tab_link_name[0]
                             download.size = size
                             download.status = Download.STATUS_WAITING
                             download.priority = Download.PRIORITY_NORMAL
@@ -563,7 +564,7 @@ class ManageDownload:
 
                             download = self.insert_download(download)
 
-                            if len(tabLinkName) > 1:
+                            if len(tab_link_name) > 1:
                                 log.log("There is a name for rename", log.LEVEL_DEBUG)
                                 action = Action()
                                 action.download_id = download.id
