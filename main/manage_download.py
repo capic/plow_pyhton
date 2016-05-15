@@ -574,7 +574,7 @@ class ManageDownload:
 
                                 property_directory_src = Property()
                                 property_directory_src.property_id = Property.PROPERTY_DIRECTORY_SRC
-                                property_directory_src.directory_id = download.directory
+                                # property_directory_src.directory_id = download.directory
 
                                 properties = [property_directory_src]
 
