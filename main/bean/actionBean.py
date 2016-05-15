@@ -56,6 +56,6 @@ class Action:
                     "download_id": self.download_id,
                     "action_status_id": self.action_status_id,
                     "action_type_id": self.action_type_id,
-                    # "action_has_properties": self.properties
+                    "action_has_properties": self.properties
                 })
         }
