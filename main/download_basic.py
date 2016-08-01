@@ -85,7 +85,7 @@ def main(argv):
             logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log(u"*** Start application ***", log.LEVEL_INFO)
+            log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 download_id = args[1]
                 treatment.stop_download(download_id)
