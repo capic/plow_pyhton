@@ -10,7 +10,7 @@ import os
 import subprocess
 import time
 from datetime import datetime, timedelta
-import unirest
+import requests
 import utils
 import log
 import config
@@ -32,7 +32,7 @@ class ManageDownload:
     MARK_AS_ERROR = "# ERROR"
 
     def __init__(self):
-        unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
+        # unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
         self.action_update_in_progress = False
 
     def insert_action(self, action):
@@ -43,11 +43,10 @@ class ManageDownload:
                 log.log("Insert action ....", log.LEVEL_INFO)
                 log.log("Action %s" % action.to_insert_json(), log.LEVEL_DEBUG)
                 log.log(config.REST_ADRESSE + 'actions \r\n params: %s' % action.to_insert_json(), log.LEVEL_DEBUG)
-                response = unirest.post(config.REST_ADRESSE + 'actions',
-                                        headers={"Accept": "application/json"},
-                                        params=action.to_insert_json())
+                response = requests.post(config.REST_ADRESSE + 'actions',
+                                        data=action.to_insert_json())
 
-                if response.code != 200:
+                if response.status_code != 200:
                     log.log('Error insert actop, %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                     raise Exception('Error insert actop, %s => %s' % (response.code, response.body))
             except Exception:
@@ -67,11 +66,10 @@ class ManageDownload:
                 log.log("Insert host ....", log.LEVEL_INFO)
                 log.log("Host %s" % download.host.to_insert_json(), log.LEVEL_DEBUG)
                 log.log(config.REST_ADRESSE + 'downloadHosts \r\n params: %s' % download.host.to_insert_json(), log.LEVEL_DEBUG)
-                response = unirest.post(config.REST_ADRESSE + 'downloadHosts',
-                                        headers={"Accept": "application/json"},
-                                        params=download.host.to_insert_json())
+                response = requests.post(config.REST_ADRESSE + 'downloadHosts',
+                                        data=download.host.to_insert_json())
 
-                if response.code != 200:
+                if response.status_code != 200:
                     log.log('Error insert host %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                     raise Exception('Error insert host %s => %s' % (response.code, response.body))
 
@@ -83,11 +81,10 @@ class ManageDownload:
 
                     log.log("Insert package ....", log.LEVEL_INFO)
                     log.log(config.REST_ADRESSE + 'downloads/package \r\n params: %s' % download_package.to_insert_json(), log.LEVEL_DEBUG)
-                    response = unirest.post(config.REST_ADRESSE + 'downloads/package',
-                                            headers={"Accept": "application/json"},
-                                            params=download_package.to_insert_json())
+                    response = requests.post(config.REST_ADRESSE + 'downloads/package',
+                                            data=download_package.to_insert_json())
 
-                    if response.code != 200:
+                    if response.status_code != 200:
                         log.log('Error insert package %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                         raise Exception('Error insert package %s => %s' % (response.code, response.body))
 
@@ -102,10 +99,10 @@ class ManageDownload:
 
                 log.log("Insert download ....", log.LEVEL_INFO)
                 log.log(config.REST_ADRESSE + 'downloads \r\n params: %s' % download.to_insert_json(), log.LEVEL_DEBUG)
-                response = unirest.post(config.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
-                                        params=download.to_insert_json())
+                response = requests.post(config.REST_ADRESSE + 'downloads',
+                                        data=download.to_insert_json())
 
-                if response.code != 200:
+                if response.status_code != 200:
                     log.log('Error insert %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                     raise Exception('Error insert %s => %s' % (response.code, response.body))
                 else:
@@ -123,18 +120,17 @@ class ManageDownload:
     def update_download(self, download, force_update_log=False, timeout=None):
         log.log('  *** update_download ***', log.LEVEL_INFO)
 
-        if timeout is None:
-            unirest.timeout(config.FAST_UNIREST_TIMEOUT)
-        else:
-            unirest.timeout(timeout)
+        # if timeout is None:
+        #     unirest.timeout(config.FAST_UNIREST_TIMEOUT)
+        # else:
+        #     unirest.timeout(timeout)
 
         download.lifecycle_update_date = datetime.utcnow().isoformat()
 
         try:
             log.log(config.REST_ADRESSE + 'downloads/' + str(download.id) + '\r\n %s' % download.to_update_object(), log.LEVEL_DEBUG)
-            response = unirest.put(config.REST_ADRESSE + 'downloads/' + str(download.id),
-                                   headers={"Accept": "application/json"},
-                                   params=download.to_update_object())
+            response = requests.put(config.REST_ADRESSE + 'downloads/' + str(download.id),
+                                   data=download.to_update_object())
 
             if response.code != 200:
                 log.log('Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
@@ -142,7 +138,7 @@ class ManageDownload:
 
             self.update_download_log(download, force_update_log)
 
-            unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
+            # unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
 
         except Exception:
             import traceback
@@ -159,12 +155,11 @@ class ManageDownload:
         if application_configuration_id is not None:
             try:
                 log.log(config.REST_ADRESSE + 'applicationConfiguration/'  + str(application_configuration_id), log.LEVEL_DEBUG)
-                response = unirest.get(config.REST_ADRESSE + 'applicationConfiguration/' + str(application_configuration_id),
-                                       headers={"Accept": "application/json"})
+                response = requests.get(config.REST_ADRESSE + 'applicationConfiguration/' + str(application_configuration_id))
 
-                if response.code == 200:
+                if response.status_code == 200:
                     log.log('application_configuration got: %s' % response.body, log.LEVEL_DEBUG)
-                    application_configuration = utils.json_to_application_configuration_object(response.body)
+                    application_configuration = utils.json_to_application_configuration_object(response.json())
                 else:
                     log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
@@ -180,11 +175,10 @@ class ManageDownload:
         if (config.LOG_BDD is True or force) and download.logs != "":
             try:
                 log.log(config.REST_ADRESSE + 'downloads/logs/' + str(download.id) + '\r\n params: %s' % {"id": download.id, "logs": download.logs}, log.LEVEL_DEBUG)
-                response = unirest.put(config.REST_ADRESSE + 'downloads/logs/' + str(download.id),
-                                       headers={"Accept": "application/json"},
-                                       params={"id": download.id, "logs": download.logs})
+                response = requests.put(config.REST_ADRESSE + 'downloads/logs/' + str(download.id),
+                                       data={"id": download.id, "logs": download.logs})
 
-                if response.code != 200:
+                if response.status_code != 200:
                     log.log('Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
                 import traceback
@@ -203,12 +197,11 @@ class ManageDownload:
         action.lifecycle_update_date = datetime.utcnow().isoformat()
         try:
             log.log(config.REST_ADRESSE + 'actions/' + str(action.id) + '\r\n params: %s' % utils.action_object_to_update_json(action), log.LEVEL_DEBUG)
-            unirest.put(
+            requests.put(
                 config.REST_ADRESSE + 'actions/' + str(action.id),
-                headers={"Accept": "application/json"},
-                params=utils.action_object_to_update_json(action),
-                callback=self.update_action_callback)
-            # if response.code != 200:
+                data=utils.action_object_to_update_json(action))
+            if response.status_code != 200:
+                update_action_callback(response)
             # log.log_debug('Error update %s => %s' % (response.code, response.body))
             # else:
             # action_property_returned = utils.json_to_action_object(response.body)
@@ -224,10 +217,9 @@ class ManageDownload:
         if download_id is not None:
             try:
                 log.log(config.REST_ADRESSE + 'downloads/' + str(download_id), log.LEVEL_DEBUG)
-                response = unirest.get(config.REST_ADRESSE + 'downloads/' + str(download_id),
-                                       headers={"Accept": "application/json"})
+                response = requests.get(config.REST_ADRESSE + 'downloads/' + str(download_id))
 
-                if response.code == 200:
+                if response.status_code == 200:
                     log.log('download got: %s' % response.body, log.LEVEL_DEBUG)
                     download = utils.json_to_download_object(response.body)
                 else:
@@ -248,10 +240,9 @@ class ManageDownload:
         if package_id is not None:
             try:
                 log.log(config.REST_ADRESSE + 'downloads/package/' + str(package_id), log.LEVEL_DEBUG)
-                response = unirest.get(config.REST_ADRESSE + 'downloads/package/' + str(package_id),
-                                       headers={"Accept": "application/json"})
+                response = requests.get(config.REST_ADRESSE + 'downloads/package/' + str(package_id))
 
-                if response.code == 200:
+                if response.status_code == 200:
                     package = utils.json_to_download_package_object(response.body)
                 else:
                     log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
@@ -271,10 +262,9 @@ class ManageDownload:
         if directory_id is not None:
             try:
                 log.log(config.REST_ADRESSE + 'downloadDirectories/' + str(directory_id), log.LEVEL_DEBUG)
-                response = unirest.get(config.REST_ADRESSE + 'downloadDirectories/' + str(directory_id),
-                                       headers={"Accept": "application/json"})
+                response = requests.get(config.REST_ADRESSE + 'downloadDirectories/' + str(directory_id))
 
-                if response.code == 200:
+                if response.status_code == 200:
                     directory = utils.json_to_download_directory_object(response.body)
                 else:
                     log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
@@ -300,8 +290,8 @@ class ManageDownload:
 
             action_list = []
             log.log(config.REST_ADRESSE + 'actions \r\n params: %s' % params, log.LEVEL_DEBUG)
-            response = unirest.get(config.REST_ADRESSE + 'actions', headers={"Accept": "application/json"}, params=params)
-            if response.code == 200:
+            response = requests.get(config.REST_ADRESSE + 'actions', params=params)
+            if response.status_code == 200:
                 action_list = utils.json_to_action_object_list(response.body)
             else:
                 log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
@@ -320,10 +310,9 @@ class ManageDownload:
         if action_id is not None:
             try:
                 log.log(config.REST_ADRESSE + 'actions/' + str(action_id), log.LEVEL_DEBUG)
-                response = unirest.get(config.REST_ADRESSE + 'actions/' + str(action_id),
-                                       headers={"Accept": "application/json"})
+                response = requests.get(config.REST_ADRESSE + 'actions/' + str(action_id))
 
-                if response.code == 200:
+                if response.status_code == 200:
                     log.log('Action got: %s' % response.body, log.LEVEL_DEBUG)
                     action = utils.json_to_action_object(response.body)
                 else:
@@ -346,12 +335,11 @@ class ManageDownload:
         try:
             if link is not None and link != '' and file_path is not None and file_path != '':
                 log.log(config.REST_ADRESSE + 'downloads \r\n params: %s' % {"link": link, "file_path": file_path}, log.LEVEL_DEBUG)
-                response = unirest.get(config.REST_ADRESSE + 'downloads',
-                                       headers={"Accept": "application/json"},
+                response = requests.get(config.REST_ADRESSE + 'downloads',
                                        params={"link": link, "file_path": file_path})
 
                 downloads_list = []
-                if response.code == 200:
+                if response.status_code == 200:
                     downloads_list = utils.json_to_download_object_list(response.body)
                 else:
                     log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
@@ -380,12 +368,11 @@ class ManageDownload:
         try:
             if package_id is not None:
                 log.log(config.REST_ADRESSE + 'downloads \r\n params: %s' % {"package_id": package_id}, log.LEVEL_DEBUG)
-                response = unirest.get(config.REST_ADRESSE + 'downloads',
-                                       headers={"Accept": "application/json"},
+                response = requests.get(config.REST_ADRESSE + 'downloads',
                                        params={"package_id": package_id})
 
                 downloads_list = []
-                if response.code == 200:
+                if response.status_code == 200:
                     downloads_list = utils.json_to_download_object_list(response.body)
                 else:
                     log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
@@ -413,14 +400,13 @@ class ManageDownload:
                 try:
                     if file_path is not None:
                         log.log(config.REST_ADRESSE + 'downloads/next \r\n params: %s' % {"file_path": file_path}, log.LEVEL_DEBUG)
-                        response = unirest.get(config.REST_ADRESSE + 'downloads/next',
-                                               headers={"Accept": "application/json"}, params={"file_path": file_path})
+                        response = requests.get(config.REST_ADRESSE + 'downloads/next', params={"file_path": file_path})
                     else:
                         log.log(config.REST_ADRESSE + 'downloads/next', log.LEVEL_DEBUG)
                         response = unirest.get(config.REST_ADRESSE + 'downloads/next',
                                                headers={"Accept": "application/json"})
 
-                    if response.code == 200:
+                    if response.status_code == 200:
                         log.log("json: %s" % response.body, log.LEVEL_DEBUG)
                         download = utils.json_to_download_object(response.body)
 
@@ -469,8 +455,7 @@ class ManageDownload:
 
         try:
             log.log(config.REST_ADRESSE + 'downloads \r\n params: %s' % {"status": Download.STATUS_IN_PROGRESS}, log.LEVEL_DEBUG)
-            response = unirest.get(config.REST_ADRESSE + 'downloads',
-                                   headers={"Accept": "application/json"},
+            response = requests.get(config.REST_ADRESSE + 'downloads',
                                    params={"status": Download.STATUS_IN_PROGRESS})
 
             downloads_list = []
@@ -495,8 +480,7 @@ class ManageDownload:
         try:
             if link is not None and link != '':
                 log.log(config.REST_ADRESSE + 'downloads \r\n params: %s' % {"link": link}, log.LEVEL_DEBUG)
-                response = unirest.get(config.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
-                                       params={"link": link})
+                response = requests.get(config.REST_ADRESSE + 'downloads', params={"link": link})
                 exists = len(response.body) > 0
                 log.log('download exists ? %s' % str(exists), log.LEVEL_DEBUG)
             else:
