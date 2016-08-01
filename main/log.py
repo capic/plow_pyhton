@@ -22,6 +22,7 @@ def convert_log_level_to_logging_level():
     elif config.CONFIG_LOG_LEVEL == LEVEL_DEBUG:
         config.CONFIG_LOG_LEVEL_LOGGING = logging.DEBUG
 
+
 def log(value, level):
     if config.CONFIG_LOG_LEVEL > LEVEL_OFF:
         if config.LOG_OUTPUT:
