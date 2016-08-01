@@ -51,11 +51,11 @@ class Treatment:
         file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
         logger.addHandler(file_handler)
 
-        log.log('*** start_file_treatment ***'.encode("utf-8"), log.LEVEL_INFO)
-        log.log('file_path %s'.encode("utf-8") % file_path, log.LEVEL_DEBUG)
-        log.log('===> rest address: %s'.encode("utf-8") % config.REST_ADRESSE, log.LEVEL_DEBUG)
+        log.log('*** start_file_treatment ***', log.LEVEL_INFO)
+        log.log('file_path %s' % file_path, log.LEVEL_DEBUG)
+        log.log('===> rest address: %s' % config.REST_ADRESSE, log.LEVEL_DEBUG)
 
-        log.log('=========> Insert new links or update old in database <========='.encode("utf-8"), log.LEVEL_INFO)
+        log.log('=========> Insert new links or update old in database <=========', log.LEVEL_INFO)
         downloads_to_mark_as_finished_in_file = []
         links_to_mark_as_error_in_file = []
         # insert links in database
