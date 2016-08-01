@@ -58,7 +58,7 @@ class Treatment:
         downloads_to_mark_as_finished_in_file = []
         links_to_mark_as_error_in_file = []
         # insert links in database
-        file = open(file_path, 'r')
+        file = open(file_path, 'r', encoding='utf-8')
         for line in file:
             # line = line.decode("utf-8")
             if 'http' in line:
