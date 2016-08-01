@@ -61,7 +61,7 @@ class Treatment:
         # insert links in database
         file = open(file_path, 'r', encoding='utf-8')
         for line in file:
-            if 'http' in line:
+            if 'http'.encode("utf-8") in line:
                 log.log('Line %s contains http' % line, log.LEVEL_DEBUG)
                 download = self.manage_download.insert_update_download(line, file_path)
 
