@@ -47,8 +47,8 @@ class ManageDownload:
                                         data=action.to_insert_json())
 
                 if response.status_code != 200:
-                    log.log('Error insert actop, %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
-                    raise Exception('Error insert actop, %s => %s' % (response.code, response.body))
+                    log.log('Error insert actop, %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
+                    raise Exception('Error insert actop, %s => %s' % (response.status_code, response.json()))
             except Exception:
                 import traceback
                 log.log("Insert action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -70,10 +70,10 @@ class ManageDownload:
                                         data=download.host.to_insert_json())
 
                 if response.status_code != 200:
-                    log.log('Error insert host %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
-                    raise Exception('Error insert host %s => %s' % (response.code, response.body))
+                    log.log('Error insert host %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
+                    raise Exception('Error insert host %s => %s' % (response.status_code, response.json()))
 
-                download.host = utils.json_to_download_host_object(response.body)
+                download.host = utils.json_to_download_host_object(response.json())
 
                 if utils.package_name_from_download_name(download.name) is not None:
                     download_package = DownloadPackage()
@@ -85,10 +85,10 @@ class ManageDownload:
                                             data=download_package.to_insert_json())
 
                     if response.status_code != 200:
-                        log.log('Error insert package %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
-                        raise Exception('Error insert package %s => %s' % (response.code, response.body))
+                        log.log('Error insert package %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
+                        raise Exception('Error insert package %s => %s' % (response.status_code, response.json()))
 
-                    download_package = utils.json_to_download_package_object(response.body)
+                    download_package = utils.json_to_download_package_object(response.json())
                     log.log('package inserted: ' + download_package.to_string(), log.LEVEL_DEBUG)
 
                 download.package = download_package
@@ -103,10 +103,10 @@ class ManageDownload:
                                         data=download.to_insert_json())
 
                 if response.status_code != 200:
-                    log.log('Error insert %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
-                    raise Exception('Error insert %s => %s' % (response.code, response.body))
+                    log.log('Error insert %s => %s' % (response.code, response.json()), log.LEVEL_ERROR)
+                    raise Exception('Error insert %s => %s' % (response.status_code, response.json()))
                 else:
-                    download = self.get_download_by_id(response.body['id'])
+                    download = self.get_download_by_id(response.json()['id'])
 
             except Exception:
                 import traceback
@@ -133,7 +133,7 @@ class ManageDownload:
                                    data=download.to_update_object())
 
             if response.code != 200:
-                log.log('Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                log.log('Error update %s => %s' % (response.code, response.json()), log.LEVEL_ERROR)
                 download.logs = "ERROR DURING DOWNLOAD UPDATE\r\n"
 
             self.update_download_log(download, force_update_log)
@@ -158,10 +158,10 @@ class ManageDownload:
                 response = requests.get(config.REST_ADRESSE + 'applicationConfiguration/' + str(application_configuration_id))
 
                 if response.status_code == 200:
-                    log.log('application_configuration got: %s' % response.body, log.LEVEL_DEBUG)
+                    log.log('application_configuration got: %s' % response.json(), log.LEVEL_DEBUG)
                     application_configuration = utils.json_to_application_configuration_object(response.json())
                 else:
-                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.code, response.json()), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get application_configuration by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -179,7 +179,7 @@ class ManageDownload:
                                        data={"id": download.id, "logs": download.logs})
 
                 if response.status_code != 200:
-                    log.log('Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error update %s => %s' % (response.code, response.json()), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Update download log: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -202,9 +202,9 @@ class ManageDownload:
                 data=utils.action_object_to_update_json(action))
             if response.status_code != 200:
                 update_action_callback(response)
-            # log.log_debug('Error update %s => %s' % (response.code, response.body))
+            # log.log_debug('Error update %s => %s' % (response.code, response.json())
             # else:
-            # action_property_returned = utils.json_to_action_object(response.body)
+            # action_property_returned = utils.json_to_action_object(response.json())
         except Exception:
             import traceback
             log.log("Update action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -220,10 +220,10 @@ class ManageDownload:
                 response = requests.get(config.REST_ADRESSE + 'downloads/' + str(download_id))
 
                 if response.status_code == 200:
-                    log.log('download got: %s' % response.body, log.LEVEL_DEBUG)
-                    download = utils.json_to_download_object(response.body)
+                    log.log('download got: %s' % response.json(), log.LEVEL_DEBUG)
+                    download = utils.json_to_download_object(response.json())
                 else:
-                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.code, response.json()), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get download by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -243,9 +243,9 @@ class ManageDownload:
                 response = requests.get(config.REST_ADRESSE + 'downloads/package/' + str(package_id))
 
                 if response.status_code == 200:
-                    package = utils.json_to_download_package_object(response.body)
+                    package = utils.json_to_download_package_object(response.json())
                 else:
-                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get download by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -265,9 +265,9 @@ class ManageDownload:
                 response = requests.get(config.REST_ADRESSE + 'downloadDirectories/' + str(directory_id))
 
                 if response.status_code == 200:
-                    directory = utils.json_to_download_directory_object(response.body)
+                    directory = utils.json_to_download_directory_object(response.json())
                 else:
-                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get download directory by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -292,9 +292,9 @@ class ManageDownload:
             log.log(config.REST_ADRESSE + 'actions \r\n params: %s' % params, log.LEVEL_DEBUG)
             response = requests.get(config.REST_ADRESSE + 'actions', params=params)
             if response.status_code == 200:
-                action_list = utils.json_to_action_object_list(response.body)
+                action_list = utils.json_to_action_object_list(response.json())
             else:
-                log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                log.log('Error get %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
 
         except Exception:
             import traceback
@@ -313,10 +313,10 @@ class ManageDownload:
                 response = requests.get(config.REST_ADRESSE + 'actions/' + str(action_id))
 
                 if response.status_code == 200:
-                    log.log('Action got: %s' % response.body, log.LEVEL_DEBUG)
-                    action = utils.json_to_action_object(response.body)
+                    log.log('Action got: %s' % response.json(), log.LEVEL_DEBUG)
+                    action = utils.json_to_action_object(response.json())
                 else:
-                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -340,9 +340,9 @@ class ManageDownload:
 
                 downloads_list = []
                 if response.status_code == 200:
-                    downloads_list = utils.json_to_download_object_list(response.body)
+                    downloads_list = utils.json_to_download_object_list(response.json())
                 else:
-                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
 
                 if len(downloads_list) == 0:
                     log.log('No download found with link %s and file_path %s' % (link, file_path), log.LEVEL_INFO)
@@ -373,9 +373,9 @@ class ManageDownload:
 
                 downloads_list = []
                 if response.status_code == 200:
-                    downloads_list = utils.json_to_download_object_list(response.body)
+                    downloads_list = utils.json_to_download_object_list(response.json())
                 else:
-                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
 
                 if len(downloads_list) == 0:
                     logging.info('No download found with package_id %s' % str(package_id))
@@ -407,8 +407,8 @@ class ManageDownload:
                                                headers={"Accept": "application/json"})
 
                     if response.status_code == 200:
-                        log.log("json: %s" % response.body, log.LEVEL_DEBUG)
-                        download = utils.json_to_download_object(response.body)
+                        log.log("json: %s" % response.json(), log.LEVEL_DEBUG)
+                        download = utils.json_to_download_object(response.json())
 
                         if download is not None:
                             if '# %s \r\n%s %s' % (download.name, self.MARK_AS_FINISHED, download.link) in open(download.file_path).read():
@@ -418,7 +418,7 @@ class ManageDownload:
                                 self.update_download(download)
                                 already_downloaded = True
                     else:
-                        log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                        log.log('Error get %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
 
                     config.RESCUE_MODE = False
                 except Exception:
@@ -460,9 +460,9 @@ class ManageDownload:
 
             downloads_list = []
             if response.code == 200:
-                downloads_list = utils.json_to_download_object_list(response.body)
+                downloads_list = utils.json_to_download_object_list(response.json())
             else:
-                log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                log.log('Error get %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
         except Exception:
             import traceback
             log.log("Get download in progress: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -481,7 +481,7 @@ class ManageDownload:
             if link is not None and link != '':
                 log.log(config.REST_ADRESSE + 'downloads \r\n params: %s' % {"link": link}, log.LEVEL_DEBUG)
                 response = requests.get(config.REST_ADRESSE + 'downloads', params={"link": link})
-                exists = len(response.body) > 0
+                exists = len(response.json()) > 0
                 log.log('download exists ? %s' % str(exists), log.LEVEL_DEBUG)
             else:
                 logging.error('Link is none')
