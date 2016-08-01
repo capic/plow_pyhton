@@ -36,7 +36,7 @@ class ManageDownload:
         self.action_update_in_progress = False
 
     def insert_action(self, action):
-        log.log(u'  *** insert_action ***', log.LEVEL_INFO)
+        log.log('  *** insert_action ***', log.LEVEL_INFO)
 
         if action is not None:
             try:
@@ -48,7 +48,7 @@ class ManageDownload:
                                         params=action.to_insert_json())
 
                 if response.code != 200:
-                    log.log(u'Error insert actop, %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error insert actop, %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                     raise Exception(u'Error insert actop, %s => %s' % (response.code, response.body))
             except Exception:
                 import traceback
@@ -58,7 +58,7 @@ class ManageDownload:
             logging.error("action is none")
 
     def insert_download(self, download):
-        log.log(u'  *** insert_download ***', log.LEVEL_INFO)
+        log.log('  *** insert_download ***', log.LEVEL_INFO)
 
         if download is not None:
             download_package = None
@@ -72,7 +72,7 @@ class ManageDownload:
                                         params=download.host.to_insert_json())
 
                 if response.code != 200:
-                    log.log(u'Error insert host %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error insert host %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                     raise Exception(u'Error insert host %s => %s' % (response.code, response.body))
 
                 download.host = utils.json_to_download_host_object(response.body)
@@ -88,11 +88,11 @@ class ManageDownload:
                                             params=download_package.to_insert_json())
 
                     if response.code != 200:
-                        log.log(u'Error insert package %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                        log.log('Error insert package %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                         raise Exception(u'Error insert package %s => %s' % (response.code, response.body))
 
                     download_package = utils.json_to_download_package_object(response.body)
-                    log.log(u'package inserted: ' + download_package.to_string(), log.LEVEL_DEBUG)
+                    log.log('package inserted: ' + download_package.to_string(), log.LEVEL_DEBUG)
 
                 download.package = download_package
 
@@ -106,7 +106,7 @@ class ManageDownload:
                                         params=download.to_insert_json())
 
                 if response.code != 200:
-                    log.log(u'Error insert %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error insert %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                     raise Exception(u'Error insert %s => %s' % (response.code, response.body))
                 else:
                     download = self.get_download_by_id(response.body['id'])
@@ -121,7 +121,7 @@ class ManageDownload:
         return download
 
     def update_download(self, download, force_update_log=False, timeout=None):
-        log.log(u'  *** update_download ***', log.LEVEL_INFO)
+        log.log('  *** update_download ***', log.LEVEL_INFO)
 
         if timeout is None:
             unirest.timeout(config.FAST_UNIREST_TIMEOUT)
@@ -137,7 +137,7 @@ class ManageDownload:
                                    params=download.to_update_object())
 
             if response.code != 200:
-                log.log(u'Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                log.log('Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                 download.logs = u"ERROR DURING DOWNLOAD UPDATE\r\n"
 
             self.update_download_log(download, force_update_log)
@@ -153,7 +153,7 @@ class ManageDownload:
             raise
     
     def get_application_configuration_by_id(self, application_configuration_id):
-        log.log(u'   *** get_application_configuration_by_id ***', log.LEVEL_INFO)
+        log.log('   *** get_application_configuration_by_id ***', log.LEVEL_INFO)
         application_configuration = None
 
         if application_configuration_id is not None:
@@ -166,7 +166,7 @@ class ManageDownload:
                     log.log('application_configuration got: %s' % response.body, log.LEVEL_DEBUG)
                     application_configuration = utils.json_to_application_configuration_object(response.body)
                 else:
-                    log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get application_configuration by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -185,18 +185,18 @@ class ManageDownload:
                                        params={"id": download.id, "logs": download.logs})
 
                 if response.code != 200:
-                    log.log(u'Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Update download log: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
                 log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
     def update_action_callback(self, response):
-        log.log(u'*** update_action_callback ***', log.LEVEL_INFO)
+        log.log('*** update_action_callback ***', log.LEVEL_INFO)
         self.action_update_in_progress = False
 
     def update_action(self, action):
-        log.log(u'*** update_action ***', log.LEVEL_INFO)
+        log.log('*** update_action ***', log.LEVEL_INFO)
 
         self.action_update_in_progress = True
 
@@ -218,7 +218,7 @@ class ManageDownload:
             log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
     def get_download_by_id(self, download_id):
-        log.log(u'   *** get_download_by_id ***', log.LEVEL_INFO)
+        log.log('   *** get_download_by_id ***', log.LEVEL_INFO)
         download = None
 
         if download_id is not None:
@@ -231,7 +231,7 @@ class ManageDownload:
                     log.log('download got: %s' % response.body, log.LEVEL_DEBUG)
                     download = utils.json_to_download_object(response.body)
                 else:
-                    log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get download by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -242,7 +242,7 @@ class ManageDownload:
         return download
 
     def get_package_by_id(self, package_id):
-        log.log(u'   *** get_package_by_id ***', log.LEVEL_INFO)
+        log.log('   *** get_package_by_id ***', log.LEVEL_INFO)
         package = None
 
         if package_id is not None:
@@ -254,7 +254,7 @@ class ManageDownload:
                 if response.code == 200:
                     package = utils.json_to_download_package_object(response.body)
                 else:
-                    log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get download by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -265,7 +265,7 @@ class ManageDownload:
         return package
 
     def get_download_directory_by_id(self, directory_id):
-        log.log(u'*** get_download_directory_by_id ***', log.LEVEL_INFO)
+        log.log('*** get_download_directory_by_id ***', log.LEVEL_INFO)
         directory = None
 
         if directory_id is not None:
@@ -277,7 +277,7 @@ class ManageDownload:
                 if response.code == 200:
                     directory = utils.json_to_download_directory_object(response.body)
                 else:
-                    log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get download directory by id: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -288,7 +288,7 @@ class ManageDownload:
         return directory
 
     def get_actions_by_parameters(self, download_id=None, action_type_id=None):
-        log.log(u'*** get_action_by_parameters ***', log.LEVEL_INFO)
+        log.log('*** get_action_by_parameters ***', log.LEVEL_INFO)
         action_list = None
 
         try:
@@ -304,7 +304,7 @@ class ManageDownload:
             if response.code == 200:
                 action_list = utils.json_to_action_object_list(response.body)
             else:
-                log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
 
         except Exception:
             import traceback
@@ -314,7 +314,7 @@ class ManageDownload:
         return action_list
 
     def get_action_by_id(self, action_id):
-        log.log(u'*** get_action_by_id ***', log.LEVEL_INFO)
+        log.log('*** get_action_by_id ***', log.LEVEL_INFO)
         action = None
 
         if action_id is not None:
@@ -324,10 +324,10 @@ class ManageDownload:
                                        headers={"Accept": "application/json"})
 
                 if response.code == 200:
-                    log.log(u'Action got: %s' % response.body, log.LEVEL_DEBUG)
+                    log.log('Action got: %s' % response.body, log.LEVEL_DEBUG)
                     action = utils.json_to_action_object(response.body)
                 else:
-                    log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
             except Exception:
                 import traceback
                 log.log("Get action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -338,8 +338,8 @@ class ManageDownload:
         return action
 
     def get_download_by_link_file_path(self, link, file_path):
-        log.log(u'   *** get_download_by_link_file_path ***', log.LEVEL_INFO)
-        log.log(u'link: %s, file_path: %s' % (link, file_path), log.LEVEL_DEBUG)
+        log.log('   *** get_download_by_link_file_path ***', log.LEVEL_INFO)
+        log.log('link: %s, file_path: %s' % (link, file_path), log.LEVEL_DEBUG)
 
         download = None
 
@@ -354,13 +354,13 @@ class ManageDownload:
                 if response.code == 200:
                     downloads_list = utils.json_to_download_object_list(response.body)
                 else:
-                    log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
 
                 if len(downloads_list) == 0:
                     log.log('No download found with link %s and file_path %s' % (link, file_path), log.LEVEL_INFO)
                 elif len(downloads_list) == 1:
                     download = downloads_list[0]
-                    log.log(u'download : %s' % (download.to_string()), log.LEVEL_DEBUG)
+                    log.log('download : %s' % (download.to_string()), log.LEVEL_DEBUG)
                 else:
                     download = downloads_list[0]
                     log.log('Too many download found with link %s and file_path %s' % (link, file_path), log.LEVEL_ERROR)
@@ -373,7 +373,7 @@ class ManageDownload:
         return download
 
     def get_downloads_by_package(self, package_id):
-        log.log(u'   *** get_downloads_by_package ***', log.LEVEL_INFO)
+        log.log('   *** get_downloads_by_package ***', log.LEVEL_INFO)
 
         downloads_list = None
 
@@ -388,7 +388,7 @@ class ManageDownload:
                 if response.code == 200:
                     downloads_list = utils.json_to_download_object_list(response.body)
                 else:
-                    log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
 
                 if len(downloads_list) == 0:
                     logging.info('No download found with package_id %s' % str(package_id))
@@ -401,7 +401,7 @@ class ManageDownload:
 
 
     def get_download_to_start(self, download_id, file_path=None):
-        log.log(u' *** get_download_to_start ***', log.LEVEL_INFO)
+        log.log(' *** get_download_to_start ***', log.LEVEL_INFO)
 
         download = None
 
@@ -426,25 +426,25 @@ class ManageDownload:
 
                         if download is not None:
                             if '# %s \r\n%s %s' % (download.name, self.MARK_AS_FINISHED, download.link) in open(download.file_path).read():
-                                log.log(u'Download got already downloaded in file => update to finish in database', log.LEVEL_INFO)
+                                log.log('Download got already downloaded in file => update to finish in database', log.LEVEL_INFO)
                                 download.status = Download.STATUS_FINISHED
                                 download.size_file_downloaded = download.size_file
                                 self.update_download(download, timeout=config.DEFAULT_UNIREST_TIMEOUT)
                                 already_downloaded = True
                     else:
-                        log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                        log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
 
                     config.RESCUE_MODE = False
                 except Exception:
                     import traceback
-                    log.log(u"no database connection => use rescue mode \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                    log.log("no database connection => use rescue mode \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
                     log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
                     file = open(file_path, 'r')
                     for line in file:
                         line = line.decode("utf-8")
                         if 'http' in line:
-                            log.log(u'Line %s contains http' % line, log.LEVEL_DEBUG)
+                            log.log('Line %s contains http' % line, log.LEVEL_DEBUG)
                             if not line.startswith('#'):
                                 line = line.replace('\n', '')
                                 line = line.replace('\r', '')
@@ -456,7 +456,7 @@ class ManageDownload:
 
                     file.close()
                     config.RESCUE_MODE = True
-                    log.log(u'===== Rescue Mode Activated =====', log.LEVEL_INFO)
+                    log.log('===== Rescue Mode Activated =====', log.LEVEL_INFO)
 
         else:
             download = self.get_download_by_id(download_id)
@@ -465,7 +465,7 @@ class ManageDownload:
 
 
     def get_downloads_in_progress(self):
-        log.log(u'*** get_downloads_in_progress ***', log.LEVEL_INFO)
+        log.log('*** get_downloads_in_progress ***', log.LEVEL_INFO)
 
         try:
             log.log(config.REST_ADRESSE + 'downloads \r\n params: %s' % {"status": Download.STATUS_IN_PROGRESS}, log.LEVEL_DEBUG)
@@ -477,7 +477,7 @@ class ManageDownload:
             if response.code == 200:
                 downloads_list = utils.json_to_download_object_list(response.body)
             else:
-                log.log(u'Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
         except Exception:
             import traceback
             log.log("Get download in progress: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -487,7 +487,7 @@ class ManageDownload:
 
 
     def download_already_exists(self, link):
-        log.log(u'*** download_already_exists ***', log.LEVEL_INFO)
+        log.log('*** download_already_exists ***', log.LEVEL_INFO)
 
         # on considere apr defaut que le download existe pour eviter de telecharger si jamais on a pas acces ?
         exists = True
@@ -498,7 +498,7 @@ class ManageDownload:
                 response = unirest.get(config.REST_ADRESSE + 'downloads', headers={"Accept": "application/json"},
                                        params={"link": link})
                 exists = len(response.body) > 0
-                log.log(u'download exists ? %s' % str(exists), log.LEVEL_DEBUG)
+                log.log('download exists ? %s' % str(exists), log.LEVEL_DEBUG)
             else:
                 logging.error('Link is none')
         except Exception:
@@ -509,7 +509,7 @@ class ManageDownload:
         return exists
 
     def insert_update_download(self, link, file_path):
-        log.log(u'*** insert_update_download ***', log.LEVEL_INFO)
+        log.log('*** insert_update_download ***', log.LEVEL_INFO)
 
         # download = None
 
@@ -530,10 +530,10 @@ class ManageDownload:
                 download = self.get_download_by_link_file_path(link, file_path)
                 # on n'insere pas un lien qui existe deja ou qui est termine
                 if config.RESCUE_MODE is False and download is None:
-                    log.log(u'Download finished ? %s' % (str(finished)), log.LEVEL_DEBUG)
+                    log.log('Download finished ? %s' % (str(finished)), log.LEVEL_DEBUG)
                     if not finished:
-                        log.log(u'Download %s doesn''t exist -> insert' % link, log.LEVEL_DEBUG)
-                        log.log(u'command : %s' % cmd, log.LEVEL_DEBUG)
+                        log.log('Download %s doesn''t exist -> insert' % link, log.LEVEL_DEBUG)
+                        log.log('command : %s' % cmd, log.LEVEL_DEBUG)
 
                         name, size, host = utils.get_infos_plowprobe(cmd)
                         if name is not None:
@@ -562,17 +562,17 @@ class ManageDownload:
                 link = link.replace('\n', '')
                 link = link.replace('\r', '')
                 link = link.replace(self.MARK_AS_FINISHED + ' ', '')
-                log.log(u'Download already marked as finished in file', log.LEVEL_INFO)
+                log.log('Download already marked as finished in file', log.LEVEL_INFO)
                 download = self.get_download_by_link_file_path(link, file_path)
                 if download is not None:
                     if download.status != Download.STATUS_FINISHED:
-                        log.log(u'Download status is not finised => To update', log.LEVEL_DEBUG)
+                        log.log('Download status is not finised => To update', log.LEVEL_DEBUG)
 
                         if download.name is None or download.name == '':
                             cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
-                            log.log(u'command : %s' % cmd, log.LEVEL_DEBUG)
+                            log.log('command : %s' % cmd, log.LEVEL_DEBUG)
                             name, size = utils.get_infos_plowprobe(cmd)
-                            log.log(u'Infos get from plowprobe %s,%s' % (
+                            log.log('Infos get from plowprobe %s,%s' % (
                                 name, size), log.LEVEL_DEBUG)
                             to_update = True
 
@@ -595,17 +595,17 @@ class ManageDownload:
             link = link.replace('\n', '')
             link = link.replace('\r', '')
             link = link.replace(self.MARK_AS_FINISHED + ' ', '')
-            log.log(u'Download already marked as finished in file', log.LEVEL_INFO)
+            log.log('Download already marked as finished in file', log.LEVEL_INFO)
             download = self.get_download_by_link_file_path(link, file_path)
             if download is not None:
                 if download.status != Download.STATUS_FINISHED:
-                    log.log(u'Download status is not finised => To update', log.LEVEL_INFO)
+                    log.log('Download status is not finised => To update', log.LEVEL_INFO)
 
                     if download.name is None or download.name == '':
                         cmd = (self.COMMAND_DOWNLOAD_INFOS % link)
-                        log.log(u'command : %s' % cmd, log.LEVEL_DEBUG)
+                        log.log('command : %s' % cmd, log.LEVEL_DEBUG)
                         name, size = utils.get_infos_plowprobe(cmd)
-                        log.log(u'Infos get from plowprobe %s,%s' % (name, size), log.LEVEL_DEBUG)
+                        log.log('Infos get from plowprobe %s,%s' % (name, size), log.LEVEL_DEBUG)
 
                     download.status = Download.STATUS_FINISHED
 
@@ -614,8 +614,8 @@ class ManageDownload:
         return download
 
     def stop_download(self, download):
-        log.log(u'*** stop_download ***', log.LEVEL_INFO)
-        log.log(u'pid python: %s' % str(download.pid_python), log.LEVEL_DEBUG)
+        log.log('*** stop_download ***', log.LEVEL_INFO)
+        log.log('pid python: %s' % str(download.pid_python), log.LEVEL_DEBUG)
         utils.kill_proc_tree(download.pid_python)
         utils.kill_proc_tree(download.pid_plowdown)
 
@@ -626,13 +626,13 @@ class ManageDownload:
         self.update_download(download)
 
     def start_download(self, download):
-        log.log(u'*** start_download ***', log.LEVEL_INFO)
+        log.log('*** start_download ***', log.LEVEL_INFO)
         indent_log = '  '
 
         cmd = (
             self.COMMAND_DOWNLOAD % (
                 config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, config.DIRECTORY_DOWNLOAD_DESTINATION, download.link))
-        log.log(u'%s command : %s' % (indent_log, cmd), log.LEVEL_DEBUG)
+        log.log('%s command : %s' % (indent_log, cmd), log.LEVEL_DEBUG)
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
         download.pid_plowdown = p.pid
         download.pid_python = os.getpid()
@@ -659,7 +659,7 @@ class ManageDownload:
     # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
     # 6 => vitesse moyenne recu, 7 => vitesse moyenne envoye, 8 => temps total, 9 => temps passe, 10 => temps restant, 11 => vitesse courante
     def get_download_values(self, values_line, download):
-        log.log(u'*** get_download_values ***', log.LEVEL_INFO)
+        log.log('*** get_download_values ***', log.LEVEL_INFO)
 
         download_log = ''
         timeout = None
@@ -704,7 +704,7 @@ class ManageDownload:
                     download.time_left = utils.hms_to_seconds(values[10])
 
                 if values[1] == values[3] and values[1] != '0' and download.status == Download.STATUS_IN_PROGRESS:
-                    log.log(u'download will be marked as finished', log.LEVEL_INFO)
+                    log.log('download will be marked as finished', log.LEVEL_INFO)
                     download.status = Download.STATUS_FINISHED
                     directory = DownloadDirectory()
                     directory.id = config.DIRECTORY_DOWNLOAD_DESTINATION_ID
@@ -739,11 +739,11 @@ class ManageDownload:
 
 
     def check_download_alive(self, download):
-        log.log(u'*** check_download_alive ***', log.LEVEL_INFO)
+        log.log('*** check_download_alive ***', log.LEVEL_INFO)
 
         if not utils.check_pid(download.pid_plowdown):
             # utils.kill_proc_tree(download.pid_python)
-            log.log(u'Process %s for download %s killed for inactivity ...\r\n' % (
+            log.log('Process %s for download %s killed for inactivity ...\r\n' % (
                 str(download.pid_python), download.name), log.LEVEL_DEBUG)
 
             download.pid_plowdown = 0
@@ -756,7 +756,7 @@ class ManageDownload:
             self.update_download(download)
 
     def move_file(self, download_id, action):
-        log.log(u'*** move_file ***', log.LEVEL_INFO)
+        log.log('*** move_file ***', log.LEVEL_INFO)
 
         if action is not None:
             download = self.get_download_by_id(download_id)
@@ -764,15 +764,15 @@ class ManageDownload:
             if download is not None:
                 action_directory_src = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_SRC)
                 src_file_path = os.path.join(action_directory_src.directory.path, download.name)
-                log.log(u'Source path %s' % src_file_path, log.LEVEL_DEBUG)
+                log.log('Source path %s' % src_file_path, log.LEVEL_DEBUG)
 
                 action_directory_dst = utils.find_element_by_attribute_in_object_array(action.properties, 'property_id', Action.PROPERTY_DIRECTORY_DST)
                 dst_file_path = os.path.join(action_directory_dst.directory.path, download.name)
-                log.log(u'Destination path %s' % dst_file_path, log.LEVEL_DEBUG)
+                log.log('Destination path %s' % dst_file_path, log.LEVEL_DEBUG)
 
                 if action_directory_src.directory.id != action_directory_dst.directory.id:
                     if os.path.isfile(src_file_path):
-                        log.log(u'downloaded file exists', log.LEVEL_DEBUG)
+                        log.log('downloaded file exists', log.LEVEL_DEBUG)
                         download.status = Download.STATUS_MOVING
                         download.logs = 'File %s exists\r\n' % src_file_path
                         download.logs += 'Moving from %s to %s => status %s\r\n' % (src_file_path, dst_file_path, download.status)
@@ -795,15 +795,15 @@ class ManageDownload:
                             download.logs = 'File moved to %s => status %s\r\n' % (download.directory.path, download.status)
                             self.update_download(download, force_update_log=True)
                     else:
-                        log.log(u'File does not exist', log.LEVEL_ERROR)
+                        log.log('File does not exist', log.LEVEL_ERROR)
                         download.logs = 'File %s does not exist\r\n' % src_file_path
                         self.update_download_log(download)
                 else:
-                    log.log(u'Sames source and destination directories', log.LEVEL_ERROR)
+                    log.log('Sames source and destination directories', log.LEVEL_ERROR)
             else:
-                log.log(u'Download is none', log.LEVEL_ERROR)
+                log.log('Download is none', log.LEVEL_ERROR)
         else:
-            log.log(u'Action is none', log.LEVEL_ERROR)
+            log.log('Action is none', log.LEVEL_ERROR)
 
     def treatment_update_action(self, action, status, percent, time_left, time_elapsed):
         log.log\
@@ -828,7 +828,7 @@ class ManageDownload:
         return action_returned
 
     def unrar(self, object_id, action):
-        log.log(u'*** unrar ***', log.LEVEL_INFO)
+        log.log('*** unrar ***', log.LEVEL_INFO)
 
         # logger = logging.getLogger()
         # logger.setLevel(logging.DEBUG)
@@ -861,7 +861,7 @@ class ManageDownload:
 
                     download.logs += 'Command: %s\r\n' % cmd
                     self.update_download_log(download)
-                    log.log(u'command : %s' % cmd, log.LEVEL_DEBUG)
+                    log.log('command : %s' % cmd, log.LEVEL_DEBUG)
                     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
                     self.treatment_update_action(action, Action.STATUS_IN_PROGRESS, 0, None, None)
@@ -900,4 +900,4 @@ class ManageDownload:
                         self.update_download(down)
 
     def disconnect(self):
-        log.log(u'*** disconnect ***', log.LEVEL_INFO)
+        log.log('*** disconnect ***', log.LEVEL_INFO)
