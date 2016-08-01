@@ -68,7 +68,7 @@ class Treatment:
                 if download is not None:
                     if download.status == Download.STATUS_FINISHED and self.manage_download.MARK_AS_FINISHED not in line:
                         log.log(
-                            u'Download id %s already finished in database but not marked in file => mark as finished', log.LEVEL_INFO)
+                            'Download id %s already finished in database but not marked in file => mark as finished', log.LEVEL_INFO)
                         downloads_to_mark_as_finished_in_file.append(download)
                 else:
                     if ManageDownload.MARK_AS_ERROR not in line and ManageDownload.MARK_AS_FINISHED not in line:
