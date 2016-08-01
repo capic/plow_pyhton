@@ -403,7 +403,7 @@ class ManageDownload:
                         response = requests.get(config.REST_ADRESSE + 'downloads/next', params={"file_path": file_path})
                     else:
                         log.log(config.REST_ADRESSE + 'downloads/next', log.LEVEL_DEBUG)
-                        response = unirest.get(config.REST_ADRESSE + 'downloads/next',
+                        response = requests.get(config.REST_ADRESSE + 'downloads/next',
                                                headers={"Accept": "application/json"})
 
                     if response.status_code == 200:
@@ -415,7 +415,7 @@ class ManageDownload:
                                 log.log('Download got already downloaded in file => update to finish in database', log.LEVEL_INFO)
                                 download.status = Download.STATUS_FINISHED
                                 download.size_file_downloaded = download.size_file
-                                self.update_download(download, timeout=config.DEFAULT_UNIREST_TIMEOUT)
+                                self.update_download(download)
                                 already_downloaded = True
                     else:
                         log.log('Error get %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
