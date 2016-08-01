@@ -62,7 +62,7 @@ class Treatment:
         file = open(file_path, 'r', encoding='utf-8')
         for line in file:
             if 'http' in line:
-                log.log('Line %s contains http'.encode("utf-8") % line, log.LEVEL_DEBUG)
+                log.log('Line %s contains http' % line, log.LEVEL_DEBUG)
                 download = self.manage_download.insert_update_download(line, file_path)
 
                 if download is not None:

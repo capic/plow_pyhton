@@ -493,7 +493,7 @@ class ManageDownload:
         return exists
 
     def insert_update_download(self, link, file_path):
-        log.log('*** insert_update_download ***'.encode("utf-8"), log.LEVEL_INFO)
+        log.log('*** insert_update_download ***', log.LEVEL_INFO)
 
         # download = None
 
