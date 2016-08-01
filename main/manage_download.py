@@ -35,6 +35,28 @@ class ManageDownload:
         unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
         self.action_update_in_progress = False
 
+    def insert_action(self, action):
+        log.log(u'  *** insert_action ***', log.LEVEL_INFO)
+
+        if action is not None:
+            try:
+                log.log("Insert action ....", log.LEVEL_INFO)
+                log.log("Action %s" % action.to_insert_json(), log.LEVEL_DEBUG)
+                log.log(config.REST_ADRESSE + 'actions \r\n params: %s' % action.to_insert_json(), log.LEVEL_DEBUG)
+                response = unirest.post(config.REST_ADRESSE + 'actions',
+                                        headers={"Accept": "application/json"},
+                                        params=action.to_insert_json())
+
+                if response.code != 200:
+                    log.log(u'Error insert actop, %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
+                    raise Exception(u'Error insert actop, %s => %s' % (response.code, response.body))
+            except Exception:
+                import traceback
+                log.log("Insert action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+                log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+        else:
+            logging.error("action is none")
+
     def insert_download(self, download):
         log.log(u'  *** insert_download ***', log.LEVEL_INFO)
 
@@ -86,6 +108,8 @@ class ManageDownload:
                 if response.code != 200:
                     log.log(u'Error insert %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
                     raise Exception(u'Error insert %s => %s' % (response.code, response.body))
+                else:
+                    download = self.get_download_by_id(response.body['id'])
 
             except Exception:
                 import traceback
@@ -93,6 +117,8 @@ class ManageDownload:
                 log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
             logging.error("Download is none")
+
+        return download
 
     def update_download(self, download, force_update_log=False, timeout=None):
         log.log(u'  *** update_download ***', log.LEVEL_INFO)

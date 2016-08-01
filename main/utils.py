@@ -1,5 +1,7 @@
 __author__ = 'Vincent'
 
+
+
 import subprocess
 import re
 
@@ -20,7 +22,7 @@ import log
 
 
 def hms_to_seconds(t):
-    log.log(u'*** hms_to_seconds ***', log.LEVEL_INFO)
+    log.log('*** hms_to_seconds ***', log.LEVEL_INFO)
 
     if ':' in t:
         h, m, s = [int(i) for i in t.split(':')]
@@ -57,7 +59,7 @@ def kill_proc_tree(pid, including_parent=True):
         if including_parent:
             parent.kill()
     except psutil.NoSuchProcess:
-        log.log(u'Process %s does not exist' % str(pid), log.LEVEL_ERROR)
+        log.log('Process %s does not exist' % str(pid), log.LEVEL_ERROR)
         pass
 
 
@@ -85,7 +87,7 @@ def clean_plowdown_line(line):
 
 
 def get_infos_plowprobe(cmd):
-    log.log(u'Command plowprobe %s' % cmd, log.LEVEL_DEBUG)
+    log.log('Command plowprobe %s' % cmd, log.LEVEL_DEBUG)
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
 
     if 'Link is not alive' not in output:
@@ -105,6 +107,7 @@ def get_infos_plowprobe(cmd):
             return [None, None, None]
     else:
         return [None, None, None]
+
 
 def clean_string_console(string):
     string = string.strip()
@@ -370,10 +373,10 @@ def get_action_by_property(actions_list, property_id):
 
 
 def find_this_process(process_name):
-    log.log(u'*** find_this_process ***', log.LEVEL_INFO)
+    log.log('*** find_this_process ***', log.LEVEL_INFO)
 
     command = "ps -eaf | grep \"" + process_name + "\""
-    log.log(u'command: %s' % command, log.LEVEL_DEBUG)
+    log.log('command: %s' % command, log.LEVEL_DEBUG)
     ps = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     output = ps.stdout.read()
     ps.stdout.close()
@@ -382,7 +385,7 @@ def find_this_process(process_name):
 
 
 def is_this_running(process_name):
-    log.log(u'*** is_this_running ***', log.LEVEL_INFO)
+    log.log('*** is_this_running ***', log.LEVEL_INFO)
     output = find_this_process(process_name)
 
     if re.search(process_name, output) is None:
