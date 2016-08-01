@@ -105,7 +105,7 @@ def main(argv):
             # logging.basicConfig(filename=config.DIRECTORY_WEB_LOG +'log_start_multi_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
             # format='%(asctime)s %(message)s',
             # datefmt='%d/%m/%Y %H:%M:%S')
-            # log.log_debug(u"*** Start application ***")
+            # log.log_debug("*** Start application ***")
             if len(args) > 1:
                 file_path = args[1]
                 treatment.start_multi_downloads(file_path)

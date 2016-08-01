@@ -138,7 +138,7 @@ class ManageDownload:
 
             if response.code != 200:
                 log.log('Error update %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
-                download.logs = u"ERROR DURING DOWNLOAD UPDATE\r\n"
+                download.logs = "ERROR DURING DOWNLOAD UPDATE\r\n"
 
             self.update_download_log(download, force_update_log)
 
