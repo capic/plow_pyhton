@@ -45,30 +45,31 @@ class Treatment:
         logger = logging.getLogger()
         logger.setLevel(logging.DEBUG)
 
-        file_handler = logging.FileHandler(config.DIRECTORY_WEB_LOG + 'start_file_treatement.log')
+        file_handler = logging.FileHandler(config.DIRECTORY_WEB_LOG + 'start_file_treatement.log', 'w',
+                                           encoding="UTF-8")
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
         logger.addHandler(file_handler)
 
-        log.log('*** start_file_treatment ***', log.LEVEL_INFO)
-        log.log('file_path %s' % file_path, log.LEVEL_DEBUG)
-        log.log('===> rest address: %s' % config.REST_ADRESSE, log.LEVEL_DEBUG)
+        log.log('*** start_file_treatment ***'.encode("utf-8"), log.LEVEL_INFO)
+        log.log('file_path %s'.encode("utf-8") % file_path, log.LEVEL_DEBUG)
+        log.log('===> rest address: %s'.encode("utf-8") % config.REST_ADRESSE, log.LEVEL_DEBUG)
 
-        log.log('=========> Insert new links or update old in database <=========', log.LEVEL_INFO)
+        log.log('=========> Insert new links or update old in database <========='.encode("utf-8"), log.LEVEL_INFO)
         downloads_to_mark_as_finished_in_file = []
         links_to_mark_as_error_in_file = []
         # insert links in database
         file = open(file_path, 'r', encoding='utf-8')
         for line in file:
-            # line = line.decode("utf-8")
             if 'http' in line:
-                log.log('Line %s contains http' % line, log.LEVEL_DEBUG)
+                log.log('Line %s contains http'.encode("utf-8") % line, log.LEVEL_DEBUG)
                 download = self.manage_download.insert_update_download(line, file_path)
 
                 if download is not None:
                     if download.status == Download.STATUS_FINISHED and self.manage_download.MARK_AS_FINISHED not in line:
                         log.log(
-                            'Download id %s already finished in database but not marked in file => mark as finished', log.LEVEL_INFO)
+                            'Download id %s already finished in database but not marked in file => mark as finished',
+                            log.LEVEL_INFO)
                         downloads_to_mark_as_finished_in_file.append(download)
                 else:
                     if ManageDownload.MARK_AS_ERROR not in line and ManageDownload.MARK_AS_FINISHED not in line:
@@ -157,7 +158,8 @@ class Treatment:
                 logger.handlers[0].stream.close()
                 logger.removeHandler(logger.handlers[0])
 
-            file_handler = logging.FileHandler(config.DIRECTORY_WEB_LOG + 'log_download_id_' + str(download.id) + '.log')
+            file_handler = logging.FileHandler(
+                config.DIRECTORY_WEB_LOG + 'log_download_id_' + str(download.id) + '.log')
             file_handler.setLevel(logging.DEBUG)
             file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
             logger.addHandler(file_handler)
@@ -183,7 +185,8 @@ class Treatment:
 
                     self.mark_download_finished_in_file(download)
 
-                    log.log('download => %s | Directory => %s' % (download.to_string(), download.directory.path), log.LEVEL_DEBUG)
+                    log.log('download => %s | Directory => %s' % (download.to_string(), download.directory.path),
+                            log.LEVEL_DEBUG)
                     if config.RESCUE_MODE is False:
                         actions_list = self.manage_download.get_actions_by_parameters(download_id=download.id)
 
