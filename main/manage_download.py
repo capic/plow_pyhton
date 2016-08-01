@@ -49,7 +49,7 @@ class ManageDownload:
 
                 if response.code != 200:
                     log.log('Error insert actop, %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
-                    raise Exception(u'Error insert actop, %s => %s' % (response.code, response.body))
+                    raise Exception('Error insert actop, %s => %s' % (response.code, response.body))
             except Exception:
                 import traceback
                 log.log("Insert action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
@@ -73,7 +73,7 @@ class ManageDownload:
 
                 if response.code != 200:
                     log.log('Error insert host %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
-                    raise Exception(u'Error insert host %s => %s' % (response.code, response.body))
+                    raise Exception('Error insert host %s => %s' % (response.code, response.body))
 
                 download.host = utils.json_to_download_host_object(response.body)
 
@@ -89,7 +89,7 @@ class ManageDownload:
 
                     if response.code != 200:
                         log.log('Error insert package %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
-                        raise Exception(u'Error insert package %s => %s' % (response.code, response.body))
+                        raise Exception('Error insert package %s => %s' % (response.code, response.body))
 
                     download_package = utils.json_to_download_package_object(response.body)
                     log.log('package inserted: ' + download_package.to_string(), log.LEVEL_DEBUG)
@@ -107,7 +107,7 @@ class ManageDownload:
 
                 if response.code != 200:
                     log.log('Error insert %s => %s' % (response.code, response.body), log.LEVEL_ERROR)
-                    raise Exception(u'Error insert %s => %s' % (response.code, response.body))
+                    raise Exception('Error insert %s => %s' % (response.code, response.body))
                 else:
                     download = self.get_download_by_id(response.body['id'])
 
@@ -209,7 +209,7 @@ class ManageDownload:
                 params=utils.action_object_to_update_json(action),
                 callback=self.update_action_callback)
             # if response.code != 200:
-            # log.log_debug(u'Error update %s => %s' % (response.code, response.body))
+            # log.log_debug('Error update %s => %s' % (response.code, response.body))
             # else:
             # action_property_returned = utils.json_to_action_object(response.body)
         except Exception:
@@ -807,7 +807,7 @@ class ManageDownload:
 
     def treatment_update_action(self, action, status, percent, time_left, time_elapsed):
         log.log\
-            (u'*** treatment_update_action ***', log.LEVEL_INFO)
+            ('*** treatment_update_action ***', log.LEVEL_INFO)
 
         action_returned = None
         if not self.action_update_in_progress:
