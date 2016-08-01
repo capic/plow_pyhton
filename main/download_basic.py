@@ -59,12 +59,12 @@ def main(argv):
                 config.CONFIG_LOG_LEVEL = config_object['log_level']
                 log.convert_log_level_to_logging_level()
 
-        log.log("Rest Address: %s" % config.REST_ADRESSE, log.LEVEL_DEBUG)
-        log.log("Directory web log %s" % config.DIRECTORY_WEB_LOG, log.LEVEL_DEBUG)
-        log.log("Directory download destination temp %s" % config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, log.LEVEL_DEBUG)
-        log.log("Directory download destination %s" % config.DIRECTORY_DOWNLOAD_DESTINATION, log.LEVEL_DEBUG)
-        log.log("Log output %s" % str(config.LOG_OUTPUT), log.LEVEL_DEBUG)
-        log.log("Console output %s" % str(config.CONSOLE_OUTPUT), log.LEVEL_DEBUG)
+        log.log("Rest Address: %s".encode("utf-8") % config.REST_ADRESSE, log.LEVEL_DEBUG)
+        log.log("Directory web log %s".encode("utf-8") % config.DIRECTORY_WEB_LOG, log.LEVEL_DEBUG)
+        log.log("Directory download destination temp %s".encode("utf-8") % config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, log.LEVEL_DEBUG)
+        log.log("Directory download destination %s".encode("utf-8") % config.DIRECTORY_DOWNLOAD_DESTINATION, log.LEVEL_DEBUG)
+        log.log("Log output %s".encode("utf-8") % str(config.LOG_OUTPUT), log.LEVEL_DEBUG)
+        log.log("Console output %s".encode("utf-8") % str(config.CONSOLE_OUTPUT), log.LEVEL_DEBUG)
 
         treatment = Treatment()
 
