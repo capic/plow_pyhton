@@ -6,7 +6,6 @@ import subprocess
 import re
 
 import psutil
-from mysql.connector import (connection)
 from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
