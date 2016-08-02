@@ -66,7 +66,7 @@ class Treatment:
         for line in file:
             if 'http' in line:
                 log.log('[Treatment](start_file_treatment) | Line %s contains http' % line, log.LEVEL_DEBUG)
-                download = ManageDownload.manage_download.insert_update_download(line, file_path)
+                download = ManageDownload.insert_update_download(line, file_path)
 
                 if download is not None:
                     if download.status == Download.STATUS_FINISHED and ManageDownload.MARK_AS_FINISHED not in line:
