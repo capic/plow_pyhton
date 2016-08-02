@@ -33,12 +33,11 @@ import inspect
 
 
 class ManageDownload:
-    COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s".encode(
-        "utf-8")
-    COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s=$=%%m' %s".encode("utf-8")
-    COMMAND_UNRAR = "cd \"%s\" && unrar x -o+ \"%s\"".encode("utf-8")
-    MARK_AS_FINISHED = "# FINNISHED ".encode("utf-8")
-    MARK_AS_ERROR = "# ERROR".encode("utf-8")
+    COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
+    COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s=$=%%m' %s"
+    COMMAND_UNRAR = "cd \"%s\" && unrar x -o+ \"%s\""
+    MARK_AS_FINISHED = "# FINNISHED "
+    MARK_AS_ERROR = "# ERROR"
 
     # def __init__(self):
     # unirest.timeout(config.DEFAULT_UNIREST_TIMEOUT)
