@@ -77,7 +77,7 @@ class Download:
         return {
             "download":
                 json.dumps({
-                    "name": self.name,
+                    "name": self.name.decode('utf-8'),
                     "host_id": self.host.id if self.host is not None else None,
                     "package_id": self.package.id if self.package is not None else None,
                     "link": self.link,
