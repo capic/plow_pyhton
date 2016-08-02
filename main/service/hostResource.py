@@ -20,7 +20,7 @@ class HostResource(object):
                     '[HostResource](Insert) | ' + config.REST_ADRESSE + 'downloadHosts \r\n params: %s' % host_to_insert.to_insert_json(), log.LEVEL_DEBUG)
 
                 response = requests.post(config.REST_ADRESSE + 'downloadHosts',
-                                        data=download.host.to_insert_json())
+                                        data=host_to_insert.to_insert_json())
 
                 if response.status_code != 200:
                     log.log('[HostResource](Insert) | Error insert host %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
