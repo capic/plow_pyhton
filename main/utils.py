@@ -86,8 +86,8 @@ def clean_plowdown_line(line):
 
 
 def get_infos_plowprobe(cmd):
-    log.log('Command plowprobe %s' % cmd, log.LEVEL_DEBUG)
-    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
+    log.log('[utils](get_infos_plowprobe) +++', log.LEVEL_DEBUG)
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0]
 
     if 'Link is not alive' not in output:
         if output.startswith('==>'):
@@ -101,6 +101,7 @@ def get_infos_plowprobe(cmd):
 
             host = tab_infos[2]
 
+            log.log('[utils](get_infos_plowprobe) | name: %s # size: %d # host: %s' % (name, size, host), log.LEVEL_DEBUG)
             return [name, size, host]
         else:
             return [None, None, None]
