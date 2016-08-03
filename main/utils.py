@@ -88,7 +88,7 @@ def clean_plowdown_line(line):
 def get_infos_plowprobe(cmd):
     log.log('[utils](get_infos_plowprobe) +++', log.LEVEL_DEBUG)
 
-    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].encode("utf-8")
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].encode("ANSI_X3.4-1968")
     log.log('[utils](get_infos_plowprobe)  | OUTPUT %s' % output, log.LEVEL_DEBUG)
     if output.find('Link is not alive') == -1:
         if output.startswith('==>'):
