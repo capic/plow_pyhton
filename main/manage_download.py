@@ -1,4 +1,3 @@
-
 # !/usr/bin/env python
 
 from __future__ import unicode_literals
@@ -166,14 +165,19 @@ class ManageDownload:
 
             if downloads_list is not None:
                 if len(downloads_list) == 0:
-                    log.log('No download found with link %s and file_path %s' % (link, file_path), log.LEVEL_INFO)
+                    log.log(
+                        '[ManageDownload](get_download_by_link_file_path) | No download found with link %s and file_path %s' % (
+                            link, file_path), log.LEVEL_INFO)
                 elif len(downloads_list) == 1:
                     download = downloads_list[0]
-                    log.log('download : %s' % (download.to_string()), log.LEVEL_DEBUG)
+                    log.log('[ManageDownload](get_download_by_link_file_path) | download : %s' % (download.to_string()),
+                            log.LEVEL_DEBUG)
                 else:
                     download = downloads_list[0]
-                    log.log('Too many download found with link %s and file_path %s' % (link, file_path),
-                            log.LEVEL_ERROR)
+                    log.log(
+                        '[ManageDownload](get_download_by_link_file_path) | Too many download found with link %s and file_path %s' % (
+                            link, file_path),
+                        log.LEVEL_ERROR)
 
         return download
 
