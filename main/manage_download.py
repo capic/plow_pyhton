@@ -29,10 +29,6 @@ from service.logResource import LogResource
 from service.directoryResource import DirectoryResource
 
 import sys
-import inspect
-
-import codecs
-sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
 class ManageDownload:
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
