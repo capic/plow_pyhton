@@ -381,8 +381,7 @@ class ManageDownload:
 
         line = ''
         while True:
-            print("1")
-            out = p.stderr.read(1)
+            out = p.stderr.read(1).decode('utf-8')
             print(out)
             if out == '' and p.poll() is not None:
                 break
