@@ -177,7 +177,7 @@ def json_to_download_object(json_object):
     if bool(json_object) is not False:
         download = Download()
         download.id = json_object['id']
-        download.name = json_object['name'].encode('utf-8')
+        download.name = json_object['name']
         if json_object['host_id']:
             host = json_to_download_host_object(json_object['download_host'])
         else:
