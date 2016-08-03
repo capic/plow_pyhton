@@ -87,13 +87,15 @@ def clean_plowdown_line(line):
 
 def get_infos_plowprobe(cmd):
     log.log('[utils](get_infos_plowprobe) +++', log.LEVEL_DEBUG)
-    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0]
-    log.log('[utils](get_infos_plowprobe)  | type %s' % type(output), log.LEVEL_DEBUG)
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode("utf-8")
+
     if output.find('Link is not alive') == -1:
         if output.startswith('==>'):
             tab_infos = output.split('=$=')
             name = tab_infos[0].replace('==>', '')
+            log.log('[utils](get_infos_plowprobe)  | type %s' % type(name), log.LEVEL_DEBUG)
             name = clean_string_console(name)
+            log.log('[utils](get_infos_plowprobe)  | type %s' % type(name), log.LEVEL_DEBUG)
 
             size = 0
             if tab_infos[1] is not None and tab_infos[1] != '':
@@ -114,7 +116,7 @@ def clean_string_console(string):
     string = string.replace("\033\[[0-9;]+m", '')
     string = string.replace("\033", '')
 
-    return string.encode("utf-8")
+    return string
 
 
 def find_element_by_attribute_in_object_array(array, attribute_to_find, value_to_find):
