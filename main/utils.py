@@ -94,7 +94,7 @@ def get_infos_plowprobe(cmd):
         if output.startswith('==>'):
             tab_infos = output.split('=$=')
             name = tab_infos[0].replace('==>', '')
-            name = clean_string_console(name.decode(sys.stdout.encoding))
+            name = clean_string_console(name)
 
             size = 0
             if tab_infos[1] is not None and tab_infos[1] != '':
