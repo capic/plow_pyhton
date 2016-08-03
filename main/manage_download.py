@@ -59,7 +59,6 @@ class ManageDownload:
                 if utils.package_name_from_download_name(download.name) is not None:
                     download_package = DownloadPackage()
                     download_package.name = utils.package_name_from_download_name(download.name)
-                    print("=================== %s" % download_package.name)
                     download_package = PackageResource.insert(download_package)
 
                 download.package = download_package

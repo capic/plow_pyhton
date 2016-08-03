@@ -135,7 +135,7 @@ class DownloadResource(object):
             response = requests.put(config.REST_ADRESSE + 'downloads/%d' % download_to_update.id,
                                     data=download_to_update.to_update_object())
 
-            if response.code != 200:
+            if response.status_code != 200:
                 log.log('[DownloadResource](update) | Error update %s => %s' % (response.code, response.json()),
                         log.LEVEL_ERROR)
                 download_to_update.logs = "ERROR DURING DOWNLOAD UPDATE\r\n"
