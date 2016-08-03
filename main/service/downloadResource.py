@@ -21,6 +21,7 @@ class DownloadResource(object):
                 response = requests.get(config.REST_ADRESSE + 'downloads/%d' % download_id)
 
                 if response.status_code == 200:
+                    print(" ############## encoding : %s" % response.encoding)
                     log.log('[DownloadResource](get) | download got: %s' % response.json(), log.LEVEL_DEBUG)
                     download = utils.json_to_download_object(response.json())
                 else:
