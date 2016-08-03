@@ -153,7 +153,7 @@ def change_action_property(action, attribute_to_find, value_to_find, attribute_t
 
 def json_to_application_configuration_object(json_object):
     log.log('[utils](json_to_application_configuration_object) +++', log.LEVEL_DEBUG)
-    if bool(json_object):
+    if bool(json_object) is not False:
         application_configuration = ApplicationConfiguration()
         application_configuration.id = json_object['id']
         application_configuration.download_activated = json_object['download_activated']
