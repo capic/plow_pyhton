@@ -175,8 +175,6 @@ def main(argv):
         else:
             print(COMMAND_USAGE)
 
-        treatment.disconnect()
-
 
 if __name__ == "__main__":
     main(sys.argv[1:])
