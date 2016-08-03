@@ -61,7 +61,7 @@ class ManageDownload:
                     download_package = DownloadPackage()
                     download_package.name = utils.package_name_from_download_name(download.name)
 
-                    download_package = PackageResource.insert(download_package.to_insert_json())
+                    download_package = PackageResource.insert(download_package)
 
                 download.package = download_package
 
