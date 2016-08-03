@@ -378,7 +378,7 @@ class ManageDownload:
         download.logs = 'updated by start_download method\r\n'
         if config.RESCUE_MODE is False:
             ManageDownload.update_download(download)
-
+        print("READY TO READ")
         line = ''
         while True:
             out = p.stderr.read(1)
