@@ -90,7 +90,7 @@ def get_infos_plowprobe(cmd):
 
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0]
     log.log('[utils](get_infos_plowprobe)  | encoding: %s => OUTPUT %s' % (sys.stdout.encoding, output), log.LEVEL_DEBUG)
-    if 'Link is not alive' not in output:
+    if output.find('Link is not alive') == -1:
         if output.startswith('==>'):
             tab_infos = output.split('=$=')
             name = tab_infos[0].replace('==>', '')
