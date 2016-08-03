@@ -378,7 +378,7 @@ class ManageDownload:
         download.logs = 'updated by start_download method\r\n'
         if config.RESCUE_MODE is False:
             ManageDownload.update_download(download)
-        print("READY TO READ")
+
         line = ''
         while True:
             out = p.stderr.read(1)
@@ -388,6 +388,7 @@ class ManageDownload:
                 if out != '\n' and out != '\r':
                     line += out
                 else:
+                    print(line)
                     line = utils.clean_plowdown_line(line)
                     download = ManageDownload.get_download_values(line, download)
                     line = ''
