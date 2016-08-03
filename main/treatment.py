@@ -47,7 +47,7 @@ class Treatment:
         logger = logging.getLogger()
         logger.setLevel(logging.DEBUG)
 
-        file_handler = logging.FileHandler(config.DIRECTORY_WEB_LOG + 'start_file_treatement.log', 'w')
+        file_handler = logging.FileHandler(config.DIRECTORY_WEB_LOG + 'start_file_treatement.log', 'w', encoding='utf-8')
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
         logger.addHandler(file_handler)
