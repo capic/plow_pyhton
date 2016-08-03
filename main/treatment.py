@@ -221,6 +221,7 @@ class Treatment:
                 # next download
                 download = ManageDownload.get_download_to_start(None, file_path)
             else:
+                log.log('[Treatment](start_multi_downloads) | Wait 60 seconds...')
                 # on attend 60s avant de retenter un telechargement
                 time.sleep(60)
 

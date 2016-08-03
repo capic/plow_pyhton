@@ -367,7 +367,7 @@ class ManageDownload:
 
     @staticmethod
     def start_download(download):
-        log.log('[ManageDownload](start_download) +++')
+        log.log('[ManageDownload](start_download) +++', log.LEVEL_DEBUG)
         cmd = (
             ManageDownload.COMMAND_DOWNLOAD % (
                 config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, config.DIRECTORY_DOWNLOAD_DESTINATION, download.link))
