@@ -382,13 +382,13 @@ class ManageDownload:
         line = ''
         while True:
             out = p.stderr.read(1).decode('utf-8')
-            print(out)
             if out == '' and p.poll() is not None:
                 break
             if out != '':
                 if out != '\n' and out != '\r':
                     line += out
                 else:
+                    print(line)
                     line = utils.clean_plowdown_line(line)
                     download = ManageDownload.get_download_values(line, download)
                     line = ''
