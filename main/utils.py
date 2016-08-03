@@ -88,13 +88,13 @@ def clean_plowdown_line(line):
 def get_infos_plowprobe(cmd):
     log.log('[utils](get_infos_plowprobe) +++', log.LEVEL_DEBUG)
 
-    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode(sys.stdout.encoding)
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0]
     log.log('[utils](get_infos_plowprobe)  | encoding: %s => OUTPUT %s' % (sys.stdout.encoding, output), log.LEVEL_DEBUG)
     if output.find('Link is not alive') == -1:
         if output.startswith('==>'):
             tab_infos = output.split('=$=')
             name = tab_infos[0].replace('==>', '')
-            name = clean_string_console(name)
+            name = clean_string_console(name.decode(sys.stdout.encoding))
 
             size = 0
             if tab_infos[1] is not None and tab_infos[1] != '':
