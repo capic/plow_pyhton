@@ -3,10 +3,7 @@ import utils
 import logging
 import config
 import time
-import sys
-import codecs
-import locale
-sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
+
 
 LEVEL_OFF = 0
 LEVEL_ALERT = 1
@@ -41,4 +38,4 @@ def log(value, level):
 
         if config.CONSOLE_OUTPUT:
             if level <= config.CONFIG_LOG_LEVEL:
-                print(time.strftime('%d/%m/%y %H:%M:%S', time.localtime()) + " " + value.encode('utf-8'))
+                print(time.strftime('%d/%m/%y %H:%M:%S', time.localtime()) + " " + value)
