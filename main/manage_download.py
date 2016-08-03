@@ -33,7 +33,7 @@ import inspect
 
 import codecs
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
-sys.stdin = codecs.getwriter('utf8')(sys.stdin)
+sys.stdin = codecs.getwriter('utf-8')(sys.stdin)
 
 
 class ManageDownload:
