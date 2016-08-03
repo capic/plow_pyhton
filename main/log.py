@@ -5,8 +5,8 @@ import config
 import time
 import sys
 import codecs
-sys.stdout = codecs.getwriter('utf8')(sys.stdout)
-sys.stderr = codecs.getwriter('utf8')(sys.stderr)
+import locale
+sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
 
 LEVEL_OFF = 0
 LEVEL_ALERT = 1
