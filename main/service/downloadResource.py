@@ -118,7 +118,7 @@ class DownloadResource(object):
             raise Exception(
                 '[DownloadResource](Insert) | Error insert %s => %s' % (response.status_code, response.json()))
         else:
-            return utils.json_to_download_object(DownloadResource.get(response.json()['id']))
+            return DownloadResource.get(response.json()['id'])
 
     @staticmethod
     def update(download_to_update):
