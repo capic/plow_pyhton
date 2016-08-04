@@ -67,8 +67,10 @@ def check_pid(pid):
 
 
 def clean_plowdown_line(line):
+    log.log('[utils](clean_plowdown_line) +++', log.LEVEL_INFO)
+    log.log('[utils](clean_plowdown_line) | line to clean: %s' % line, log.LEVEL_DEBUG)
     idxs = [m.start() for m in re.finditer('\[0', line)]
-
+    log.log('[utils](clean_plowdown_line) |Number of idx: %d' % len(idxs))
     n = 0
     if len(idxs) > 0:
         for idx in idxs:
