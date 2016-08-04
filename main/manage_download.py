@@ -381,21 +381,28 @@ class ManageDownload:
 
         line = ''
         while True:
-            out = p.stderr.read(1).decode('utf-8')
-            if out == '' and p.poll() is not None:
-                print('Break')
-                break
-            if out != '':
-                print('out %s' % out)
-                if out != '\n' and out != '\r':
-                    line += out
-                else:
-                    line = utils.clean_plowdown_line(line)
-                    print('Apres clean_plowdown_line')
-                    download = ManageDownload.get_download_values(line, download)
-                    print('Apres get_download_values')
-                    line = ''
+            try:
+                out = p.stderr.read(1).decode('utf-8')
+                if out == '' and p.poll() is not None:
+                    print('Break')
+                    break
+                if out != '':
+                    print('out %s' % out)
+                    if out != '\n' and out != '\r':
+                        line += out
+                    else:
+                        line = utils.clean_plowdown_line(line)
+                        print('Apres clean_plowdown_line')
+                        download = ManageDownload.get_download_values(line, download)
+                        print('Apres get_download_values')
+                        line = ''
+            except Exception:
+                import traceback
 
+                log.log("[ManageDownload](start_download) | Error during console reading \r\n %s" %
+                        traceback.format_exc().splitlines()[-1],
+                        log.LEVEL_ERROR)
+                log.log("[ManageDownload](start_download) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         return download
 
     # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
