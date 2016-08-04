@@ -403,6 +403,8 @@ class ManageDownload:
                         traceback.format_exc().splitlines()[-1],
                         log.LEVEL_ERROR)
                 log.log("[ManageDownload](start_download) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+
+                break
         return download
 
     # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
