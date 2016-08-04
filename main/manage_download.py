@@ -371,7 +371,7 @@ class ManageDownload:
         cmd = (
             ManageDownload.COMMAND_DOWNLOAD % (
                 config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, config.DIRECTORY_DOWNLOAD_DESTINATION, download.link))
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         download.pid_plowdown = p.pid
         download.pid_python = os.getpid()
         download.status = Download.STATUS_IN_PROGRESS
@@ -384,7 +384,6 @@ class ManageDownload:
             try:
                 out = p.stdout.read(1).decode('utf-8')
                 if out == '' and p.poll() is not None:
-                    print('Break')
                     break
                 if out != '':
                     print('out %s' % out)
