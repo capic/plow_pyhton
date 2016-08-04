@@ -399,6 +399,7 @@ class ManageDownload:
     # 6 => vitesse moyenne recu, 7 => vitesse moyenne envoye, 8 => temps total, 9 => temps passe, 10 => temps restant, 11 => vitesse courante
     @staticmethod
     def get_download_values(values_line, download):
+        log.log('[ManageDownload](get_download_values)', log.LEVEL_DEBUG)
         download_log = ''
         timeout = None
 
