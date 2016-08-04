@@ -388,7 +388,6 @@ class ManageDownload:
                 if out != '\n' and out != '\r':
                     line += out
                 else:
-                    print(line)
                     line = utils.clean_plowdown_line(line)
                     download = ManageDownload.get_download_values(line, download)
                     line = ''
@@ -403,7 +402,7 @@ class ManageDownload:
         download_log = ''
         timeout = None
 
-        log.log(values_line, log.LEVEL_DEBUG)
+        log.log('[ManageDownload](get_download_values) | %s' % values_line, log.LEVEL_DEBUG)
         values = values_line.split()
 
         if len(values) > 0:
@@ -468,6 +467,7 @@ class ManageDownload:
             if config.RESCUE_MODE is False:
                 try:
                     ManageDownload.update_download(download)
+                    log.log('[ManageDownload](get_download_values) | after update')
                 except Exception:
                     if download.status == Download.STATUS_FINISHED:
                         config.RESCUE_MODE = True
