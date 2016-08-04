@@ -381,6 +381,7 @@ class ManageDownload:
 
         line = ''
         while True:
+            print('Debut boucle')
             out = p.stderr.read(1).decode('utf-8')
             if out == '' and p.poll() is not None:
                 break
@@ -389,9 +390,11 @@ class ManageDownload:
                     line += out
                 else:
                     line = utils.clean_plowdown_line(line)
+                    print('Apres clean_plowdown_line')
                     download = ManageDownload.get_download_values(line, download)
+                    print('Apres get_download_values')
                     line = ''
-
+            print('Fin boucle')
         return download
 
     # 0 => pourcentage, 1 => taille totale, 2 => pourcentage recu, 3 => taille recu, 4 pourcentage transfere, 5 => taille transfere,
