@@ -2,6 +2,7 @@
 
 __author__ = 'Vincent'
 
+import sys
 import logging
 import os
 import subprocess
