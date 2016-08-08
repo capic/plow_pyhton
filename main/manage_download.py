@@ -381,7 +381,6 @@ class ManageDownload:
         line = ''
         while True:
             try:
-                print('Shell encoding : %s' % sys.stdout.encoding)
                 out = p.stdout.read(1).decode('utf-8')
                 if out == '' and p.poll() is not None:
                     break

@@ -11,6 +11,7 @@ import os
 import json
 import log
 import config
+from inspect import signature
 
 from treatment import Treatment
 from bean.actionBean import Action
@@ -172,6 +173,13 @@ def main(argv):
                 treatment.delete_package_files(package_id)
             else:
                 print(COMMAND_USAGE)
+        elif args[0] == 'test':
+            if len(args) > 1:
+                fct_to_test_name = args[1]
+                fct_to_test = getattr(Treatment, fct_to_test_name)
+                sig = signature(fct_to_test)
+                print(str(sig))
+
         else:
             print(COMMAND_USAGE)
 
