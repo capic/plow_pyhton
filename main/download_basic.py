@@ -174,13 +174,9 @@ def main(argv):
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'test':
-            if len(args) > 2:
-                module_to_test_name = args[1]
-                fct_to_test_name = args[2]
-                fct_to_test = getattr(module_to_test_name, fct_to_test_name)
-                sig = inspect.getargspec(fct_to_test)
-                print(str(sig))
-
+            if len(args) > 1:
+                fct_to_test_name = args[1]
+                getattr(Treatment, fct_to_test_name)(args[2:])
         else:
             print(COMMAND_USAGE)
 
