@@ -11,7 +11,7 @@ import os
 import json
 import log
 import config
-from inspect import signature
+import inspect
 
 from treatment import Treatment
 from bean.actionBean import Action
@@ -177,7 +177,7 @@ def main(argv):
             if len(args) > 1:
                 fct_to_test_name = args[1]
                 fct_to_test = getattr(Treatment, fct_to_test_name)
-                sig = signature(fct_to_test)
+                sig = inspect.getargspec(fct_to_test)
                 print(str(sig))
 
         else:
