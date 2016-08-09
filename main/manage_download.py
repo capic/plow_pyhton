@@ -379,10 +379,10 @@ class ManageDownload:
             ManageDownload.update_download(download)
 
         line = ''
+        reader = io.TextIOWrapper(p.stdout, encoding='utf8')
         while True:
             try:
-                # out = p.stdout.read(1).decode('utf-8')
-                out = p.communicate()[0].decode('utf-8')
+                out = reader.read(1)
                 if out == '' and p.poll() is not None:
                     break
                 if out != '':
