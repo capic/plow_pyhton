@@ -387,14 +387,11 @@ class ManageDownload:
                 if out == '' and p.poll() is not None:
                     break
                 if out != '':
-                    print('out %s' % out)
                     if out != '\n' and out != '\r':
                         line += out
                     else:
                         line = utils.clean_plowdown_line(line)
-                        print('Apres clean_plowdown_line')
                         download = ManageDownload.get_download_values(line, download)
-                        print('Apres get_download_values')
                         line = ''
             except Exception:
                 import traceback
