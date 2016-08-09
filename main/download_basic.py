@@ -176,6 +176,7 @@ def main(argv):
         elif args[0] == 'test':
             if len(args) > 1:
                 fct_to_test_name = args[1]
+                print(*args[2:])
                 getattr(Treatment, fct_to_test_name)(*args[2:])
         else:
             print(COMMAND_USAGE)
