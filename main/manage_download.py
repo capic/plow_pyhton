@@ -382,7 +382,7 @@ class ManageDownload:
         while True:
             try:
                 # out = p.stdout.read(1).decode('utf-8')
-                out = p.stdout.communicate()[0].decode('utf-8')
+                out = p.communicate()[0].decode('utf-8')
                 if out == '' and p.poll() is not None:
                     break
                 if out != '':
