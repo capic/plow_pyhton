@@ -469,3 +469,30 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
     sys.stdout.write('\r\033[K')  # clear to EOL
     elapsed = time.time() - start
     log.log('copied "{}" --> "{}" in {:>.1f}s"'.format(src, dst, elapsed), log.LEVEL_INFO)
+
+
+def read_char_by_char():
+    line = ''
+    while True:
+        try:
+            out = p.stdout.read(1).decode('utf-8')
+            if out == '' and p.poll() is not None:
+                break
+            if out != '':
+                print('out %s' % out)
+                if out != '\n' and out != '\r':
+                    line += out
+                else:
+                    line = clean_plowdown_line(line)
+                    print('Apres clean_plowdown_line')
+                    print(line)
+                    line = ''
+        except Exception:
+            import traceback
+
+            log.log("[ManageDownload](start_download) | Error during console reading \r\n %s" %
+                    traceback.format_exc().splitlines()[-1],
+                    log.LEVEL_ERROR)
+            log.log("[ManageDownload](start_download) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+
+            break
