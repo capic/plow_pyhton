@@ -117,26 +117,26 @@ class Treatment:
         log.log('[Treatment](mark_download_error_in_file) +++', log.LEVEL_INFO)
         Treatment.mark_link_in_file(download.file_path, download.link,
                                     '# %s \r\n%s %s' % (
-                                        download.name, Treatment.MARK_AS_ERROR, download.link))
+                                        download.name, ManageDownload.MARK_AS_ERROR, download.link))
 
     @staticmethod
     def mark_download_finished_in_file(download):
         log.log('[Treatment](mark_download_finished_in_file) +++', log.LEVEL_INFO)
         Treatment.mark_link_in_file(download.file_path, download.link,
                                     '# %s \r\n%s %s' % (
-                                        download.name, Treatment.MARK_AS_FINISHED, download.link))
+                                        download.name, ManageDownload.MARK_AS_FINISHED, download.link))
 
     @staticmethod
     def mark_link_error_in_file(file_path, link):
         log.log('[Treatment](mark_link_error_in_file) +++', log.LEVEL_INFO)
         Treatment.mark_link_in_file(file_path, link,
-                                    '%s %s' % (Treatment.MARK_AS_ERROR, link))
+                                    '%s %s' % (ManageDownload.MARK_AS_ERROR, link))
 
     @staticmethod
     def reset_link_finished_in_file(download):
         log.log('[Treatment](reset_link_finished_in_file) +++', log.LEVEL_INFO)
         Treatment.mark_link_in_file(download,
-                                    '# %s \r\n%s %s' % (download.name, Treatment.MARK_AS_FINISHED, download.link),
+                                    '# %s \r\n%s %s' % (download.name, ManageDownload.MARK_AS_FINISHED, download.link),
                                     download.link)
 
     @staticmethod
