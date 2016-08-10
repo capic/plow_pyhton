@@ -111,7 +111,7 @@ def clean_string_console(string):
     string = string.replace("\033\[[0-9;]+m", '')
     string = string.replace("\033", '')
 
-    return string
+    return string.encode("utf-8")
 
 
 def find_element_by_attribute_in_object_array(array, attribute_to_find, value_to_find):
