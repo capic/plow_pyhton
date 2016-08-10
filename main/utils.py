@@ -1,10 +1,11 @@
 __author__ = 'Vincent'
 
+
+
 import subprocess
 import re
 
 import psutil
-from mysql.connector import (connection)
 from bean.downloadBean import Download
 from bean.downloadPackageBean import DownloadPackage
 from bean.downloadDirectoryBean import DownloadDirectory
@@ -20,7 +21,7 @@ import log
 
 
 def hms_to_seconds(t):
-    log.log(u'*** hms_to_seconds ***', log.LEVEL_INFO)
+    log.log('*** hms_to_seconds ***', log.LEVEL_INFO)
 
     if ':' in t:
         h, m, s = [int(i) for i in t.split(':')]
@@ -57,7 +58,7 @@ def kill_proc_tree(pid, including_parent=True):
         if including_parent:
             parent.kill()
     except psutil.NoSuchProcess:
-        log.log(u'Process %s does not exist' % str(pid), log.LEVEL_ERROR)
+        log.log('Process %s does not exist' % str(pid), log.LEVEL_ERROR)
         pass
 
 
@@ -66,8 +67,10 @@ def check_pid(pid):
 
 
 def clean_plowdown_line(line):
+    log.log('[utils](clean_plowdown_line) +++', log.LEVEL_INFO)
+    log.log('[utils](clean_plowdown_line) | line to clean: %s' % line, log.LEVEL_DEBUG)
     idxs = [m.start() for m in re.finditer('\[0', line)]
-
+    log.log('[utils](clean_plowdown_line) | Number of idx: %d' % len(idxs), log.LEVEL_DEBUG)
     n = 0
     if len(idxs) > 0:
         for idx in idxs:
@@ -85,10 +88,11 @@ def clean_plowdown_line(line):
 
 
 def get_infos_plowprobe(cmd):
-    log.log(u'Command plowprobe %s' % cmd, log.LEVEL_DEBUG)
-    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
+    log.log('[utils](get_infos_plowprobe) +++', log.LEVEL_DEBUG)
 
-    if 'Link is not alive' not in output:
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('utf-8')
+    print('[utils](get_infos_plowprobe)  | encoding: %s => OUTPUT %s' % (sys.stdout.encoding, output))
+    if output.find('Link is not alive') == -1:
         if output.startswith('==>'):
             tab_infos = output.split('=$=')
             name = tab_infos[0].replace('==>', '')
@@ -100,11 +104,13 @@ def get_infos_plowprobe(cmd):
 
             host = tab_infos[2]
 
+            log.log('[utils](get_infos_plowprobe) | name: %s # size: %d # host: %s' % (name, size, host), log.LEVEL_DEBUG)
             return [name, size, host]
         else:
             return [None, None, None]
     else:
         return [None, None, None]
+
 
 def clean_string_console(string):
     string = string.strip()
@@ -148,7 +154,8 @@ def change_action_property(action, attribute_to_find, value_to_find, attribute_t
 
 
 def json_to_application_configuration_object(json_object):
-    if bool(json_object):
+    log.log('[utils](json_to_application_configuration_object) +++', log.LEVEL_DEBUG)
+    if bool(json_object) is not False:
         application_configuration = ApplicationConfiguration()
         application_configuration.id = json_object['id']
         application_configuration.download_activated = json_object['download_activated']
@@ -350,7 +357,7 @@ def json_to_download_host_object(json_object):
 def package_name_from_download_name(download_name):
     ext = download_name.split(".")[-1]
     ext2 = download_name.split(".")[-2]
-    log.log('Extensions %s | %s ' % (ext, ext2), log.LEVEL_DEBUG)
+    log.log('[utils](package_name_from_download_name) | Extensions %s | %s ' % (ext, ext2), log.LEVEL_DEBUG)
     if ext == 'rar':
         if 'part' in ext2:
             return download_name.split(".part")[0]
@@ -370,10 +377,10 @@ def get_action_by_property(actions_list, property_id):
 
 
 def find_this_process(process_name):
-    log.log(u'*** find_this_process ***', log.LEVEL_INFO)
+    log.log('*** find_this_process ***', log.LEVEL_INFO)
 
     command = "ps -eaf | grep \"" + process_name + "\""
-    log.log(u'command: %s' % command, log.LEVEL_DEBUG)
+    log.log('command: %s' % command, log.LEVEL_DEBUG)
     ps = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     output = ps.stdout.read()
     ps.stdout.close()
@@ -382,7 +389,7 @@ def find_this_process(process_name):
 
 
 def is_this_running(process_name):
-    log.log(u'*** is_this_running ***', log.LEVEL_INFO)
+    log.log('*** is_this_running ***', log.LEVEL_INFO)
     output = find_this_process(process_name)
 
     if re.search(process_name, output) is None:
@@ -462,3 +469,30 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
     sys.stdout.write('\r\033[K')  # clear to EOL
     elapsed = time.time() - start
     log.log('copied "{}" --> "{}" in {:>.1f}s"'.format(src, dst, elapsed), log.LEVEL_INFO)
+
+
+def read_char_by_char():
+    line = ''
+    while True:
+        try:
+            out = p.stdout.read(1).decode('utf-8')
+            if out == '' and p.poll() is not None:
+                break
+            if out != '':
+                print('out %s' % out)
+                if out != '\n' and out != '\r':
+                    line += out
+                else:
+                    line = clean_plowdown_line(line)
+                    print('Apres clean_plowdown_line')
+                    print(line)
+                    line = ''
+        except Exception:
+            import traceback
+
+            log.log("[ManageDownload](start_download) | Error during console reading \r\n %s" %
+                    traceback.format_exc().splitlines()[-1],
+                    log.LEVEL_ERROR)
+            log.log("[ManageDownload](start_download) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+
+            break

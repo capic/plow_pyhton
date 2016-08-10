@@ -1,4 +1,4 @@
-# coding: utf8
+
 # !/usr/bin/env python
 
 __author__ = 'Vincent'
@@ -11,6 +11,7 @@ import os
 import json
 import log
 import config
+import inspect
 
 from treatment import Treatment
 from bean.actionBean import Action
@@ -32,7 +33,7 @@ def main(argv):
     else:
         if os.path.isfile(config.CONFIG_FILE):
             config_object = {}
-            execfile(config.CONFIG_FILE, config_object)
+            exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
 
             if 'rest_adresse' in config_object:
                 config.REST_ADRESSE = config_object['rest_adresse']
@@ -75,7 +76,7 @@ def main(argv):
             logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_start.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log(u"*** Start application ***", log.LEVEL_INFO)
+            log.log("*** Start application ***", log.LEVEL_INFO)
 
             if len(args) > 1:
                 download_id = args[1]
@@ -87,7 +88,7 @@ def main(argv):
             logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log(u"*** Start application ***", log.LEVEL_INFO)
+            log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 download_id = args[1]
                 treatment.stop_download(download_id)
@@ -97,7 +98,7 @@ def main(argv):
             logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_start_file_treatment.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log(u"*** Start application ***", log.LEVEL_INFO)
+            log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 file_path = args[1]
                 treatment.start_file_treatment(file_path)
@@ -107,7 +108,7 @@ def main(argv):
             # logging.basicConfig(filename=config.DIRECTORY_WEB_LOG +'log_start_multi_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
             # format='%(asctime)s %(message)s',
             # datefmt='%d/%m/%Y %H:%M:%S')
-            # log.log_debug(u"*** Start application ***")
+            # log.log_debug("*** Start application ***")
             if len(args) > 1:
                 file_path = args[1]
                 treatment.start_multi_downloads(file_path)
@@ -115,7 +116,7 @@ def main(argv):
             logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop_multi_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log(u"*** Start application ***", log.LEVEL_INFO)
+            log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 file_path = args[1]
                 treatment.stop_multi_downloads(file_path)
@@ -123,7 +124,7 @@ def main(argv):
             logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_check_download_alive.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log(u"*** Start application ***", log.LEVEL_INFO)
+            log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 download_id = args[1]
                 treatment.check_download_alive(download_id)
@@ -174,10 +175,13 @@ def main(argv):
                 treatment.delete_package_files(package_id)
             else:
                 print(COMMAND_USAGE)
+        elif args[0] == 'test':
+            if len(args) > 1:
+                fct_to_test_name = args[1]
+                print(args[2])
+                getattr(Treatment, fct_to_test_name)(args[2])
         else:
             print(COMMAND_USAGE)
-
-        treatment.disconnect()
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ import logging
 import config
 import time
 
+
 LEVEL_OFF = 0
 LEVEL_ALERT = 1
 LEVEL_ERROR = 2
@@ -21,6 +22,7 @@ def convert_log_level_to_logging_level():
         config.CONFIG_LOG_LEVEL_LOGGING = logging.INFO
     elif config.CONFIG_LOG_LEVEL == LEVEL_DEBUG:
         config.CONFIG_LOG_LEVEL_LOGGING = logging.DEBUG
+
 
 def log(value, level):
     if config.CONFIG_LOG_LEVEL > LEVEL_OFF:
