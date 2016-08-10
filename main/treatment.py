@@ -96,7 +96,7 @@ class Treatment:
         if file_path is not None and file_path != '':
             # try:
             log.log('[Treatment](mark_link_in_file) | =========> Open file %s to read <=========' % file_path, log.LEVEL_INFO)
-            f = open(file_path, 'r')
+            f = open(file_path, 'r', encoding='utf-8')
             file_data = f.read()
             f.close()
             log.log('[Treatment](mark_link_in_file) | =========> Close file %s <=========' % file_path, log.LEVEL_INFO)
@@ -105,7 +105,7 @@ class Treatment:
             new_data = file_data.replace(to_replace, replace_by)
 
             log.log('[Treatment](mark_link_in_file) | =========> Open file %s to write <=========' % file_path, log.LEVEL_INFO)
-            f = open(file_path, 'w')
+            f = open(file_path, 'w', encoding='utf-8')
             f.write(new_data)
             f.close()
             log.log('[Treatment](mark_link_in_file) | =========> Close file %s <=========' % file_path, log.LEVEL_INFO)
