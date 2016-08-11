@@ -45,8 +45,6 @@ def main(argv):
                 config.DIRECTORY_DOWNLOAD_DESTINATION_ID = config_object['repertoire_telechargement_id']
             if 'repertoire_telechargement' in config_object:
                 config.DIRECTORY_DOWNLOAD_DESTINATION = config_object['repertoire_telechargement']
-            if 'repertoire_telechargement_texte' in config_object:
-                config.DIRECTORY_DOWNLOAD_TEXT = config_object['repertoire_telechargement_texte']
             if 'log_output' in config_object:
                 config.LOG_OUTPUT = (
                     config_object['log_output'] == "True" or config_object['log_output'] == "true" or config_object['log_output'] == "1")
