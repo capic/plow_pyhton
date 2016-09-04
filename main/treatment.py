@@ -190,6 +190,10 @@ class Treatment:
 
                 # mark link with # in file
                 if download.status == Download.STATUS_FINISHED:
+                    #change the file permission
+                    log.log("[Treatment](start_multi_downloads) | Change file permission", log.LEVEL_DEBUG)
+                    os.chmod(download.directory + download.name, 0o777)
+
                     if config.RESCUE_MODE is False:
                         download = ManageDownload.get_download_by_id(download.id)
 
@@ -218,9 +222,7 @@ class Treatment:
                     download.logs = 'updated by start_file_treatment method\r\n'
                     ManageDownload.update_download(download)
 
-                    #change the file permission
-                    log.log("[Treatment](start_multi_downloads) | Change file permission", log.LEVEL_DEBUG)
-                    os.chmod(download.directory + download.name, 0o777)
+
                 log.log('[Treatment](start_multi_downloads) | =========< End download >=========', log.LEVEL_INFO)
                 # next download
                 download = ManageDownload.get_download_to_start(None, file_path)
@@ -228,6 +230,14 @@ class Treatment:
                 log.log('[Treatment](start_multi_downloads) | Wait 60 seconds...')
                 # on attend 60s avant de retenter un telechargement
                 time.sleep(60)
+
+    def stop_current_downloads(self):
+        log.log('[Treatment](stop_current_downloads) +++', log.LEVEL_INFO)
+
+        download_list = ManageDownload.get_downloads_in_progress()
+
+        for download in download_list:
+            ManageDownload.stop_download(download)
 
     def stop_multi_downloads(self, file_path):
         log.log('[Treatment](stop_multi_downloads) +++', log.LEVEL_INFO)

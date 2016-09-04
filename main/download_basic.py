@@ -118,6 +118,12 @@ def main(argv):
             if len(args) > 1:
                 file_path = args[1]
                 treatment.stop_multi_downloads(file_path)
+        elif args[0] == 'stop_current_downloads':
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop_current_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+                                format='%(asctime)s %(message)s',
+                                datefmt='%d/%m/%Y %H:%M:%S')
+            log.log("*** Start application ***", log.LEVEL_INFO)
+            treatment.stop_current_downloads()
         elif args[0] == 'check_download_alive':
             logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_check_download_alive.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
