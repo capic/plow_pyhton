@@ -217,6 +217,10 @@ class Treatment:
 
                     download.logs = 'updated by start_file_treatment method\r\n'
                     ManageDownload.update_download(download)
+
+                    #change the file permission
+                    log.log("[Treatment](start_multi_downloads) | Change file permission", log.LEVEL_DEBUG)
+                    os.chmod(download.directory + download.name, 0o777)
                 log.log('[Treatment](start_multi_downloads) | =========< End download >=========', log.LEVEL_INFO)
                 # next download
                 download = ManageDownload.get_download_to_start(None, file_path)
