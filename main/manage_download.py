@@ -273,6 +273,7 @@ class ManageDownload:
 
     @staticmethod
     def insert_update_download(link, file_path):
+        download = None
         # si la ligne n'est pas marque comme termine avec ce programme
         if not link.startswith(ManageDownload.MARK_AS_FINISHED):
             if not link.startswith(ManageDownload.MARK_AS_ERROR):
