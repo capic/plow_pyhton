@@ -99,12 +99,14 @@ class ManageDownload:
 
     @staticmethod
     def update_download_log(download, force=False):
+        log.log("[ManageDownlaod](update_download_log) +++++++")
+        log.log("[ManageDownlaod](update_download_log) | update download in database ? %d" % download)
         if (config.LOG_BDD is True or force) and download.logs != "":
             return LogResource.insert(download)
 
     def update_action_callback(self, response):
         log.log('*** update_action_callback ***', log.LEVEL_INFO)
-        self.action_update_in_progress = False
+        # self.action_update_in_progress = False
 
     def update_action(self, action):
         log.log('*** update_action ***', log.LEVEL_INFO)
