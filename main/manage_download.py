@@ -99,8 +99,8 @@ class ManageDownload:
 
     @staticmethod
     def update_download_log(download, force=False):
-        log.log("[ManageDownlaod](update_download_log) +++++++")
-        log.log("[ManageDownlaod](update_download_log) | update download in database ? %d" % download)
+        log.log("[ManageDownlaod](update_download_log) +++++++", log.LEVEL_INFO)
+        log.log("[ManageDownlaod](update_download_log) | update download in database ? %d" % download, log.LEVEL_DEBUG)
         if (config.LOG_BDD is True or force) and download.logs != "":
             return LogResource.insert(download)
 
