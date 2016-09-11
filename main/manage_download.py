@@ -85,7 +85,7 @@ class ManageDownload:
         try:
             download_updated = DownloadResource.update(download_to_update)
 
-            if download_updated is None:
+            if download_updated is not None:
                 ManageDownload.update_download_log(download_to_update, force_update_log)
         except Exception:
             import traceback
