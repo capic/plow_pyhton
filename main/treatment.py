@@ -216,11 +216,26 @@ class Treatment:
                     download.average_speed = 0
 
                     download.logs = 'updated by start_file_treatment method\r\n'
-                    ManageDownload.update_download(download)
+                    ManageDownload.update_download_log(download)
 
-                    #change the file permission
-                    log.log("[Treatment](start_multi_downloads) | Change file permission", log.LEVEL_DEBUG)
-                    os.chmod(os.path.join(download.directory.path + download.name), 0o777)
+                    try:
+                        #change the file permission
+                        l = "[Treatment](start_multi_downloads) | Change file permission"
+                        log.log(l, log.LEVEL_DEBUG)
+                        download.logs = l
+                        os.chmod(os.path.join(download.directory.path + download.name), 0o777)
+                    except Exception:
+                        import traceback
+
+                        log.log(
+                            "[Treatment](start_multi_downloads) | Error changing rights \r\n %s" % traceback.format_exc().splitlines()[-1],
+                            log.LEVEL_ERROR)
+                        log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+
+                        download.logs = "[Treatment](start_multi_downloads) | Error changing rights \r\n %s" % traceback.format_exc().splitlines()[-1]
+                        download.logs = download.logs + "Traceback: %s" % traceback.format_exc()
+
+                    ManageDownload.update_download(download)
                 log.log('[Treatment](start_multi_downloads) | =========< End download >=========', log.LEVEL_INFO)
                 # next download
                 download = ManageDownload.get_download_to_start(None, file_path)
