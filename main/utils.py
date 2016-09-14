@@ -23,9 +23,9 @@ import log
 def hms_to_seconds(t):
     log.log('*** hms_to_seconds ***', log.LEVEL_INFO)
 
+    d = 0
     if ':' in t:
         h, m, s = [int(i) for i in t.split(':')]
-        d = 0
     elif 'd' in t:
         m = 0
         s = 0

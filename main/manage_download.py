@@ -85,7 +85,7 @@ class ManageDownload:
         try:
             download_updated = DownloadResource.update(download_to_update)
 
-            if download_updated is None:
+            if download_updated is not None:
                 ManageDownload.update_download_log(download_to_update, force_update_log)
         except Exception:
             import traceback
@@ -99,12 +99,14 @@ class ManageDownload:
 
     @staticmethod
     def update_download_log(download, force=False):
+        log.log("[ManageDownlaod](update_download_log) +++++++", log.LEVEL_INFO)
+        log.log("[ManageDownlaod](update_download_log) | update download in database ? %d" % (config.LOG_BDD or force), log.LEVEL_DEBUG)
         if (config.LOG_BDD is True or force) and download.logs != "":
             return LogResource.insert(download)
 
     def update_action_callback(self, response):
         log.log('*** update_action_callback ***', log.LEVEL_INFO)
-        self.action_update_in_progress = False
+        # self.action_update_in_progress = False
 
     def update_action(self, action):
         log.log('*** update_action ***', log.LEVEL_INFO)
@@ -273,6 +275,7 @@ class ManageDownload:
 
     @staticmethod
     def insert_update_download(link, file_path):
+        download = None
         # si la ligne n'est pas marque comme termine avec ce programme
         if not link.startswith(ManageDownload.MARK_AS_FINISHED):
             if not link.startswith(ManageDownload.MARK_AS_ERROR):
