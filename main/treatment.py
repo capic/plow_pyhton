@@ -195,29 +195,6 @@ class Treatment:
 
                     Treatment.mark_download_finished_in_file(download)
 
-                    if config.RESCUE_MODE is False:
-                        actions_list = ManageDownload.get_actions_by_parameters(download_id=download.id)
-
-                        for action in actions_list:
-                            object_id = None
-                            if action.download_id is not None:
-                                object_id = action.download_id
-                            elif action.download_package_id is not None:
-                                object_id = action.download_package_id
-
-                            Treatment.action(object_id, action.id)
-                else:
-                    if download.status == Download.STATUS_ERROR:
-                        Treatment.mark_download_error_in_file(download)
-                    else:
-                        download.status = Download.STATUS_WAITING
-
-                    download.time_left = 0
-                    download.average_speed = 0
-
-                    download.logs = 'updated by start_file_treatment method\r\n'
-                    ManageDownload.update_download_log(download)
-
                     try:
                         #change the file permission
                         l = "[Treatment](start_multi_downloads) | Change file permission"
@@ -235,6 +212,31 @@ class Treatment:
                         download.logs = "[Treatment](start_multi_downloads) | Error changing rights \r\n %s" % traceback.format_exc().splitlines()[-1]
                         download.logs = download.logs + "Traceback: %s" % traceback.format_exc()
 
+                    if config.RESCUE_MODE is False:
+                        ManageDownload.update_download_log(download)
+
+                        actions_list = ManageDownload.get_actions_by_parameters(download_id=download.id)
+
+                        for action in actions_list:
+                            object_id = None
+                            if action.download_id is not None:
+                                object_id = action.download_id
+                            elif action.download_package_id is not None:
+                                object_id = action.download_package_id
+
+                            Treatment.action(object_id, action.id)
+
+
+                else:
+                    if download.status == Download.STATUS_ERROR:
+                        Treatment.mark_download_error_in_file(download)
+                    else:
+                        download.status = Download.STATUS_WAITING
+
+                    download.time_left = 0
+                    download.average_speed = 0
+
+                    download.logs = 'updated by start_file_treatment method\r\n'
                     ManageDownload.update_download(download)
                 log.log('[Treatment](start_multi_downloads) | =========< End download >=========', log.LEVEL_INFO)
                 # next download
