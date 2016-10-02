@@ -100,7 +100,9 @@ def get_infos_plowprobe(cmd):
 
             size = 0
             if tab_infos[1] is not None and tab_infos[1] != '':
-                size = int(tab_infos[1])
+                sizes_tab = [int(s) for s in tab_infos[1].split() if s.isdigit()]
+                if len(sizes_tab) > 0:
+                    size = sizes_tab[0]
 
             host = tab_infos[2]
 
