@@ -91,7 +91,8 @@ class ManageDownload:
             import traceback
 
             download_to_update.logs = traceback.format_exc().splitlines()[-1]
-            ManageDownload.update_download_log(download_to_update, True)
+            if config.RESCUE_MODE is False:
+                ManageDownload.update_download_log(download_to_update, True)
 
     @staticmethod
     def get_application_configuration_by_id(application_configuration_id):
