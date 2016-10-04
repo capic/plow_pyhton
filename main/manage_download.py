@@ -225,7 +225,7 @@ class ManageDownload:
                     log.log("[ManageDownload](get_download_to_start) | Traceback: %s" % traceback.format_exc(),
                             log.LEVEL_DEBUG)
 
-                    file = open(file_path, 'r')
+                    file = open(file_path, 'r', encoding='utf-8')
                     for line in file:
                         line = line.decode("utf-8")
                         if 'http' in line:
