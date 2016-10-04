@@ -227,7 +227,7 @@ class ManageDownload:
 
                     file = open(file_path, 'r', encoding='utf-8')
                     for line in file:
-                        line = line.decode("utf-8")
+                        # line = line.decode("utf-8")
                         if 'http' in line:
                             log.log('[ManageDownload](get_download_to_start) | Line %s contains http' % line,
                                     log.LEVEL_DEBUG)
