@@ -65,6 +65,8 @@ class DownloadResource(object):
                     log.LEVEL_ERROR)
             log.log("[DownloadResource](get_next) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
+            raise
+
         return download
 
     @staticmethod
