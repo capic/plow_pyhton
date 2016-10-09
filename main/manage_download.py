@@ -1,4 +1,5 @@
 # !/usr/bin/env python3.2
+from main.service import actionResource
 
 __author__ = 'Vincent'
 
@@ -113,25 +114,7 @@ class ManageDownload:
 
         self.action_update_in_progress = True
 
-        action.lifecycle_update_date = datetime.utcnow().isoformat()
-        try:
-            log.log(config.REST_ADRESSE + 'actions/' + str(
-                action.id) + '\r\n params: %s' % utils.action_object_to_update_json(action), log.LEVEL_DEBUG)
-            requests.put(
-                config.REST_ADRESSE + 'actions/' + str(action.id),
-                data=utils.action_object_to_update_json(action))
-            if response.status_code != 200:
-                update_action_callback(response)
-                # log.log_debug('Error update %s => %s' % (response.code, response.json())
-                # else:
-                # action_property_returned = utils.json_to_action_object(response.json())
-        except Exception:
-            import traceback
-
-            log.log("Update action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1],
-                    log.LEVEL_ERROR)
-            log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
-
+        action_updated = ActionResource.update(action)
 
     @staticmethod
     def get_package_by_id(self, package_id):
