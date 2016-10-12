@@ -77,7 +77,7 @@ def main(argv):
             log.log("*** Start application ***", log.LEVEL_INFO)
 
             if len(args) > 1:
-                download_id = args[1]
+                download_id = int(args[1])
                 treatment.start_download(download_id)
             else:
                 print(COMMAND_USAGE)
@@ -88,7 +88,7 @@ def main(argv):
                                 datefmt='%d/%m/%Y %H:%M:%S')
             log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
-                download_id = args[1]
+                download_id = int(args[1])
                 treatment.stop_download(download_id)
             else:
                 print(COMMAND_USAGE)
@@ -130,7 +130,7 @@ def main(argv):
                                 datefmt='%d/%m/%Y %H:%M:%S')
             log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
-                download_id = args[1]
+                download_id = int(args[1])
                 treatment.check_download_alive(download_id)
             else:
                 treatment.check_multi_downloads_alive()
@@ -156,7 +156,7 @@ def main(argv):
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 1:
-                download_id = args[1]
+                download_id = int(args[1])
                 treatment.unrar(download_id)
             else:
                 print(COMMAND_USAGE)
@@ -165,7 +165,7 @@ def main(argv):
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 2:
-                download_id = args[1]
+                download_id = int(args[1])
                 file_to_delete = (args[2] == "true")
                 treatment.reset(download_id, file_to_delete)
             else:
@@ -175,7 +175,7 @@ def main(argv):
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 1:
-                package_id = args[1]
+                package_id = int(args[1])
                 treatment.delete_package_files(package_id)
             else:
                 print(COMMAND_USAGE)
