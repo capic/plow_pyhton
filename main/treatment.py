@@ -220,7 +220,7 @@ class Treatment:
                     download.average_speed = 0
 
                     download.logs = 'updated by start_file_treatment method\r\n'
-                    ManageDownload.update_download(download)
+                    ManageDownload.update_download(download, True)
 
                     #change the file permission
                     log.log("[Treatment](start_multi_downloads) | Change file permission", log.LEVEL_DEBUG)
@@ -289,14 +289,14 @@ class Treatment:
             try:
                 download.log = 'deleting file'
                 download.status = Download.STATUS_FILE_DELETING
-                ManageDownload.update_download(download)
+                ManageDownload.update_download(download, True)
                 file_path = os.path.join(download.directory.path, download.name)
                 os.remove(file_path)
                 download.log = 'delete file ok'
                 download.status = Download.STATUS_FILE_DELETED
-                ManageDownload.update_download(download)
+                ManageDownload.update_download(download, True)
             except OSError:
                 download.log = 'delete file error'
                 download.status = Download.STATUS_FILE_DELETE_ERROR
-                ManageDownload.update_download(download, force_update_log=True)
+                ManageDownload.update_download(download, True, force_update_log=True)
 

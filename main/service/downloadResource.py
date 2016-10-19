@@ -121,7 +121,7 @@ class DownloadResource(object):
             return DownloadResource.get(response.json()['id'])
 
     @staticmethod
-    def update(download_to_update):
+    def update(download_to_update, to_update_in_database=True):
         log.log('[DownloadResource](update) +++', log.LEVEL_INFO)
 
         download_to_update.lifecycle_update_date = datetime.utcnow().isoformat()
@@ -132,8 +132,9 @@ class DownloadResource(object):
             log.log('[DownloadResource](update) | ' + config.REST_ADRESSE + 'downloads/%d \r\n %s' % (
                 download_to_update.id, download_to_update.to_update_object()), log.LEVEL_DEBUG)
 
-            response = requests.put(config.REST_ADRESSE + 'downloads/%d' % download_to_update.id,
-                                    data=download_to_update.to_update_object())
+            params = download_to_update.to_update_object()
+            params.update = to_update_in_database
+            response = requests.put(config.REST_ADRESSE + 'downloads/%d' % download_to_update.id, data=params)
 
             if response.status_code != 200:
                 log.log('[DownloadResource](update) | Error update %s => %s' % (response.code, response.json()),
