@@ -404,6 +404,7 @@ class ManageDownload:
         values = values_line.split()
 
         if len(values) > 0:
+            to_update_in_database = True
             if values[0].isdigit():
                 # progress part
                 download.progress_part = int(values[2])
@@ -447,6 +448,7 @@ class ManageDownload:
                     download.to_move_directory = None
                     timeout = config.DEFAULT_UNIREST_TIMEOUT
 
+                to_update_in_database = False
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
                 download.name = utils.clean_string_console(tab_name[len(tab_name) - 1])
@@ -464,7 +466,7 @@ class ManageDownload:
             # si on est pas en rescue mode
             if config.RESCUE_MODE is False:
                 try:
-                    ManageDownload.update_download(download, False)
+                    ManageDownload.update_download(download, to_update_in_database)
                     log.log('[ManageDownload](get_download_values) | after update')
                 except Exception:
                     if download.status == Download.STATUS_FINISHED:
