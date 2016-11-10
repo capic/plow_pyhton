@@ -29,7 +29,7 @@ class ApplicationConfigurationResource(object):
                     application_configuration = utils.json_to_application_configuration_object(response.json())
                 else:
                     log.log('[ApplicationConfigurationResource](get) | Error get %s => %s' % (
-                        response.code, response.json()),
+                        response.status_code, response.json()),
                             log.LEVEL_ERROR)
             except Exception:
                 import traceback

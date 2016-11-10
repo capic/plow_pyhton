@@ -23,7 +23,7 @@ class ActionResource(object):
                     log.log('[ActionResource](get) | action got: %s' % response.json(), log.LEVEL_DEBUG)
                     action = utils.json_to_action_object(response.json())
                 else:
-                    log.log('[ActionResource](get) | Error get %s => %s' % (response.code, response.json()),
+                    log.log('[ActionResource](get) | Error get %s => %s' % (response.status_code, response.json()),
                             log.LEVEL_ERROR)
             except Exception:
                 import traceback
@@ -50,7 +50,7 @@ class ActionResource(object):
                 if response.status_code == 200:
                     action_list = utils.json_to_action_object_list(response.json())
                 else:
-                    log.log('[ActionResource](get_all_by_params) | Error get %s => %s' % (response.code, response.json()),
+                    log.log('[ActionResource](get_all_by_params) | Error get %s => %s' % (response.status_code, response.json()),
                             log.LEVEL_ERROR)
             except Exception:
                 import traceback
@@ -110,7 +110,7 @@ class ActionResource(object):
                                     data=action_to_update.to_update_object())
 
             if response.status_code != 200:
-                log.log('[ActionResource](update) | Error update %s => %s' % (response.code, response.json()),
+                log.log('[ActionResource](update) | Error update %s => %s' % (response.status_code, response.json()),
                         log.LEVEL_ERROR)
             else:
                 action_updated = utils.json_to_action_object(response.json())

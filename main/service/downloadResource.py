@@ -24,7 +24,7 @@ class DownloadResource(object):
                     log.log('[DownloadResource](get) | download got: %s' % response.json(), log.LEVEL_DEBUG)
                     download = utils.json_to_download_object(response.json())
                 else:
-                    log.log('[DownloadResource](get) | Error get %s => %s' % (response.code, response.json()),
+                    log.log('[DownloadResource](get) | Error get %s => %s' % (response.status_code, response.json()),
                             log.LEVEL_ERROR)
             except Exception:
                 import traceback
@@ -55,7 +55,7 @@ class DownloadResource(object):
                 log.log('[DownloadResource](get_next) | download got: %s' % response.json(), log.LEVEL_DEBUG)
                 download = utils.json_to_download_object(response.json())
             else:
-                log.log('[DownloadResource](get_next) | Error get %s => %s' % (response.code, response.json()),
+                log.log('[DownloadResource](get_next) | Error get %s => %s' % (response.status_code, response.json()),
                         log.LEVEL_ERROR)
         except Exception:
             import traceback
@@ -86,7 +86,7 @@ class DownloadResource(object):
                     downloads_list = utils.json_to_download_object_list(response.json())
                 else:
                     log.log(
-                        '[DownloadResource](get_all_by_params) | Error get %s => %s' % (response.code, response.json()),
+                        '[DownloadResource](get_all_by_params) | Error get %s => %s' % (response.status_code, response.json()),
                         log.LEVEL_ERROR)
             except Exception:
                 import traceback
@@ -113,7 +113,7 @@ class DownloadResource(object):
         response = requests.post(config.REST_ADRESSE + 'downloads', data=download_to_insert.to_insert_json())
 
         if response.status_code != 200:
-            log.log('[DownloadResource](Insert) | Error insert %s => %s' % (response.code, response.json()),
+            log.log('[DownloadResource](Insert) | Error insert %s => %s' % (response.status_code, response.json()),
                     log.LEVEL_ERROR)
             raise Exception(
                 '[DownloadResource](Insert) | Error insert %s => %s' % (response.status_code, response.json()))
@@ -133,11 +133,11 @@ class DownloadResource(object):
                 download_to_update.id, download_to_update.to_update_object()), log.LEVEL_DEBUG)
 
             params = download_to_update.to_update_object()
-            params.update = to_update_in_database
+            params["update"] = 'true' if to_update_in_database else 'false'
             response = requests.put(config.REST_ADRESSE + 'downloads/%d' % download_to_update.id, data=params)
 
             if response.status_code != 200:
-                log.log('[DownloadResource](update) | Error update %s => %s' % (response.code, response.json()),
+                log.log('[DownloadResource](update) | Error update %s => %s' % (response.status_code, response.json()),
                         log.LEVEL_ERROR)
                 download_to_update.logs = "ERROR DURING DOWNLOAD UPDATE\r\n"
             else:
@@ -145,7 +145,7 @@ class DownloadResource(object):
 
             return download_updated
 
-        except Exception:
+        except:
             import traceback
 
             log.log("[DownloadResource](update) | Update download: No database connection \r\n %s" %

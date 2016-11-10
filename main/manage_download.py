@@ -1,5 +1,5 @@
 # !/usr/bin/env python3.2
-from main.service import actionResource
+from service import actionResource
 
 __author__ = 'Vincent'
 
@@ -88,13 +88,14 @@ class ManageDownload:
         try:
             download_updated = DownloadResource.update(download_to_update, to_update_in_database)
 
-            if download_updated is not None:
+            if download_updated is not None and to_update_in_database is True:
                 ManageDownload.update_download_log(download_to_update, force_update_log)
         except Exception:
             import traceback
 
             download_to_update.logs = traceback.format_exc().splitlines()[-1]
-            ManageDownload.update_download_log(download_to_update, True)
+            if to_update_in_database is True:
+                ManageDownload.update_download_log(download_to_update, True)
 
     @staticmethod
     def get_application_configuration_by_id(application_configuration_id):
@@ -381,7 +382,8 @@ class ManageDownload:
                         line = utils.clean_plowdown_line(line)
                         download = ManageDownload.get_download_values(line, download)
                         line = ''
-            except Exception:
+            except:
+                ManageDownload.update_download(download)
                 import traceback
 
                 log.log("[ManageDownload](start_download) | Error during console reading \r\n %s" %
@@ -439,16 +441,20 @@ class ManageDownload:
                     # time left
                     download.time_left = utils.hms_to_seconds(values[10])
 
+                to_update_in_database = False
+
                 if values[1] == values[3] and values[1] != '0' and download.status == Download.STATUS_IN_PROGRESS:
                     download.status = Download.STATUS_FINISHED
+                    download.time_left = 0
+                    download.current_speed = 0
                     directory = DownloadDirectory()
                     directory.id = config.DIRECTORY_DOWNLOAD_DESTINATION_ID
                     directory.path = config.DIRECTORY_DOWNLOAD_DESTINATION
                     download.directory = directory
                     download.to_move_directory = None
                     timeout = config.DEFAULT_UNIREST_TIMEOUT
+                    to_update_in_database = True
 
-                to_update_in_database = False
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
                 download.name = utils.clean_string_console(tab_name[len(tab_name) - 1])

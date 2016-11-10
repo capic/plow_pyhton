@@ -1,4 +1,3 @@
-
 # !/usr/bin/env python
 
 __author__ = 'Vincent'
@@ -32,6 +31,7 @@ def main(argv):
         exit()
     else:
         if os.path.isfile(config.CONFIG_FILE):
+            print("Config file found")
             config_object = {}
             exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
 
