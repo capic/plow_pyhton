@@ -1,4 +1,3 @@
-
 # !/usr/bin/env python
 
 __author__ = 'Vincent'
@@ -32,6 +31,7 @@ def main(argv):
         exit()
     else:
         if os.path.isfile(config.CONFIG_FILE):
+            print("Config file found")
             config_object = {}
             exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
 
@@ -77,7 +77,7 @@ def main(argv):
             log.log("*** Start application ***", log.LEVEL_INFO)
 
             if len(args) > 1:
-                download_id = args[1]
+                download_id = int(args[1])
                 treatment.start_download(download_id)
             else:
                 print(COMMAND_USAGE)
@@ -88,7 +88,7 @@ def main(argv):
                                 datefmt='%d/%m/%Y %H:%M:%S')
             log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
-                download_id = args[1]
+                download_id = int(args[1])
                 treatment.stop_download(download_id)
             else:
                 print(COMMAND_USAGE)
@@ -118,13 +118,19 @@ def main(argv):
             if len(args) > 1:
                 file_path = args[1]
                 treatment.stop_multi_downloads(file_path)
+        elif args[0] == 'stop_current_downloads':
+            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop_current_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+                                format='%(asctime)s %(message)s',
+                                datefmt='%d/%m/%Y %H:%M:%S')
+            log.log("*** Start application ***", log.LEVEL_INFO)
+            treatment.stop_current_downloads()
         elif args[0] == 'check_download_alive':
             logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_check_download_alive.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
-                download_id = args[1]
+                download_id = int(args[1])
                 treatment.check_download_alive(download_id)
             else:
                 treatment.check_multi_downloads_alive()
@@ -150,7 +156,7 @@ def main(argv):
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 1:
-                download_id = args[1]
+                download_id = int(args[1])
                 treatment.unrar(download_id)
             else:
                 print(COMMAND_USAGE)
@@ -159,7 +165,7 @@ def main(argv):
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 2:
-                download_id = args[1]
+                download_id = int(args[1])
                 file_to_delete = (args[2] == "true")
                 treatment.reset(download_id, file_to_delete)
             else:
@@ -169,7 +175,7 @@ def main(argv):
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 1:
-                package_id = args[1]
+                package_id = int(args[1])
                 treatment.delete_package_files(package_id)
             else:
                 print(COMMAND_USAGE)

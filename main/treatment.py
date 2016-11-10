@@ -225,8 +225,6 @@ class Treatment:
                                 object_id = action.download_package_id
 
                             Treatment.action(object_id, action.id)
-
-
                 else:
                     if download.status == Download.STATUS_ERROR:
                         Treatment.mark_download_error_in_file(download)
@@ -237,14 +235,26 @@ class Treatment:
                     download.average_speed = 0
 
                     download.logs = 'updated by start_file_treatment method\r\n'
-                    ManageDownload.update_download(download)
+                    ManageDownload.update_download(download, True)
+
+                    #change the file permission
+                    log.log("[Treatment](start_multi_downloads) | Change file permission", log.LEVEL_DEBUG)
+                    os.chmod(download.directory + download.name, 0o777)
                 log.log('[Treatment](start_multi_downloads) | =========< End download >=========', log.LEVEL_INFO)
                 # next download
                 download = ManageDownload.get_download_to_start(None, file_path)
             else:
-                log.log('[Treatment](start_multi_downloads) | Wait 60 seconds...')
+                log.log('[Treatment](start_multi_downloads) | Wait 60 seconds...', log.LEVEL_INFO)
                 # on attend 60s avant de retenter un telechargement
                 time.sleep(60)
+
+    def stop_current_downloads(self):
+        log.log('[Treatment](stop_current_downloads) +++', log.LEVEL_INFO)
+
+        download_list = ManageDownload.get_downloads_in_progress()
+
+        for download in download_list:
+            ManageDownload.stop_download(download)
 
     def stop_multi_downloads(self, file_path):
         log.log('[Treatment](stop_multi_downloads) +++', log.LEVEL_INFO)
@@ -294,14 +304,14 @@ class Treatment:
             try:
                 download.log = 'deleting file'
                 download.status = Download.STATUS_FILE_DELETING
-                ManageDownload.update_download(download)
+                ManageDownload.update_download(download, True)
                 file_path = os.path.join(download.directory.path, download.name)
                 os.remove(file_path)
                 download.log = 'delete file ok'
                 download.status = Download.STATUS_FILE_DELETED
-                ManageDownload.update_download(download)
+                ManageDownload.update_download(download, True)
             except OSError:
                 download.log = 'delete file error'
                 download.status = Download.STATUS_FILE_DELETE_ERROR
-                ManageDownload.update_download(download, force_update_log=True)
+                ManageDownload.update_download(download, True, force_update_log=True)
 

@@ -23,7 +23,7 @@ class PackageResource(object):
                     log.log('[PackageResource](get) | package got: %s' % response.json(), log.LEVEL_DEBUG)
                     download = utils.json_to_download_package_object(response.json())
                 else:
-                    log.log('[PackageResource](get) | Error get %s => %s' % (response.code, response.json()),
+                    log.log('[PackageResource](get) | Error get %s => %s' % (response.status_code, response.json()),
                             log.LEVEL_ERROR)
             except Exception:
                 import traceback

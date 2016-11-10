@@ -1,4 +1,5 @@
 # !/usr/bin/env python3.2
+from service import actionResource
 
 __author__ = 'Vincent'
 
@@ -29,7 +30,9 @@ from service.directoryResource import DirectoryResource
 
 # demarrer le programme en utilisant PYTHONIOENCODING='utf8' python3.2
 
+
 class ManageDownload:
+
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s=$=%%m' %s"
     COMMAND_UNRAR = "cd \"%s\" && unrar x -o+ \"%s\""
@@ -81,17 +84,18 @@ class ManageDownload:
         return download
 
     @staticmethod
-    def update_download(download_to_update, force_update_log=False):
+    def update_download(download_to_update, to_update_in_database=True, force_update_log=False):
         try:
-            download_updated = DownloadResource.update(download_to_update)
+            download_updated = DownloadResource.update(download_to_update, to_update_in_database)
 
-            if download_updated is not None:
+            if download_updated is not None and to_update_in_database is True:
                 ManageDownload.update_download_log(download_to_update, force_update_log)
         except Exception:
             import traceback
 
             download_to_update.logs = traceback.format_exc().splitlines()[-1]
-            ManageDownload.update_download_log(download_to_update, True)
+            if to_update_in_database is True:
+                ManageDownload.update_download_log(download_to_update, True)
 
     @staticmethod
     def get_application_configuration_by_id(application_configuration_id):
@@ -113,25 +117,7 @@ class ManageDownload:
 
         self.action_update_in_progress = True
 
-        action.lifecycle_update_date = datetime.utcnow().isoformat()
-        try:
-            log.log(config.REST_ADRESSE + 'actions/' + str(
-                action.id) + '\r\n params: %s' % utils.action_object_to_update_json(action), log.LEVEL_DEBUG)
-            requests.put(
-                config.REST_ADRESSE + 'actions/' + str(action.id),
-                data=utils.action_object_to_update_json(action))
-            if response.status_code != 200:
-                update_action_callback(response)
-                # log.log_debug('Error update %s => %s' % (response.code, response.json())
-                # else:
-                # action_property_returned = utils.json_to_action_object(response.json())
-        except Exception:
-            import traceback
-
-            log.log("Update action: No database connection \r\n %s" % traceback.format_exc().splitlines()[-1],
-                    log.LEVEL_ERROR)
-            log.log("Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
-
+        action_updated = ActionResource.update(action)
 
     @staticmethod
     def get_package_by_id(self, package_id):
@@ -211,7 +197,7 @@ class ManageDownload:
                                 log.LEVEL_INFO)
                             download.status = Download.STATUS_FINISHED
                             download.size_file_downloaded = download.size_file
-                            ManageDownload.update_download(download)
+                            ManageDownload.update_download(download, True)
                             already_downloaded = True
 
                     config.RESCUE_MODE = False
@@ -353,7 +339,7 @@ class ManageDownload:
 
                     if to_update:
                         download.logs = 'updated by insert_update_download method\r\n'
-                        ManageDownload.update_download(download)
+                        ManageDownload.update_download(download, True)
 
         return download
 
@@ -366,7 +352,7 @@ class ManageDownload:
         download.pid_plowdown = 0
         download.status = Download.STATUS_WAITING
         download.logs = 'updated by stop_download method\r\n'
-        ManageDownload.update_download(download)
+        ManageDownload.update_download(download, True)
 
     @staticmethod
     def start_download(download):
@@ -380,7 +366,7 @@ class ManageDownload:
         download.status = Download.STATUS_IN_PROGRESS
         download.logs = 'updated by start_download method\r\n'
         if config.RESCUE_MODE is False:
-            ManageDownload.update_download(download)
+            ManageDownload.update_download(download, True)
 
         line = ''
         reader = io.TextIOWrapper(p.stdout, encoding='utf8')
@@ -396,7 +382,8 @@ class ManageDownload:
                         line = utils.clean_plowdown_line(line)
                         download = ManageDownload.get_download_values(line, download)
                         line = ''
-            except Exception:
+            except:
+                ManageDownload.update_download(download)
                 import traceback
 
                 log.log("[ManageDownload](start_download) | Error during console reading \r\n %s" %
@@ -419,6 +406,7 @@ class ManageDownload:
         values = values_line.split()
 
         if len(values) > 0:
+            to_update_in_database = True
             if values[0].isdigit():
                 # progress part
                 download.progress_part = int(values[2])
@@ -453,14 +441,19 @@ class ManageDownload:
                     # time left
                     download.time_left = utils.hms_to_seconds(values[10])
 
+                to_update_in_database = False
+
                 if values[1] == values[3] and values[1] != '0' and download.status == Download.STATUS_IN_PROGRESS:
                     download.status = Download.STATUS_FINISHED
+                    download.time_left = 0
+                    download.current_speed = 0
                     directory = DownloadDirectory()
                     directory.id = config.DIRECTORY_DOWNLOAD_DESTINATION_ID
                     directory.path = config.DIRECTORY_DOWNLOAD_DESTINATION
                     download.directory = directory
                     download.to_move_directory = None
                     timeout = config.DEFAULT_UNIREST_TIMEOUT
+                    to_update_in_database = True
 
             elif "Filename" in values[0]:
                 tab_name = values_line.split('Filename:')
@@ -479,7 +472,7 @@ class ManageDownload:
             # si on est pas en rescue mode
             if config.RESCUE_MODE is False:
                 try:
-                    ManageDownload.update_download(download)
+                    ManageDownload.update_download(download, to_update_in_database)
                     log.log('[ManageDownload](get_download_values) | after update')
                 except Exception:
                     if download.status == Download.STATUS_FINISHED:
@@ -502,7 +495,7 @@ class ManageDownload:
             download.average_speed = 0
             download.logs = 'updated by check_download_alive_method\r\nProcess killed by inactivity ...\r\n'
 
-            ManageDownload.update_download(download)
+            ManageDownload.update_download(download, True)
 
     @staticmethod
     def move_file(download_id, action):
@@ -523,7 +516,7 @@ class ManageDownload:
                         download.logs = 'File %s exists\r\n' % src_file_path
                         download.logs += 'Moving from %s to %s => status %s\r\n' % (
                             src_file_path, dst_file_path, download.status)
-                        ManageDownload.update_download(download)
+                        ManageDownload.update_download(download, True)
 
                         try:
                             utils.copy_large_file(src_file_path, dst_file_path, action, Action.STATUS_IN_PROGRESS,
@@ -535,7 +528,7 @@ class ManageDownload:
                             download.directory = action_directory_dst.directory
                             download.logs = 'File moved to %s => status %s\r\n' % (
                                 download.directory.path, download.status)
-                            ManageDownload.update_download(download)
+                            ManageDownload.update_download(download, True)
                         except Exception:
                             import traceback
 
@@ -543,7 +536,7 @@ class ManageDownload:
                             download.status = Download.STATUS_ERROR_MOVING
                             download.logs = 'File moved to %s => status %s\r\n' % (
                                 download.directory.path, download.status)
-                            ManageDownload.update_download(download, force_update_log=True)
+                            ManageDownload.update_download(download, True, force_update_log=True)
                     else:
                         download.logs = 'File %s does not exist\r\n' % src_file_path
                         ManageDownload.update_download_log(download)
@@ -591,7 +584,7 @@ class ManageDownload:
             if file_extension == '.rar':
                 for down in downloads_list:
                     down.status = Download.STATUS_UNRARING
-                    ManageDownload.update_download(down)
+                    ManageDownload.update_download(down, True)
 
                 download.logs = 'Unrar in progress ... \r\n'
                 ManageDownload.update_download_log(download)
@@ -637,4 +630,4 @@ class ManageDownload:
 
                     for down in downloads_list:
                         down.status = download_status
-                        ManageDownload.update_download(down)
+                        ManageDownload.update_download(down, True)

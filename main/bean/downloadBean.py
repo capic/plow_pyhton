@@ -50,6 +50,7 @@ class Download:
         self.file_path = ''
         self.priority = 0
         self.logs = ''
+        self.captcha_path = ''
         self.theorical_start_datetime = None
         self.lifecycle_insert_date = None
         self.lifecycle_update_date = None

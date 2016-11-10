@@ -23,7 +23,7 @@ class DirectoryResource(object):
                     log.log('[DirectoryResource](get) | package got: %s' % response.json(), log.LEVEL_DEBUG)
                     directory = utils.json_to_download_directory_object(response.json())
                 else:
-                    log.log('[DirectoryResource](get) | Error get %s => %s' % (response.code, response.json()),
+                    log.log('[DirectoryResource](get) | Error get %s => %s' % (response.status_code, response.json()),
                             log.LEVEL_ERROR)
             except Exception:
                 import traceback

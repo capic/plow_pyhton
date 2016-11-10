@@ -100,7 +100,9 @@ def get_infos_plowprobe(cmd):
 
             size = 0
             if tab_infos[1] is not None and tab_infos[1] != '':
-                size = int(tab_infos[1])
+                sizes_tab = [int(s) for s in tab_infos[1].split() if s.isdigit()]
+                if len(sizes_tab) > 0:
+                    size = sizes_tab[0]
 
             host = tab_infos[2]
 
@@ -355,12 +357,19 @@ def json_to_download_host_object(json_object):
 
 
 def package_name_from_download_name(download_name):
-    ext = download_name.split(".")[-1]
-    ext2 = download_name.split(".")[-2]
-    log.log('[utils](package_name_from_download_name) | Extensions %s | %s ' % (ext, ext2), log.LEVEL_DEBUG)
-    if ext == 'rar':
-        if 'part' in ext2:
-            return download_name.split(".part")[0]
+    if download_name is not None:
+        ext_tab = download_name.split(".")
+        if len(ext_tab) >= 3:
+            ext = ext_tab[-1]
+            ext2 = ext_tab[-2]
+            log.log('[utils](package_name_from_download_name) | Extensions %s | %s ' % (ext, ext2), log.LEVEL_DEBUG)
+            if ext == 'rar':
+                if 'part' in ext2:
+                    return download_name.split(".part")[0]
+            else:
+                return None
+        else:
+            return None
     else:
         return None
 

@@ -23,7 +23,7 @@ class ActionResource(object):
                     log.log('[ActionResource](get) | action got: %s' % response.json(), log.LEVEL_DEBUG)
                     action = utils.json_to_action_object(response.json())
                 else:
-                    log.log('[ActionResource](get) | Error get %s => %s' % (response.code, response.json()),
+                    log.log('[ActionResource](get) | Error get %s => %s' % (response.status_code, response.json()),
                             log.LEVEL_ERROR)
             except Exception:
                 import traceback
@@ -50,7 +50,7 @@ class ActionResource(object):
                 if response.status_code == 200:
                     action_list = utils.json_to_action_object_list(response.json())
                 else:
-                    log.log('[ActionResource](get_all_by_params) | Error get %s => %s' % (response.code, response.json()),
+                    log.log('[ActionResource](get_all_by_params) | Error get %s => %s' % (response.status_code, response.json()),
                             log.LEVEL_ERROR)
             except Exception:
                 import traceback
@@ -93,3 +93,35 @@ class ActionResource(object):
             log.log("[ActionResource](Insert) | Action is none", log.LEVEL_ERROR)
 
         return action_inserted
+
+    @staticmethod
+    def update(action_to_update):
+        log.log('[ActionResource](update) +++', log.LEVEL_INFO)
+
+        action_to_update.lifecycle_update_date = datetime.utcnow().isoformat()
+
+        try:
+            action_updated = None
+
+            log.log('[ActionResource](update) | ' + config.REST_ADRESSE + 'actions/%d \r\n %s' % (
+                action_to_update.id, action_to_update.to_update_object()), log.LEVEL_DEBUG)
+
+            response = requests.put(config.REST_ADRESSE + 'actions/%d' % action_to_update.id,
+                                    data=action_to_update.to_update_object())
+
+            if response.status_code != 200:
+                log.log('[ActionResource](update) | Error update %s => %s' % (response.status_code, response.json()),
+                        log.LEVEL_ERROR)
+            else:
+                action_updated = utils.json_to_action_object(response.json())
+
+            return action_updated
+
+        except Exception:
+            import traceback
+
+            log.log("[DownloadResource](update) | Update download: No database connection \r\n %s" %
+                    traceback.format_exc().splitlines()[-1],
+                    log.LEVEL_ERROR)
+            log.log("[DownloadResource](update) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+            raise
