@@ -30,9 +30,7 @@ from service.directoryResource import DirectoryResource
 
 # demarrer le programme en utilisant PYTHONIOENCODING='utf8' python3.2
 
-
 class ManageDownload:
-
     COMMAND_DOWNLOAD = "/usr/bin/plowdown -r 10 -x --9kweu=I1QOR00P692PN4Q4669U --temp-rename --temp-directory %s -o %s %s"
     COMMAND_DOWNLOAD_INFOS = "/usr/bin/plowprobe --printf '==>%%f=$=%%s=$=%%m' %s"
     COMMAND_UNRAR = "cd \"%s\" && unrar x -o+ \"%s\""
@@ -94,7 +92,7 @@ class ManageDownload:
             import traceback
 
             download_to_update.logs = traceback.format_exc().splitlines()[-1]
-            if to_update_in_database is True:
+            if config.RESCUE_MODE is False and to_update_in_database is True:
                 ManageDownload.update_download_log(download_to_update, True)
 
     @staticmethod
@@ -210,9 +208,9 @@ class ManageDownload:
                     log.log("[ManageDownload](get_download_to_start) | Traceback: %s" % traceback.format_exc(),
                             log.LEVEL_DEBUG)
 
-                    file = open(file_path, 'r')
+                    file = open(file_path, 'r', encoding='utf-8')
                     for line in file:
-                        line = line.decode("utf-8")
+                        # line = line.decode("utf-8")
                         if 'http' in line:
                             log.log('[ManageDownload](get_download_to_start) | Line %s contains http' % line,
                                     log.LEVEL_DEBUG)

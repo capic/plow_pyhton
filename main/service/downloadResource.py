@@ -64,8 +64,8 @@ class DownloadResource(object):
                     traceback.format_exc().splitlines()[-1],
                     log.LEVEL_ERROR)
             log.log("[DownloadResource](get_next) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
-        else:
-            log.log('[DownloadResource](get) | Id is none', log.LEVEL_ERROR)
+
+            raise
 
         return download
 
