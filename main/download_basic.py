@@ -14,6 +14,7 @@ import inspect
 
 from treatment import Treatment
 from bean.actionBean import Action
+from service.applicationConfigurationResource import ApplicationConfigurationResource
 
 COMMAND_USAGE = 'usage: script start|stop (download_id)'
 
@@ -30,51 +31,52 @@ def main(argv):
         print(COMMAND_USAGE)
         exit()
     else:
+        config.init()
+        config_object = {}
+
         if os.path.isfile(config.CONFIG_FILE):
-            print("Config file found")
-            config_object = {}
+            log.init('application.log')
+
+            log.log(__name__, sys._getframe().f_code.co_name, "Config file found => %s" % config.CONFIG_FILE, log.LEVEL_INFO)
+
             exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
+            config.application_configuration.rest_address = config_object['REST_ADRESS']
+        else:
+            log.log(__name__, sys._getframe().f_code.co_name, "No config file found, use default parameters", log.LEVEL_ALERT)
 
-            if 'rest_adresse' in config_object:
-                config.REST_ADRESSE = config_object['rest_adresse']
-            if 'repertoire_web_log' in config_object:
-                config.DIRECTORY_WEB_LOG = config_object['repertoire_web_log']
-            if 'repertoire_telechargement_temporaire' in config_object:
-                config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP = config_object['repertoire_telechargement_temporaire']
-            if 'repertoire_telechargement_id' in config_object:
-                config.DIRECTORY_DOWNLOAD_DESTINATION_ID = config_object['repertoire_telechargement_id']
-            if 'repertoire_telechargement' in config_object:
-                config.DIRECTORY_DOWNLOAD_DESTINATION = config_object['repertoire_telechargement']
-            if 'log_output' in config_object:
-                config.LOG_OUTPUT = (
-                    config_object['log_output'] == "True" or config_object['log_output'] == "true" or config_object['log_output'] == "1")
-            if 'console_output' in config_object:
-                config.CONSOLE_OUTPUT = (
-                    config_object['console_output'] == "True" or config_object['console_output'] == "true" or config_object[
-                        'console_output'] == "1")
-            if 'log_bdd' in config_object:
-                config.LOG_BDD = (
-                    config_object['log_bdd'] == "True" or config_object['log_bdd'] == "true" or config_object[
-                        'log_bdd'] == "1")
-            if 'log_level' in config_object:
-                config.CONFIG_LOG_LEVEL = config_object['log_level']
-                log.convert_log_level_to_logging_level()
+        # get the settings from the database
+        try:
+            config.application_configuration = ApplicationConfigurationResource.get(config.application_configuration.id_application)
 
-        log.log("Rest Address: %s" % config.REST_ADRESSE, log.LEVEL_DEBUG)
-        log.log("Directory web log %s" % config.DIRECTORY_WEB_LOG, log.LEVEL_DEBUG)
-        log.log("Directory download destination temp %s" % config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, log.LEVEL_DEBUG)
-        log.log("Directory download destination %s" % config.DIRECTORY_DOWNLOAD_DESTINATION, log.LEVEL_DEBUG)
-        log.log("Log output %s" % str(config.LOG_OUTPUT), log.LEVEL_DEBUG)
-        log.log("Console output %s" % str(config.CONSOLE_OUTPUT), log.LEVEL_DEBUG)
+            # if the settings is not found in database use the local config file
+            if config.application_configuration is None:
+                log.log(__name__, sys._getframe().f_code.co_name, "No configuration found in database, use locale config file", log.LEVEL_ERROR)
+                utils.config_from_file(config_object)
+        except:
+            log.log(__name__, sys._getframe().f_code.co_name, "Error database connection, use local config file", log.LEVEL_ERROR)
+            # no connection use the local config file
+            utils.config_from_file(config_object)
+
+        log.log(__name__, sys._getframe().f_code.co_name, "\r\n", log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "************** Configuration informations **************", log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_APPLICATION_ID: %d" % config.application_configuration.id_application, log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** REST_ADDRESS: %s" % config.application_configuration.rest_address, log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** NOTIFICATION_ADDRESS: %s" % config.application_configuration.notification_address, log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_LOG_FORMAT: %s" % config.application_configuration.python_log_format, log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_LOG_DIRECTORY: %s" % config.application_configuration.python_log_directory.to_string(), log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_DIRECTORY_DOWNLOAD_TEMP: %s" % config.application_configuration.python_directory_download_temp.to_string(), log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_DIRECTORY_DOWNLOAD: %s" % config.application_configuration.python_directory_download.to_string(), log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** RESCUE_MODE: %s" % config.RESCUE_MODE, log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "\r\n", log.LEVEL_DEBUG)
 
         treatment = Treatment()
 
         # start a download
         if args[0] == 'start':
-            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_start.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+            logging.basicConfig(filename=config.application_configuration.python_log_directory.path + 'log_start.log', level=config.application_configuration.python_log_level,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log("*** Start application ***", log.LEVEL_INFO)
+            log.log(__name__, sys._getframe().f_code.co_name, "*** Start application ***", log.LEVEL_INFO)
 
             if len(args) > 1:
                 download_id = int(args[1])
@@ -83,52 +85,44 @@ def main(argv):
                 print(COMMAND_USAGE)
         # stop a download
         elif args[0] == 'stop':
-            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+            logging.basicConfig(filename=config.application_configuration.python_log_directory.path + 'log_stop.log', level=config.application_configuration.python_log_level,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log("*** Start application ***", log.LEVEL_INFO)
+            log.log(__name__, sys._getframe().f_code.co_name, "*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 download_id = int(args[1])
                 treatment.stop_download(download_id)
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'start_file_treatment':
-            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_start_file_treatment.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
-                                format='%(asctime)s %(message)s',
-                                datefmt='%d/%m/%Y %H:%M:%S')
-            log.log("*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 file_path = args[1]
                 treatment.start_file_treatment(file_path)
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'start_multi_downloads':
-            # logging.basicConfig(filename=config.DIRECTORY_WEB_LOG +'log_start_multi_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
-            # format='%(asctime)s %(message)s',
-            # datefmt='%d/%m/%Y %H:%M:%S')
-            # log.log_debug("*** Start application ***")
             if len(args) > 1:
                 file_path = args[1]
                 treatment.start_multi_downloads(file_path)
         elif args[0] == 'stop_multi_downloads':
-            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop_multi_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+            logging.basicConfig(filename=config.application_configuration.python_log_directory.path + 'log_stop_multi_downloads.log', level=config.application_configuration.python_log_level,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log("*** Start application ***", log.LEVEL_INFO)
+            log.log(__name__, sys._getframe().f_code.co_name, "*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 file_path = args[1]
                 treatment.stop_multi_downloads(file_path)
         elif args[0] == 'stop_current_downloads':
-            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_stop_current_downloads.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+            logging.basicConfig(filename=config.application_configuration.python_log_directory.path + 'log_stop_current_downloads.log', level=config.application_configuration.python_log_level,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log("*** Start application ***", log.LEVEL_INFO)
+            log.log(__name__, sys._getframe().f_code.co_name, "*** Start application ***", log.LEVEL_INFO)
             treatment.stop_current_downloads()
         elif args[0] == 'check_download_alive':
-            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'log_check_download_alive.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+            logging.basicConfig(filename=config.application_configuration.python_log_directory.path + 'log_check_download_alive.log', level=config.application_configuration.python_log_level,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
-            log.log("*** Start application ***", log.LEVEL_INFO)
+            log.log(__name__, sys._getframe().f_code.co_name, "*** Start application ***", log.LEVEL_INFO)
             if len(args) > 1:
                 download_id = int(args[1])
                 treatment.check_download_alive(download_id)
@@ -145,14 +139,14 @@ def main(argv):
                         file_name += 'package_'
                     file_name += str(o['object_id']) + '.log'
 
-                    logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + file_name, level=config.CONFIG_LOG_LEVEL_LOGGING,
+                    logging.basicConfig(filename=config.application_configuration.python_log_directory.path + file_name, level=config.application_configuration.python_log_level,
                                         format='%(asctime)s %(message)s',
                                         datefmt='%d/%m/%Y %H:%M:%S')
                     treatment.action(o['object_id'], o['action_id'], o['action_target_id'])
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'unrar':
-            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'unrar.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+            logging.basicConfig(filename=config.application_configuration.python_log_directory.path + 'unrar.log', level=config.application_configuration.python_log_level,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 1:
@@ -161,7 +155,7 @@ def main(argv):
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'reset':
-            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'reset.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+            logging.basicConfig(filename=config.application_configuration.python_log_directory.path + 'reset.log', level=config.application_configuration.python_log_level,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 2:
@@ -171,7 +165,7 @@ def main(argv):
             else:
                 print(COMMAND_USAGE)
         elif args[0] == 'delete_package_files':
-            logging.basicConfig(filename=config.DIRECTORY_WEB_LOG + 'delete_package_files.log', level=config.CONFIG_LOG_LEVEL_LOGGING,
+            logging.basicConfig(filename=config.application_configuration.python_log_directory.path + 'delete_package_files.log', level=config.application_configuration.python_log_level,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
             if len(args) > 1:

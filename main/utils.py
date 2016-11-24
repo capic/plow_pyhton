@@ -18,11 +18,33 @@ import sys
 import time
 import json
 import log
+import config
+
+
+def config_from_file(config_file_object):
+    if 'PYTHON_APPLICATION_ID' in config_file_object:
+        config.application_configuration.id_application = config_file_object['PYTHON_APPLICATION_ID']
+    if 'DOWNLOAD_ACTIVATED' in config_file_object:
+        config.application_configuration.download_activated = config_file_object['DOWNLOAD_ACTIVATED']
+    if 'REST_ADRESS' in config_file_object:
+        config.application_configuration.rest_address = config_file_object['REST_ADRESS']
+    if 'NOTIFICATION_ADDRESS' in config_file_object:
+        config.application_configuration.notification_address = config_file_object['NOTIFICATION_ADDRESS']
+    if 'PYTHON_LOG_LEVEL' in config_file_object:
+        config.application_configuration.python_log_level = config_file_object['PYTHON_LOG_LEVEL']
+    if 'PYTHON_LOG_FORMAT' in config_file_object:
+        config.application_configuration.python_log_format = config_file_object['PYTHON_LOG_FORMAT']
+    if 'PYTHON_LOG_CONSOLE_LEVEL' in config_file_object:
+        config.application_configuration.python_log_console_level = config_file_object['PYTHON_LOG_CONSOLE_LEVEL']
+    if 'PYTHON_LOG_DIRECTORY' in config_file_object:
+        config.application_configuration.python_log_directory.path = config_file_object['PYTHON_LOG_DIRECTORY']
+    if 'PYTHON_DIRECTORY_DOWNLOAD_TEMP' in config_file_object:
+        config.application_configuration.python_directory_download_temp.path = config_file_object['PYTHON_DIRECTORY_DOWNLOAD_TEMP']
+    if 'PYTHON_DIRECTORY_DOWNLOAD' in config_file_object:
+        config.application_configuration.python_directory_download.path = config_file_object['PYTHON_DIRECTORY_DOWNLOAD']
 
 
 def hms_to_seconds(t):
-    log.log('*** hms_to_seconds ***', log.LEVEL_INFO)
-
     d = 0
     if ':' in t:
         h, m, s = [int(i) for i in t.split(':')]
@@ -58,7 +80,7 @@ def kill_proc_tree(pid, including_parent=True):
         if including_parent:
             parent.kill()
     except psutil.NoSuchProcess:
-        log.log('Process %s does not exist' % str(pid), log.LEVEL_ERROR)
+        log.log(__name__, sys._getframe().f_code.co_name, 'Process %s does not exist' % str(pid), log.LEVEL_ERROR)
         pass
 
 
@@ -67,10 +89,9 @@ def check_pid(pid):
 
 
 def clean_plowdown_line(line):
-    log.log('[utils](clean_plowdown_line) +++', log.LEVEL_INFO)
-    log.log('[utils](clean_plowdown_line) | line to clean: %s' % line, log.LEVEL_DEBUG)
+    log.log(__name__, sys._getframe().f_code.co_name, 'line to clean: %s' % line, log.LEVEL_DEBUG)
     idxs = [m.start() for m in re.finditer('\[0', line)]
-    log.log('[utils](clean_plowdown_line) | Number of idx: %d' % len(idxs), log.LEVEL_DEBUG)
+    log.log(__name__, sys._getframe().f_code.co_name, 'Number of idx: %d' % len(idxs), log.LEVEL_DEBUG)
     n = 0
     if len(idxs) > 0:
         for idx in idxs:
@@ -88,10 +109,8 @@ def clean_plowdown_line(line):
 
 
 def get_infos_plowprobe(cmd):
-    log.log('[utils](get_infos_plowprobe) +++', log.LEVEL_DEBUG)
-
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('utf-8')
-    print('[utils](get_infos_plowprobe)  | encoding: %s => OUTPUT %s' % (sys.stdout.encoding, output))
+    print(__name__, sys._getframe().f_code.co_name, 'encoding: %s => OUTPUT %s' % (sys.stdout.encoding, output))
     if output.find('Link is not alive') == -1:
         if output.startswith('==>'):
             tab_infos = output.split('=$=')
@@ -106,7 +125,7 @@ def get_infos_plowprobe(cmd):
 
             host = tab_infos[2]
 
-            log.log('[utils](get_infos_plowprobe) | name: %s # size: %d # host: %s' % (name, size, host), log.LEVEL_DEBUG)
+            log.log(__name__, sys._getframe().f_code.co_name, 'name: %s # size: %d # host: %s' % (name, size, host), log.LEVEL_DEBUG)
             return [name, size, host]
         else:
             return [None, None, None]
@@ -156,12 +175,39 @@ def change_action_property(action, attribute_to_find, value_to_find, attribute_t
 
 
 def json_to_application_configuration_object(json_object):
-    log.log('[utils](json_to_application_configuration_object) +++', log.LEVEL_DEBUG)
     if bool(json_object) is not False:
-        application_configuration = ApplicationConfiguration()
-        application_configuration.id = json_object['id']
-        application_configuration.download_activated = json_object['download_activated']
-        application_configuration.log_debug_activated = json_object['log_debug_activated']
+        try:
+            application_configuration = ApplicationConfiguration()
+
+            application_configuration.id_application = json_object['id_application']
+            application_configuration.download_activated = json_object['download_activated']
+            application_configuration.api_log_database_level = json_object['api_log_database_level']
+            application_configuration.python_log_level = json_object['python_log_level']
+            application_configuration.python_log_format = json_object['python_log_format']
+            if json_object['python_log_directory_id']:
+                application_configuration.python_log_directory = json_to_download_directory_object(json_object['python_log_directory'])
+            else:
+                application_configuration.python_log_directory = None
+            application_configuration.python_log_console_level = json_object['python_log_console_level']
+            if json_object['python_directory_download_temp_id']:
+                application_configuration.python_directory_download_temp = json_to_download_directory_object(json_object['python_directory_download_temp'])
+            else:
+                application_configuration.python_directory_download_temp = None
+            if json_object['python_directory_download_id']:
+                application_configuration.python_directory_download = json_to_download_directory_object(json_object['python_directory_download'])
+            else:
+                application_configuration.python_directory_download = None
+            # on stock l'adresse rest depuis la config defini dans le fichier
+            application_configuration.rest_address = config.application_configuration.rest_address
+            application_configuration.notification_address = json_object['notification_address']
+        except:
+            import traceback
+
+            log.log(__name__, sys._getframe().f_code.co_name, "Error during json to object \r\n %s" %
+                    traceback.format_exc().splitlines()[-1],
+                    log.LEVEL_ERROR)
+            log.log(__name__, sys._getframe().f_code.co_name, "Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+            raise
 
         return application_configuration
     else:
@@ -362,7 +408,7 @@ def package_name_from_download_name(download_name):
         if len(ext_tab) >= 3:
             ext = ext_tab[-1]
             ext2 = ext_tab[-2]
-            log.log('[utils](package_name_from_download_name) | Extensions %s | %s ' % (ext, ext2), log.LEVEL_DEBUG)
+            log.log(__name__, sys._getframe().f_code.co_name, 'Extensions %s | %s ' % (ext, ext2), log.LEVEL_DEBUG)
             if ext == 'rar':
                 if 'part' in ext2:
                     return download_name.split(".part")[0]
@@ -386,10 +432,10 @@ def get_action_by_property(actions_list, property_id):
 
 
 def find_this_process(process_name):
-    log.log('*** find_this_process ***', log.LEVEL_INFO)
+    log.log(__name__, sys._getframe().f_code.co_name, '*** find_this_process ***', log.LEVEL_INFO)
 
     command = "ps -eaf | grep \"" + process_name + "\""
-    log.log('command: %s' % command, log.LEVEL_DEBUG)
+    log.log(__name__, sys._getframe().f_code.co_name, 'command: %s' % command, log.LEVEL_DEBUG)
     ps = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     output = ps.stdout.read()
     ps.stdout.close()
@@ -398,7 +444,7 @@ def find_this_process(process_name):
 
 
 def is_this_running(process_name):
-    log.log('*** is_this_running ***', log.LEVEL_INFO)
+    log.log(__name__, sys._getframe().f_code.co_name, '*** is_this_running ***', log.LEVEL_INFO)
     output = find_this_process(process_name)
 
     if re.search(process_name, output) is None:
@@ -411,20 +457,20 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
     '''
     Copy a large file showing progress.
     '''
-    log.log('copying "{}" --> "{}"'.format(src, dst), log.LEVEL_DEBUG)
+    log.log(__name__, sys._getframe().f_code.co_name, 'copying "{}" --> "{}"'.format(src, dst), log.LEVEL_DEBUG)
     if os.path.exists(src) is False:
-        log.log('ERROR: file does not exist: "{}"'.format(src), log.LEVEL_ERROR)
+        log.log(__name__, sys._getframe().f_code.co_name, 'ERROR: file does not exist: "{}"'.format(src), log.LEVEL_ERROR)
         sys.exit(1)
     if os.path.exists(dst) is True:
         os.remove(dst)
     if os.path.exists(dst) is True:
-        log.log('ERROR: file exists, cannot overwrite it: "{}"'.format(dst), log.LEVEL_ERROR)
+        log.log(__name__, sys._getframe().f_code.co_name, 'ERROR: file exists, cannot overwrite it: "{}"'.format(dst), log.LEVEL_ERROR)
         sys.exit(1)
 
     # Start the timer and get the size.
     start = time.time()
     size = os.stat(src).st_size
-    log.log('{} bytes'.format(size), log.LEVEL_DEBUG)
+    log.log(__name__, sys._getframe().f_code.co_name, '{} bytes'.format(size), log.LEVEL_DEBUG)
 
     # Adjust the chunk size to the input size.
     divisor = 10000  # .1%
@@ -432,7 +478,7 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
     while chunk_size == 0 and divisor > 0:
         divisor /= 10
         chunk_size = size / divisor
-    log.log('chunk size is {}'.format(chunk_size), log.LEVEL_DEBUG)
+    log.log(__name__, sys._getframe().f_code.co_name, 'chunk size is {}'.format(chunk_size), log.LEVEL_DEBUG)
 
     # Copy.
     try:
@@ -472,12 +518,12 @@ def copy_large_file(src, dst, action=None, status=None, properties_treatment=Non
                     os.remove(src)
 
     except IOError as obj:
-        log.log('\nERROR: {}'.format(obj), log.LEVEL_ERROR)
+        log.log(__name__, sys._getframe().f_code.co_name, '\nERROR: {}'.format(obj), log.LEVEL_ERROR)
         sys.exit(1)
 
     sys.stdout.write('\r\033[K')  # clear to EOL
     elapsed = time.time() - start
-    log.log('copied "{}" --> "{}" in {:>.1f}s"'.format(src, dst, elapsed), log.LEVEL_INFO)
+    log.log(__name__, sys._getframe().f_code.co_name, 'copied "{}" --> "{}" in {:>.1f}s"'.format(src, dst, elapsed), log.LEVEL_INFO)
 
 
 def read_char_by_char():
@@ -499,9 +545,9 @@ def read_char_by_char():
         except Exception:
             import traceback
 
-            log.log("[ManageDownload](start_download) | Error during console reading \r\n %s" %
+            log.log(__name__, sys._getframe().f_code.co_name, "Error during console reading \r\n %s" %
                     traceback.format_exc().splitlines()[-1],
                     log.LEVEL_ERROR)
-            log.log("[ManageDownload](start_download) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+            log.log(__name__, sys._getframe().f_code.co_name, "Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
             break

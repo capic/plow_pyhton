@@ -49,8 +49,6 @@ class ManageDownload:
 
     @staticmethod
     def insert_download(download):
-        log.log('[ManageDownload](insert_download) +++', log.LEVEL_INFO)
-
         if download is not None:
             download_package = None
 
@@ -75,45 +73,39 @@ class ManageDownload:
             except Exception:
                 import traceback
 
-                log.log("[ManageDownload](insert_download) | Insert download: No database connection \r\n %s" %
+                log.log(__name__, sys._getframe().f_code.co_name, "Insert download: No database connection => %s" %
                         traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
-                log.log("[ManageDownload](insert_download) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+                log.log(__name__, sys._getframe().f_code.co_name, "Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
         else:
-            logging.error("[ManageDownload](insert_download) | Download is none")
+            logging.error(__name__, sys._getframe().f_code.co_name, "Download is none")
 
         return download
 
     @staticmethod
     def update_download(download_to_update, to_update_in_database=True, force_update_log=False):
         try:
-            download_updated = DownloadResource.update(download_to_update, to_update_in_database)
+            DownloadResource.update(download_to_update, to_update_in_database)
 
-            if download_updated is not None and to_update_in_database is True:
-                ManageDownload.update_download_log(download_to_update, force_update_log)
         except Exception:
             import traceback
 
-            download_to_update.logs = traceback.format_exc().splitlines()[-1]
-            if to_update_in_database is True:
-                ManageDownload.update_download_log(download_to_update, True)
+            log.log(__name__, traceback.format_exc().splitlines()[-1], 'Unrar finised but error', log.LEVEL_ALERT, True, download)
 
     @staticmethod
-    def get_application_configuration_by_id(application_configuration_id):
-        return ApplicationConfigurationResource.get(application_configuration_id)
+    def get_application_configuration_by_id(application_configuration_id, download=None):
+        return ApplicationConfigurationResource.get(application_configuration_id, download)
 
-    @staticmethod
-    def update_download_log(download, force=False):
-        log.log("[ManageDownlaod](update_download_log) +++++++", log.LEVEL_INFO)
-        log.log("[ManageDownlaod](update_download_log) | update download in database ? %d" % (config.LOG_BDD or force), log.LEVEL_DEBUG)
-        if (config.LOG_BDD is True or force) and download.logs != "":
-            return LogResource.insert(download)
+    # @staticmethod
+    # def update_download_log(download):
+    #     log.log(__name__, sys._getframe().f_code.co_name, "+++++++", log.LEVEL_INFO)
+    #     return LogResource.insert(download)
 
     def update_action_callback(self, response):
-        log.log('*** update_action_callback ***', log.LEVEL_INFO)
+        log.log(__name__, sys._getframe().f_code.co_name, '*** update_action_callback ***', log.LEVEL_INFO)
         # self.action_update_in_progress = False
 
     def update_action(self, action):
-        log.log('*** update_action ***', log.LEVEL_INFO)
+        log.log(__name__, sys._getframe().f_code.co_name, '*** update_action ***', log.LEVEL_INFO)
 
         self.action_update_in_progress = True
 
@@ -152,17 +144,17 @@ class ManageDownload:
 
             if downloads_list is not None:
                 if len(downloads_list) == 0:
-                    log.log(
-                        '[ManageDownload](get_download_by_link_file_path) | No download found with link %s and file_path %s' % (
+                    log.log(__name__, sys._getframe().f_code.co_name,
+                        'No download found with link %s and file_path %s' % (
                             link, file_path), log.LEVEL_INFO)
                 elif len(downloads_list) == 1:
                     download = downloads_list[0]
-                    log.log('[ManageDownload](get_download_by_link_file_path) | download : %s' % (download.to_string()),
+                    log.log(__name__, sys._getframe().f_code.co_name, 'download : %s' % (download.to_string()),
                             log.LEVEL_DEBUG)
                 else:
                     download = downloads_list[0]
-                    log.log(
-                        '[ManageDownload](get_download_by_link_file_path) | Too many download found with link %s and file_path %s' % (
+                    log.log(__name__, sys._getframe().f_code.co_name,
+                        'Too many download found with link %s and file_path %s' % (
                             link, file_path),
                         log.LEVEL_ERROR)
 
@@ -190,11 +182,8 @@ class ManageDownload:
                     download = DownloadResource.get_next(params)
 
                     if download is not None:
-                        if '# %s \r\n%s %s' % (download.name, ManageDownload.MARK_AS_FINISHED, download.link) in open(
-                                download.file_path).read():
-                            log.log(
-                                '[ManageDownload](get_download_to_start) | Download got already downloaded in file => update to finish in database',
-                                log.LEVEL_INFO)
+                        if '# %s \r\n%s %s' % (download.name, ManageDownload.MARK_AS_FINISHED, download.link) in open(download.file_path).read():
+                            log.log(__name__, sys._getframe().f_code.co_name, 'Download got already downloaded in file => update to finish in database', log.LEVEL_INFO, True, download)
                             download.status = Download.STATUS_FINISHED
                             download.size_file_downloaded = download.size_file
                             ManageDownload.update_download(download, True)
@@ -204,18 +193,14 @@ class ManageDownload:
                 except Exception:
                     import traceback
 
-                    log.log(
-                        "[ManageDownload](get_download_to_start) | no database connection => use rescue mode \r\n %s" %
-                        traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
-                    log.log("[ManageDownload](get_download_to_start) | Traceback: %s" % traceback.format_exc(),
-                            log.LEVEL_DEBUG)
+                    log.log(__name__, sys._getframe().f_code.co_name, traceback.format_exc().splitlines()[-1], log.LEVEL_ALERT, True, download)
+                    log.log(__name__, sys._getframe().f_code.co_name, "Traceback: %s" % traceback.format_exc(), log.LEVEL_Alert, True, download)
 
                     file = open(file_path, 'r')
                     for line in file:
                         line = line.decode("utf-8")
                         if 'http' in line:
-                            log.log('[ManageDownload](get_download_to_start) | Line %s contains http' % line,
-                                    log.LEVEL_DEBUG)
+                            log.log(__name__, sys._getframe().f_code.co_name, 'Line %s contains http' % line, log.LEVEL_DEBUG)
                             if not line.startswith('#'):
                                 line = line.replace('\n', '')
                                 line = line.replace('\r', '')
@@ -227,10 +212,7 @@ class ManageDownload:
 
                     file.close()
                     config.RESCUE_MODE = True
-                    log.log('[ManageDownload](get_download_to_start) | ===== Rescue Mode Activated =====',
-                            log.LEVEL_INFO)
-
-
+                    log.log(__name__, sys._getframe().f_code.co_name, '===== Rescue Mode Activated =====', log.LEVEL_INFO)
         else:
             download = ManageDownload.get_download_by_id(download_id)
 
@@ -252,7 +234,7 @@ class ManageDownload:
 
             if download_list is not None:
                 exists = len(download_list) > 0
-                log.log('[ManageDownload](download_already_exists) | download exists ? %s' % str(exists),
+                log.log(__name__, sys._getframe().f_code.co_name, 'download exists ? %s' % str(exists),
                         log.LEVEL_DEBUG)
         else:
             logging.error('[ManageDownload](download_already_exists) | Link is none')
@@ -279,11 +261,11 @@ class ManageDownload:
                 download = ManageDownload.get_download_by_link_file_path(link, file_path)
                 # on n'insere pas un lien qui existe deja ou qui est termine
                 if config.RESCUE_MODE is False and download is None:
-                    log.log('[ManageDownload}(insert_update_download) | Download finished ? %s' % (str(finished)),
+                    log.log(__name__, sys._getframe().f_code.co_name, 'Download finished ? %s' % (str(finished)),
                             log.LEVEL_DEBUG)
                     if not finished:
-                        log.log(
-                            '[ManageDownload}(insert_update_download) | Download %s doesn''t exist -> insert' % link,
+                        log.log(__name__, sys._getframe().f_code.co_name,
+                            'Download %s doesn''t exist -> insert' % link,
                             log.LEVEL_DEBUG)
 
                         name, size, host = utils.get_infos_plowprobe(cmd)
@@ -292,8 +274,8 @@ class ManageDownload:
                             download_host.name = host
 
                             download_directory = DownloadDirectory()
-                            download_directory.id = config.DIRECTORY_DOWNLOAD_DESTINATION_ID
-                            download_directory.path = config.DIRECTORY_DOWNLOAD_DESTINATION
+                            download_directory.id = config.application_configuration.python_directory_download.id
+                            download_directory.path = config.application_configuration.python_directory_download.path
 
                             download = Download()
                             download.name = name
@@ -312,12 +294,12 @@ class ManageDownload:
             link = link.replace('\n', '')
             link = link.replace('\r', '')
             link = link.replace(ManageDownload.MARK_AS_FINISHED + ' ', '')
-            log.log('[ManageDownload}(insert_update_download) | Download already marked as finished in file',
+            log.log(__name__, sys._getframe().f_code.co_name, 'Download already marked as finished in file',
                     log.LEVEL_INFO)
             download = ManageDownload.get_download_by_link_file_path(link, file_path)
             if download is not None:
                 if download.status != Download.STATUS_FINISHED:
-                    log.log('[ManageDownload}(insert_update_download) | Download status is not finised => To update',
+                    log.log(__name__, sys._getframe().f_code.co_name, 'Download status is not finised => To update',
                             log.LEVEL_DEBUG)
 
                     if download.name is None or download.name == '':
@@ -335,6 +317,7 @@ class ManageDownload:
 
                     if not action_bool:
                         download.status = Download.STATUS_FINISHED
+                        download.progress_file = 100
                         to_update = True
 
                     if to_update:
@@ -356,15 +339,14 @@ class ManageDownload:
 
     @staticmethod
     def start_download(download):
-        log.log('[ManageDownload](start_download) +++', log.LEVEL_DEBUG)
         cmd = (
             ManageDownload.COMMAND_DOWNLOAD % (
-                config.DIRECTORY_DOWNLOAD_DESTINATION_TEMP, config.DIRECTORY_DOWNLOAD_DESTINATION, download.link))
+                config.application_configuration.python_directory_download_temp.path, config.application_configuration.python_directory_download.path, download.link))
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         download.pid_plowdown = p.pid
         download.pid_python = os.getpid()
         download.status = Download.STATUS_IN_PROGRESS
-        download.logs = 'updated by start_download method\r\n'
+        log.log(__name__, sys._getframe().f_code.co_name, 'Updated by start_download method', log.LEVEL_DEBUG, True, download)
         if config.RESCUE_MODE is False:
             ManageDownload.update_download(download, True)
 
@@ -383,14 +365,12 @@ class ManageDownload:
                         download = ManageDownload.get_download_values(line, download)
                         line = ''
             except:
-                ManageDownload.update_download(download)
                 import traceback
 
-                log.log("[ManageDownload](start_download) | Error during console reading \r\n %s" %
-                        traceback.format_exc().splitlines()[-1],
-                        log.LEVEL_ERROR)
-                log.log("[ManageDownload](start_download) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+                log.log(__name__, sys._getframe().f_code.co_name, "Error during console reading => %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ALERT, True, download)
+                log.log(__name__, sys._getframe().f_code.co_name, "Traceback: %s" % traceback.format_exc(), log.LEVEL_ALERT, True, download)
 
+                ManageDownload.update_download(download)
                 break
         return download
 
@@ -398,11 +378,9 @@ class ManageDownload:
     # 6 => vitesse moyenne recu, 7 => vitesse moyenne envoye, 8 => temps total, 9 => temps passe, 10 => temps restant, 11 => vitesse courante
     @staticmethod
     def get_download_values(values_line, download):
-        log.log('[ManageDownload](get_download_values)', log.LEVEL_DEBUG)
         download_log = ''
-        timeout = None
 
-        log.log('[ManageDownload](get_download_values) | %s' % values_line, log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, values_line, log.LEVEL_DEBUG)
         values = values_line.split()
 
         if len(values) > 0:
@@ -448,11 +426,10 @@ class ManageDownload:
                     download.time_left = 0
                     download.current_speed = 0
                     directory = DownloadDirectory()
-                    directory.id = config.DIRECTORY_DOWNLOAD_DESTINATION_ID
-                    directory.path = config.DIRECTORY_DOWNLOAD_DESTINATION
+                    directory.id = config.application_configuration.python_directory_download.id
+                    directory.path = config.application_configuration.python_directory_download.path
                     download.directory = directory
                     download.to_move_directory = None
-                    timeout = config.DEFAULT_UNIREST_TIMEOUT
                     to_update_in_database = True
 
             elif "Filename" in values[0]:
@@ -460,20 +437,17 @@ class ManageDownload:
                 download.name = utils.clean_string_console(tab_name[len(tab_name) - 1])
             elif "Waiting" in values[0]:
                 download.theorical_start_datetime = (datetime.utcnow() + timedelta(0, int(values[1]))).isoformat()
-                download_log += 'Theorical start date time %s \r\n' % str(download.theorical_start_datetime)
+                # log.log(__name__, sys._getframe().f_code.co_name, 'Theorical start date time %s' % time.strftime('%y/%m/%d %H:%M:%S', download.theorical_start_datetime), log.LEVEL_INFO, True, download)
             elif "Link" in values[0] and "is" in values[1] and "not" in values[2] and "alive" in values[3]:
                 download_log += 'Link is not alive'
                 download.status = Download.STATUS_ERROR
 
-            download_log += time.strftime('%d/%m/%y %H:%M:%S',
-                                          time.localtime()) + ': ' + values_line + '\r\n'
-            download.logs = download_log
+            log.log(__name__, sys._getframe().f_code.co_name, time.strftime('%d/%m/%y %H:%M:%S', time.localtime()) + ': ' + values_line, log.LEVEL_INFO, True, download)
 
             # si on est pas en rescue mode
             if config.RESCUE_MODE is False:
                 try:
-                    ManageDownload.update_download(download, to_update_in_database)
-                    log.log('[ManageDownload](get_download_values) | after update')
+                    ManageDownload.update_download(download)
                 except Exception:
                     if download.status == Download.STATUS_FINISHED:
                         config.RESCUE_MODE = True
@@ -484,8 +458,8 @@ class ManageDownload:
     def check_download_alive(download):
         if not utils.check_pid(download.pid_plowdown):
             # utils.kill_proc_tree(download.pid_python)
-            log.log(
-                '{ManageDownload](check_download_alive) | Process %s for download %s killed for inactivity ...\r\n' % (
+            log.log(__name__, sys._getframe().f_code.co_name,
+                'Process %s for download %s killed for inactivity ...\r\n' % (
                     str(download.pid_python), download.name), log.LEVEL_DEBUG)
 
             download.pid_plowdown = 0
@@ -532,20 +506,19 @@ class ManageDownload:
                         except Exception:
                             import traceback
 
-                            log.log(traceback.format_exc(), log.LEVEL_ERROR)
+                            log.log(__name__, sys._getframe().f_code.co_name, traceback.format_exc(), log.LEVEL_ERROR)
                             download.status = Download.STATUS_ERROR_MOVING
                             download.logs = 'File moved to %s => status %s\r\n' % (
                                 download.directory.path, download.status)
                             ManageDownload.update_download(download, True, force_update_log=True)
                     else:
-                        download.logs = 'File %s does not exist\r\n' % src_file_path
-                        ManageDownload.update_download_log(download)
+                        log.log(__name__, 'move_file', 'File %s does not exist' % src_file_path, log.LEVEL_ERROR, True, download)
                 else:
-                    log.log('[ManageDownload](move_file) | Sames source and destination directories', log.LEVEL_ERROR)
+                    log.log(__name__, sys._getframe().f_code.co_name, 'Sames source and destination directories', log.LEVEL_ERROR)
             else:
-                log.log('[ManageDownload](move_file) | Download is none', log.LEVEL_ERROR)
+                log.log(__name__, sys._getframe().f_code.co_name, 'Download is none', log.LEVEL_ERROR)
         else:
-            log.log('[ManageDownload](move_file) | Action is none', log.LEVEL_ERROR)
+            log.log(__name__, sys._getframe().f_code.co_name, ' Action is none', log.LEVEL_ERROR)
 
     @staticmethod
     def treatment_update_action(action, status, percent, time_left, time_elapsed):
@@ -586,15 +559,13 @@ class ManageDownload:
                     down.status = Download.STATUS_UNRARING
                     ManageDownload.update_download(down, True)
 
-                download.logs = 'Unrar in progress ... \r\n'
-                ManageDownload.update_download_log(download)
+                log.log(__name__, 'unrar', 'Unrar in progress ...', log.LEVEL_INFO, True, download)
                 if not utils.is_this_running("[u]nrar x \"%s\"" % download.name):
                     cmd = (
                         ManageDownload.COMMAND_UNRAR % (
                             download.directory.path, download.name))
 
-                    download.logs += 'Command: %s\r\n' % cmd
-                    ManageDownload.update_download_log(download)
+                    log.log(__name__, 'unrar', 'Command: %s =>' % cmd, log.LEVEL_DEBUG, True, download)
 
                     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -609,23 +580,20 @@ class ManageDownload:
                             if out != '%':
                                 line += out
                             else:
-                                download.logs = line
                                 values = line.split()
                                 if len(values) > 1:
                                     percent = values[int(len(values) - 1)]
-                                    log.log('[ManageDownload](unrar) | percent ' + percent, log.LEVEL_DEBUG)
+                                    log.log(__name__, sys._getframe().f_code.co_name, 'percent ' + percent, log.LEVEL_DEBUG)
                                     ManageDownload.treatment_update_action(action, None, percent, None, None)
-                                    ManageDownload.update_download_log(download)
+                                    log.log(__name__, 'unrar', line, log.LEVEL_DEBUG, True, download)
 
                     if 'All OK' in line:
-                        download.logs = 'Unrar finished, all is OK\r\n'
                         ManageDownload.treatment_update_action(action, Action.STATUS_FINISHED, 100, None, None)
-                        ManageDownload.update_download_log(download)
                         download_status = Download.STATUS_UNRAR_OK
+                        log.log(__name__, 'unrar', 'Unrar finished, all is OK', log.LEVEL_INFO, True, download)
                     else:
-                        download.logs = 'Unrar finised but error\r\n'
                         ManageDownload.treatment_update_action(action, Action.STATUS_ERROR, None, None, None)
-                        ManageDownload.update_download_log(download)
+                        log.log(__name__, 'unrar', 'Unrar finised but error', log.LEVEL_ERROR, True, download)
                         download_status = Download.STATUS_UNRAR_ERROR
 
                     for down in downloads_list:
