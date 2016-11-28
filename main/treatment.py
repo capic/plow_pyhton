@@ -44,6 +44,7 @@ class Treatment:
     @staticmethod
     def start_file_treatment(file_path):
         log.init('start_file_treatement.log')
+        # log.init_log_file('start_file_treatement.log', config.application_configuration.python_log_format)
 
         log.log(__name__, sys._getframe().f_code.co_name, 'file_path %s' % file_path, log.LEVEL_DEBUG)
 
@@ -146,18 +147,20 @@ class Treatment:
 
     def start_multi_downloads(self, file_path):
         download = ManageDownload.get_download_to_start(None, file_path)
-        logger = logging.getLogger()
 
         while not self.stop_loop_file_treatment and download is not None:
-            if len(logger.handlers) > 0:
-                logger.handlers[0].stream.close()
-                logger.removeHandler(logger.handlers[0])
-
-            log.init('log_download_id_%d.log' % download.id)
+            log.init('log_download_id_%d.log', download)
+            # log.init_log_file('log_download_id_%d.log', config.application_configuration.python_log_format)
 
             log.log(__name__, sys._getframe().f_code.co_name, '=========> Start new download <=========', log.LEVEL_INFO)
             if config.RESCUE_MODE is False:
                 config.application_configuration = ManageDownload.get_application_configuration_by_id(config.application_configuration.id_application, download)
+                if config.application_configuration is None:
+                    log.init('log_download_id_%d.log', download)
+                    # on utilise la nouvelle configuration pour le log console
+                    # log.init_log_console(config.application_configuration.python_log_format)
+                    # on initialise le log qui sera utilise pour envoyer directement a l'ihm
+                    # log.init_log_stream(config.application_configuration.python_log_format)
             else:
                 # si on est en rescue mode on a pas acces a la base donc on considere que le telechargement est active
                 config.application_configuration = ApplicationConfiguration()
@@ -200,8 +203,8 @@ class Treatment:
                     log.log(__name__, sys._getframe().f_code.co_name, "Updated by start_file_treatment method", log.LEVEL_DEBUG, True, download)
 
                     #change the file permission
-                    log.log(__name__, sys._getframe().f_code.co_name, "Change file permission", log.LEVEL_INFO, True, download)
-                    os.chmod(download.directory.path + download.name, 0o777)
+                    # log.log(__name__, sys._getframe().f_code.co_name, "Change file permission", log.LEVEL_INFO, True, download)
+                    # os.chmod(download.directory.path + download.name, 0o777)
                 log.log(__name__, sys._getframe().f_code.co_name, '=========< End download >=========', log.LEVEL_INFO)
                 # next download
                 download = ManageDownload.get_download_to_start(None, file_path)

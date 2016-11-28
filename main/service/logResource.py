@@ -12,12 +12,12 @@ from bean.downloadBean import Download
 
 class LogResource(object):
     @staticmethod
-    def insert(download_id, logs, to_insert_in_database=False):
+    def insert(download_id, logs, application_configuration_id, to_insert_in_database=False):
         log_inserted = None
 
         try:
-            params = {"logs": json.dumps({"id": download_id, "logs": logs}), "insert": 'true' if to_insert_in_database is True else 'false'}
-            log.log(__name__, sys._getframe().f_code.co_name, config.application_configuration.rest_address + 'downloads/logs/%d => params: %s' % (download_id, params), log.LEVEL_DEBUG)
+            params = {"logs": json.dumps({"id": download_id, "logs": logs}), "applicationConfigurationId": application_configuration_id, "insert": 'true' if to_insert_in_database is True else 'false'}
+            # log.log(__name__, sys._getframe().f_code.co_name, config.application_configuration.rest_address + 'downloads/logs/%d => params: %s' % (download_id, params), log.LEVEL_DEBUG)
             response = requests.put(config.application_configuration.rest_address + 'downloads/logs/%d' % download_id,
                                     data=params)
 

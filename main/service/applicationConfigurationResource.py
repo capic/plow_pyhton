@@ -26,7 +26,7 @@ class ApplicationConfigurationResource(object):
             except Exception:
                 import traceback
 
-                log.log(__name__, sys._getframe().f_code.co_name, "Get application configuration by id: No database connection => %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ALERT, True, downloads)
+                log.log(__name__, sys._getframe().f_code.co_name, "Get application configuration by id: No database connection => %s" % traceback.format_exc().splitlines()[-1], log.LEVEL_ALERT, True, download)
                 log.log(__name__, sys._getframe().f_code.co_name, "Traceback: %s" % traceback.format_exc(), log.LEVEL_ALERT, True, download)
         else:
             log.log(__name__, sys._getframe().f_code.co_name, 'Id is none', log.LEVEL_ERROR, True, download)

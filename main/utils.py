@@ -46,6 +46,9 @@ def config_from_file(config_file_object):
 
 def hms_to_seconds(t):
     d = 0
+    h = 0
+    m = 0
+    s = 0
     if ':' in t:
         h, m, s = [int(i) for i in t.split(':')]
     elif 'd' in t:
@@ -110,7 +113,7 @@ def clean_plowdown_line(line):
 
 def get_infos_plowprobe(cmd):
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].decode('utf-8')
-    print(__name__, sys._getframe().f_code.co_name, 'encoding: %s => OUTPUT %s' % (sys.stdout.encoding, output))
+    # log.log(__name__, sys._getframe().f_code.co_name, 'encoding: %s => OUTPUT %s' % (sys.stdout.encoding, output), log.LEVEL_DEBUG)
     if output.find('Link is not alive') == -1:
         if output.startswith('==>'):
             tab_infos = output.split('=$=')
@@ -262,6 +265,7 @@ def json_to_download_object(json_object):
         download.directory = download_directory
         download.file_path = json_object['file_path']
         download.priority = json_object['priority']
+        download.application_configuration_id = json_object['application_configuration_id']
         if json_object['theorical_start_datetime'] == 0:
             download.theorical_start_datetime = None
         else:
@@ -534,13 +538,10 @@ def read_char_by_char():
             if out == '' and p.poll() is not None:
                 break
             if out != '':
-                print('out %s' % out)
                 if out != '\n' and out != '\r':
                     line += out
                 else:
                     line = clean_plowdown_line(line)
-                    print('Apres clean_plowdown_line')
-                    print(line)
                     line = ''
         except Exception:
             import traceback

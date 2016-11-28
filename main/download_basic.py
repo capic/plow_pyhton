@@ -20,6 +20,8 @@ COMMAND_USAGE = 'usage: script start|stop (download_id)'
 
 
 def main(argv):
+    logging.getLogger("requests").setLevel(logging.WARNING)
+
     try:
         opts, args = getopt.getopt(argv, "", [])
     except getopt.GetoptError:
@@ -36,6 +38,9 @@ def main(argv):
 
         if os.path.isfile(config.CONFIG_FILE):
             log.init('application.log')
+            # log.init_log_file('application.log', config.application_configuration.python_log_format)
+            # on initialise le log console par defaut
+            # log.init_log_console(config.application_configuration.python_log_format)
 
             log.log(__name__, sys._getframe().f_code.co_name, "Config file found => %s" % config.CONFIG_FILE, log.LEVEL_INFO)
 
@@ -52,7 +57,18 @@ def main(argv):
             if config.application_configuration is None:
                 log.log(__name__, sys._getframe().f_code.co_name, "No configuration found in database, use locale config file", log.LEVEL_ERROR)
                 utils.config_from_file(config_object)
+            else:
+                log.init('application.log')
+                # on utilise la nouvelle configuration pour le log console
+                # log.init_log_console(config.application_configuration.python_log_format)
+                # on initialise le log qui sera utilise pour envoyer directement a l'ihm
+                # log.init_log_stream(config.application_configuration.python_log_format)
         except:
+            import traceback
+
+            print(traceback.format_exc().splitlines()[-1])
+            print("Traceback: %s" % traceback.format_exc())
+
             log.log(__name__, sys._getframe().f_code.co_name, "Error database connection, use local config file", log.LEVEL_ERROR)
             # no connection use the local config file
             utils.config_from_file(config_object)

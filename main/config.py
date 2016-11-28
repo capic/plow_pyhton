@@ -21,6 +21,7 @@ def init():
     application_configuration.rest_address = 'http://192.168.1.101:3000/'
     application_configuration.notification_address = 'ws://capic.hd.free.fr:8181/ws'
     application_configuration.python_log_level = 4
+    application_configuration.python_log_format = LOG_FORMAT
     application_configuration.python_log_console_level = 4
     application_configuration.python_log_directory = DownloadDirectory()
     application_configuration.python_log_directory.path = '/var/www/plow_solution/log/'

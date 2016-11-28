@@ -286,6 +286,7 @@ class ManageDownload:
                             download.priority = Download.PRIORITY_NORMAL
                             download.file_path = file_path
                             download.directory = download_directory
+                            download.application_configuration_id = config.application_configuration.id_application
                             download.lifecycle_insert_date = datetime.utcnow().isoformat()
 
                             ManageDownload.insert_download(download)
