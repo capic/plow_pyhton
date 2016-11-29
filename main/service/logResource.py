@@ -4,40 +4,36 @@ import log
 import config
 import requests
 import utils
+import json
+import sys
 from datetime import datetime, timedelta
 from bean.downloadBean import Download
 
 
 class LogResource(object):
     @staticmethod
-    def insert(download_log_to_insert):
-        log.log('[LogResource](insert) +++', log.LEVEL_INFO)
-
+    def insert(download_id, logs, application_configuration_id, to_insert_in_database=False):
         log_inserted = None
-        if download_log_to_insert is not None:
-            try:
-                params = {"id": download_log_to_insert.id, "logs": download_log_to_insert.logs}
-                log.log('[LogResource](insert_log) | ' + config.REST_ADRESSE + 'downloads/logs/%d \r\n params: %s' % (
-                    download_log_to_insert.id, params), log.LEVEL_DEBUG)
-                response = requests.put(config.REST_ADRESSE + 'downloads/logs/%d' % download_log_to_insert.id,
-                                        data=params)
 
-                if response.status_code != 200:
-                    log.log('[LogResource](insert_log) | Error insert log %s => %s' % (
-                        response.status_code, response.json()), log.LEVEL_ERROR)
-                    raise Exception('[LogResource](insert_log) | Error insert package %s => %s' % (
-                        response.status_code, response.json()))
-                else:
-                    log_inserted = response.json()['logs']
+        try:
+            params = {"logs": json.dumps({"id": download_id, "logs": logs}), "applicationConfigurationId": application_configuration_id, "insert": 'true' if to_insert_in_database is True else 'false'}
+            # log.log(__name__, sys._getframe().f_code.co_name, config.application_configuration.rest_address + 'downloads/logs/%d => params: %s' % (download_id, params), log.LEVEL_DEBUG)
+            response = requests.put(config.application_configuration.rest_address + 'downloads/logs/%d' % download_id,
+                                    data=params)
 
-            except Exception:
-                import traceback
+            if response.status_code != 200:
+                log.log(__name__, sys._getframe().f_code.co_name, 'Error insert log %s => %s' % (
+                    response.status_code, response.json()), log.LEVEL_ERROR)
+                raise Exception('Error insert package %s => %s' % (
+                    response.status_code, response.json()))
+            else:
+                log_inserted = response.json()['logs']
 
-                log.log("[DownloadResource](Insert) | Insert package: No database connection \r\n %s" %
-                        traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
-                log.log("[DownloadResource](Insert) | Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
+        except Exception:
+            import traceback
 
-        else:
-            log.log("[DownloadResource](Insert) | Download log is none", log.LEVEL_ERROR)
+            log.log(__name__, sys._getframe().f_code.co_name, "Insert package: No database connection => %s" %
+                    traceback.format_exc().splitlines()[-1], log.LEVEL_ERROR)
+            log.log(__name__, sys._getframe().f_code.co_name, "Traceback: %s" % traceback.format_exc(), log.LEVEL_DEBUG)
 
         return log_inserted

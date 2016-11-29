@@ -51,6 +51,7 @@ class Download:
         self.priority = 0
         self.logs = ''
         self.captcha_path = ''
+        self.application_configuration_id = 0
         self.theorical_start_datetime = None
         self.lifecycle_insert_date = None
         self.lifecycle_update_date = None
@@ -87,6 +88,7 @@ class Download:
                     "file_path": self.file_path,
                     "priority": self.priority,
                     "directory_id": self.directory.id if self.directory is not None else None,
+                    "application_configuration_id": self.application_configuration_id,
                     "lifecycle_insert_date": self.lifecycle_insert_date,
                     "lifecycle_update_date": self.lifecycle_update_date,
                     "theorical_start_datetime": self.theorical_start_datetime})
@@ -116,6 +118,7 @@ class Download:
                     "file_path": self.file_path,
                     "directory_id": self.directory.id if self.directory is not None else None,
                     "priority": self.priority,
+                    "application_configuration_id": self.application_configuration_id,
                     "theorical_start_datetime": self.theorical_start_datetime,
                     "lifecycle_insert_date": self.lifecycle_insert_date,
                     "lifecycle_update_date": self.lifecycle_update_date
