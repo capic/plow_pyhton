@@ -5,8 +5,8 @@ from bean.downloadDirectoryBean import DownloadDirectory
 LOG_FORMAT = '[%(levelname)8s]  %(asctime)s <%(to_ihm)4s>     (%(file_name)s) {%(function_name)s} "%(message)s"'
 DATE_FORMAT = '%d/%m/%Y %H:%M:%S'
 
-CONFIG_FILE = '/var/www/plow_solution/config.cfg'
-# CONFIG_FILE = '/var/www/plow_solution_dev/config_python.cfg'
+# CONFIG_FILE = '/var/www/plow_solution/config.cfg'
+CONFIG_FILE = '/var/www/plow_solution_dev/config_python.cfg'
 
 RESCUE_MODE = False
 
