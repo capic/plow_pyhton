@@ -48,13 +48,21 @@ def init(log_file_name, download=None):
     logging.getLogger('appli.file').addHandler(file_handler)
 
     # if not len(logger_console.handlers):
-    print('Init console handler')
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
-    console_handler.setLevel(logging.DEBUG)
-    logger_console.addHandler(console_handler)
+    if len(logger_console.handlers):
+        console_handler = logger_console.handlers[0]
+        console_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
+    else:
+        print('Init console handler')
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
+        console_handler.setLevel(logging.DEBUG)
+        logger_console.addHandler(console_handler)
 
-    if download is not None and not len(logger_stream.handlers):
+    if download is not None:
+        if len(logger_stream.handlers):
+            stream_handler = logger_stream.handlers[0]
+            stream_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
+    else:
         print('Init stream handler')
         stream_handler = logging.StreamHandler(stream_value)
         stream_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
