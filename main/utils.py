@@ -42,6 +42,8 @@ def config_from_file(config_file_object):
         config.application_configuration.python_directory_download_temp.path = config_file_object['PYTHON_DIRECTORY_DOWNLOAD_TEMP']
     if 'PYTHON_DIRECTORY_DOWNLOAD' in config_file_object:
         config.application_configuration.python_directory_download.path = config_file_object['PYTHON_DIRECTORY_DOWNLOAD']
+    if 'PYTHON_DIRECTORY_DOWNLOAD_TEXT' in config_file_object:
+        config.application_configuration.python_directory_download_text.path = config_file_object['PYTHON_DIRECTORY_DOWNLOAD_TEXT']
 
 
 def hms_to_seconds(t):
@@ -196,6 +198,10 @@ def json_to_application_configuration_object(json_object):
                 application_configuration.python_directory_download_temp = json_to_download_directory_object(json_object['python_directory_download_temp'])
             else:
                 application_configuration.python_directory_download_temp = None
+            if json_object['python_directory_download_text_id']:
+                application_configuration.python_directory_download_text = json_to_download_directory_object(json_object['python_directory_download_text'])
+            else:
+                application_configuration.python_directory_download_text = None
             if json_object['python_directory_download_id']:
                 application_configuration.python_directory_download = json_to_download_directory_object(json_object['python_directory_download'])
             else:

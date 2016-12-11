@@ -3,20 +3,21 @@
 
 __author__ = 'Vincent'
 
-import utils
-
-from bean.downloadBean import Download
-from bean.actionBean import Action
-from manage_download import ManageDownload
-from bean.applicationConfigurationBean import ApplicationConfiguration
-import logging
-import shutil
-import os
 import copy
-import time
-import log
-import config
+import logging
+import os
+import shutil
 import sys
+import time
+
+import config
+import log
+import utils
+from bean.actionBean import Action
+from bean.applicationConfigurationBean import ApplicationConfiguration
+from bean.downloadBean import Download
+
+from manage_download import ManageDownload
 
 
 class Treatment:
@@ -24,13 +25,51 @@ class Treatment:
         self.stop_loop_file_treatment = False
 
     @staticmethod
-    def start_download(download_id):
-        log.log(__name__, sys._getframe().f_code.co_name, 'download_id %d' % download_id, log.LEVEL_DEBUG)
+    def start_download(download):
+        log.log(__name__, sys._getframe().f_code.co_name, 'download %s' % download.to_string(), log.LEVEL_DEBUG)
 
-        download_to_start = ManageDownload.get_download_to_start(download_id)
-        log.log(__name__, sys._getframe().f_code.co_name, 'download to start %s' % (download_to_start.to_string()), log.LEVEL_DEBUG)
+        download = ManageDownload.start_download(download)
 
-        ManageDownload.start_download(download_to_start)
+        # mark link with # in file
+        if download.status == Download.STATUS_FINISHED:
+            # change the file permission
+            log.log(__name__, sys._getframe().f_code.co_name,
+                    "Change file permission %s" % download.directory.path + download.name, log.LEVEL_INFO, True,
+                    download)
+            os.chmod(download.directory.path + download.name, 0o777)
+
+            if config.RESCUE_MODE is False:
+                download = ManageDownload.get_download_by_id(download.id)
+
+            Treatment.mark_download_finished_in_file(download)
+
+            if config.RESCUE_MODE is False:
+                actions_list = ManageDownload.get_actions_by_parameters(download_id=download.id)
+
+                for action in actions_list:
+                    object_id = None
+                    if action.download_id is not None:
+                        object_id = action.download_id
+                    elif action.download_package_id is not None:
+                        object_id = action.download_package_id
+
+                    Treatment.action(object_id, action.id)
+        else:
+            if download.status == Download.STATUS_ERROR:
+                Treatment.mark_download_error_in_file(download)
+            else:
+                download.status = Download.STATUS_WAITING
+
+            download.time_left = 0
+            download.average_speed = 0
+
+            log.log(__name__, sys._getframe().f_code.co_name, "Updated by start_file_treatment method", log.LEVEL_DEBUG,
+                    True, download)
+
+            # change the file permission
+            # log.log(__name__, sys._getframe().f_code.co_name, "Change file permission", log.LEVEL_INFO, True, download)
+            # os.chmod(download.directory.path + download.name, 0o777)
+        log.log(__name__, sys._getframe().f_code.co_name, '=========< End download >=========', log.LEVEL_INFO)
 
     @staticmethod
     def stop_download(download_id):

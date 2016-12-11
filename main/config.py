@@ -29,3 +29,5 @@ def init():
     application_configuration.python_directory_download_temp.path = '/mnt/HD/HD_a2/telechargement/temp_plowdown/'
     application_configuration.python_directory_download = DownloadDirectory()
     application_configuration.python_directory_download.path = '/mnt/HD/HD_a2/telechargement/'
+    application_configuration.python_directory_download_text = DownloadDirectory()
+    application_configuration.python_directory_download_text.path = '/mnt/HD/HD_a2/telechargement/telechargement_texte/'

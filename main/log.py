@@ -31,11 +31,9 @@ def init(log_file_name, download=None):
     logger_stream.setLevel(logging.DEBUG)
 
     if len(logger_file.handlers):
-        print("Delete file handler")
         logger_file.handlers[0].stream.close()
         logger_file.removeHandler(logger_file.handlers[0])
 
-    print("Init file handler => " + log_file_name)
     if download is None:
         file_handler = logging.FileHandler(
             config.application_configuration.python_log_directory.path + log_file_name, 'w', encoding='utf-8')
@@ -52,7 +50,6 @@ def init(log_file_name, download=None):
         console_handler = logger_console.handlers[0]
         console_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
     else:
-        print('Init console handler')
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
         console_handler.setLevel(logging.DEBUG)
@@ -63,14 +60,12 @@ def init(log_file_name, download=None):
             stream_handler = logger_stream.handlers[0]
             stream_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
     else:
-        print('Init stream handler')
         stream_handler = logging.StreamHandler(stream_value)
         stream_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
         stream_handler.setLevel(logging.DEBUG)
         logger_stream.addHandler(stream_handler)
 
     logging.getLogger("requests").setLevel(logging.WARNING)
-    print('Init finished')
 
 def log(file_name, function_name, value, level, to_ihm=False, download=None):
     if config.application_configuration.python_log_level > LEVEL_OFF:

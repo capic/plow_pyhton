@@ -64,6 +64,28 @@ class DownloadResource(object):
         return download
 
     @staticmethod
+    def get_next_downloads():
+        downloads_list = []
+
+        try:
+            response = requests.get(config.application_configuration.rest_address + 'downloads/next2')
+
+            if response.status_code == 200:
+                log.log(__name__, sys._getframe().f_code.co_name, 'downloads got: %s' % response.json(), log.LEVEL_DEBUG)
+                downloads_list = utils.json_to_download_object_list(response.json())
+            else:
+                log.log(__name__, sys._getframe().f_code.co_name, 'Error get %s => %s' % (response.status_code, response.json()), log.LEVEL_ERROR)
+        except:
+            import traceback
+
+            log.log(__name__, sys._getframe().f_code.co_name,
+                    "Get next downloads: No database connection => %s" % traceback.format_exc().splitlines()[-1],
+                    log.LEVEL_ALERT)
+            log.log(__name__, sys._getframe().f_code.co_name, "Traceback: %s" % traceback.format_exc(), log.LEVEL_ALERT)
+
+        return downloads_list
+
+    @staticmethod
     def get_all_by_params(params):
         downloads_list = None
         if params is not None:
