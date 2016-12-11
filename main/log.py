@@ -52,11 +52,11 @@ def init(log_file_name, download=None):
         file_handler = logging.FileHandler(
             config.application_configuration.python_log_directory.path + log_file_name, 'w', encoding='utf-8')
     else:
+        log_name = config.application_configuration.python_log_directory.path + (log_file_name % download.id)
+
         logger_console.info(
-            'Create logger file for %s' % config.application_configuration.python_log_directory.path + log_file_name + download.id, extra=extra)
-        file_handler = logging.FileHandler(
-            config.application_configuration.python_log_directory.path + log_file_name + download.id, 'w',
-            encoding='utf-8')
+            'Create logger file for %s' % log_name, extra=extra)
+        file_handler = logging.FileHandler(log_name, 'w', encoding='utf-8')
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
     logging.getLogger('appli.file').addHandler(file_handler)

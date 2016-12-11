@@ -28,6 +28,7 @@ class Treatment:
     def start_download(download):
         log.log(__name__, sys._getframe().f_code.co_name, 'download %s' % download.to_string(), log.LEVEL_DEBUG)
 
+        log.init('log_download_id_%d.log', download)
         download = ManageDownload.start_download(download)
 
         # mark link with # in file
