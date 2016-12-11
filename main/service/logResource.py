@@ -26,8 +26,6 @@ class LogResource(object):
                     response.status_code, response.json()), log.LEVEL_ERROR)
                 raise Exception('Error insert package %s => %s' % (
                     response.status_code, response.json()))
-            else:
-                log_inserted = response.json()['logs']
 
         except Exception:
             import traceback

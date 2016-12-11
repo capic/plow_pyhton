@@ -166,6 +166,10 @@ class ManageDownload:
         return DownloadResource.get_all_by_params(params)
 
     @staticmethod
+    def get_all_downloads_to_start():
+        return DownloadResource.get_next_downloads()
+
+    @staticmethod
     def get_download_to_start(download_id, file_path=None):
         download = None
 

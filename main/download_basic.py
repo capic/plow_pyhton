@@ -11,10 +11,13 @@ import json
 import log
 import config
 import inspect
+import time
 
 from treatment import Treatment
 from bean.actionBean import Action
 from service.applicationConfigurationResource import ApplicationConfigurationResource
+from service.downloadResource import DownloadResource
+from downloads_main_manager import DownloadsMainManager
 
 COMMAND_USAGE = 'usage: script start|stop (download_id)'
 
@@ -69,9 +72,11 @@ def main(argv):
             print(traceback.format_exc().splitlines()[-1])
             print("Traceback: %s" % traceback.format_exc())
 
-            log.log(__name__, sys._getframe().f_code.co_name, "Error database connection, use local config file", log.LEVEL_ERROR)
             # no connection use the local config file
             utils.config_from_file(config_object)
+
+            log.log(__name__, sys._getframe().f_code.co_name, "Error database connection, use local config file", log.LEVEL_ERROR)
+
 
         log.log(__name__, sys._getframe().f_code.co_name, "\r\n", log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "************** Configuration informations **************", log.LEVEL_DEBUG)
@@ -82,13 +87,22 @@ def main(argv):
         log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_LOG_DIRECTORY: %s" % config.application_configuration.python_log_directory.to_string(), log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_DIRECTORY_DOWNLOAD_TEMP: %s" % config.application_configuration.python_directory_download_temp.to_string(), log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_DIRECTORY_DOWNLOAD: %s" % config.application_configuration.python_directory_download.to_string(), log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_DIRECTORY_DOWNLOAD_TEXT: %s" % config.application_configuration.python_directory_download_text.to_string(), log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "***** RESCUE_MODE: %s" % config.RESCUE_MODE, log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "\r\n", log.LEVEL_DEBUG)
 
         treatment = Treatment()
+        if args[0] == 'normal':
+            log.init('normal')
+            log.log(__name__, sys._getframe().f_code.co_name, "*** Start application ***", log.LEVEL_INFO)
+
+            downloads_main_manger = DownloadsMainManager()
+            downloads_main_manger.start()
+
+            log.log(__name__, sys._getframe().f_code.co_name, "*** Stop application ***", log.LEVEL_INFO)
 
         # start a download
-        if args[0] == 'start':
+        elif args[0] == 'start':
             logging.basicConfig(filename=config.application_configuration.python_log_directory.path + 'log_start.log', level=config.application_configuration.python_log_level,
                                 format='%(asctime)s %(message)s',
                                 datefmt='%d/%m/%Y %H:%M:%S')
