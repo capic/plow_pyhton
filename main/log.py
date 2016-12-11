@@ -30,20 +30,7 @@ def init(log_file_name, download=None):
     logger_console.setLevel(logging.DEBUG)
     logger_stream.setLevel(logging.DEBUG)
 
-    if len(logger_file.handlers):
-        logger_file.handlers[0].stream.close()
-        logger_file.removeHandler(logger_file.handlers[0])
-
-    if download is None:
-        file_handler = logging.FileHandler(
-            config.application_configuration.python_log_directory.path + log_file_name, 'w', encoding='utf-8')
-    else:
-        file_handler = logging.FileHandler(
-            config.application_configuration.python_log_directory.path + log_file_name % download.id, 'w',
-            encoding='utf-8')
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
-    logging.getLogger('appli.file').addHandler(file_handler)
+    extra = {'file_name': '', 'function_name': 'Init', 'to_ihm': False}
 
     # if not len(logger_console.handlers):
     if len(logger_console.handlers):
@@ -55,17 +42,39 @@ def init(log_file_name, download=None):
         console_handler.setLevel(logging.DEBUG)
         logger_console.addHandler(console_handler)
 
+    if len(logger_file.handlers):
+        logger_console.info('Remove logger file', extra=extra)
+        logger_file.handlers[0].stream.close()
+        logger_file.removeHandler(logger_file.handlers[0])
+
+    if download is None:
+        logger_console.info('Create logger file for %s' % config.application_configuration.python_log_directory.path + log_file_name, extra=extra)
+        file_handler = logging.FileHandler(
+            config.application_configuration.python_log_directory.path + log_file_name, 'w', encoding='utf-8')
+    else:
+        logger_console.info(
+            'Create logger file for %s' % config.application_configuration.python_log_directory.path + log_file_name + download.id, extra=extra)
+        file_handler = logging.FileHandler(
+            config.application_configuration.python_log_directory.path + log_file_name + download.id, 'w',
+            encoding='utf-8')
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
+    logging.getLogger('appli.file').addHandler(file_handler)
+
     if download is not None:
         if len(logger_stream.handlers):
+            logger_console.info('Remove logger stream', extra=extra)
             stream_handler = logger_stream.handlers[0]
             stream_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
     else:
+        logger_console.info('Create logger stream', extra=extra)
         stream_handler = logging.StreamHandler(stream_value)
         stream_handler.setFormatter(logging.Formatter(config.application_configuration.python_log_format))
         stream_handler.setLevel(logging.DEBUG)
         logger_stream.addHandler(stream_handler)
 
     logging.getLogger("requests").setLevel(logging.WARNING)
+
 
 def log(file_name, function_name, value, level, to_ihm=False, download=None):
     if config.application_configuration.python_log_level > LEVEL_OFF:
