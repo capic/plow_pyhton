@@ -209,6 +209,7 @@ def json_to_application_configuration_object(json_object):
             # on stock l'adresse rest depuis la config defini dans le fichier
             application_configuration.rest_address = config.application_configuration.rest_address
             application_configuration.notification_address = json_object['notification_address']
+            application_configuration.periodic_check_minutes = json_object['periodic_check_minutes']
         except:
             import traceback
 

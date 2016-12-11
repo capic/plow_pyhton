@@ -17,6 +17,7 @@ class ApplicationConfiguration:
         self.python_directory_download_temp = None
         self.python_directory_download = None
         self.python_directory_download_text = None
+        self.periodic_check_minute = 15
 
     def to_string(self):
         return 'id_application: %d | download_activated: %d | api_log_database_level: %d | python_log_level: %d | ' \

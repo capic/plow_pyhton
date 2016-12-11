@@ -1,13 +1,14 @@
 # !/usr/bin/env python
 
-from threading import Thread
+from threading import Thread, Timer
 from treatment import Treatment
 import log
 import sys
 import time
 from download_thread import DownloadThread
 from manage_download import ManageDownload
-from timer import Timer
+import config
+
 
 class DownloadsManagerThread(Thread):
     def __init__(self, event):
@@ -15,17 +16,21 @@ class DownloadsManagerThread(Thread):
         self.event = event
         self.download_threads_list = []
 
+    def periodic_check(self):
+        log.log(__name__, sys._getframe().f_code.co_name, "Start periodic check ...", log.LEVEL_DEBUG)
+        t = Timer(config.application_configuration.periodic_check_minute * 60, self.periodic_check)
+        t.start()
+        self.event.set()
+
     def run(self):
         log.log(__name__, sys._getframe().f_code.co_name, "Start of thread downloads manager", log.LEVEL_DEBUG)
 
         self.event.clear()
         log.log(__name__, sys._getframe().f_code.co_name, "Start up => check if there are downloads to do", log.LEVEL_DEBUG)
 
-        # a = Timer(10.0, self.event.set(), ["MyTimer"])
-        # a.start()
+        self.periodic_check()
 
         while True:
-
             downloads_list = ManageDownload.get_all_downloads_to_start()
             for download in downloads_list:
                 log.log(__name__, sys._getframe().f_code.co_name,
@@ -54,3 +59,4 @@ class DownloadsManagerThread(Thread):
     def join(self):
         Thread.join(self)
         log.log(__name__, sys._getframe().f_code.co_name, "End of thread downloads manager", log.LEVEL_DEBUG)
+        self.timer.stop()

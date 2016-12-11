@@ -77,8 +77,7 @@ def main(argv):
 
             log.log(__name__, sys._getframe().f_code.co_name, "Error database connection, use local config file", log.LEVEL_ERROR)
 
-
-        log.log(__name__, sys._getframe().f_code.co_name, "\r\n", log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "", log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "************** Configuration informations **************", log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_APPLICATION_ID: %d" % config.application_configuration.id_application, log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "***** REST_ADDRESS: %s" % config.application_configuration.rest_address, log.LEVEL_DEBUG)
@@ -88,8 +87,10 @@ def main(argv):
         log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_DIRECTORY_DOWNLOAD_TEMP: %s" % config.application_configuration.python_directory_download_temp.to_string(), log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_DIRECTORY_DOWNLOAD: %s" % config.application_configuration.python_directory_download.to_string(), log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_DIRECTORY_DOWNLOAD_TEXT: %s" % config.application_configuration.python_directory_download_text.to_string(), log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "***** PYTHON_PERIODIC_CHECK_MINUTES: %d" % config.application_configuration.periodic_check_minutes, log.LEVEL_DEBUG)
         log.log(__name__, sys._getframe().f_code.co_name, "***** RESCUE_MODE: %s" % config.RESCUE_MODE, log.LEVEL_DEBUG)
-        log.log(__name__, sys._getframe().f_code.co_name, "\r\n", log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "********************************************************", log.LEVEL_DEBUG)
+        log.log(__name__, sys._getframe().f_code.co_name, "", log.LEVEL_DEBUG)
 
         treatment = Treatment()
         if args[0] == 'normal':
