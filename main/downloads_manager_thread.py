@@ -11,9 +11,10 @@ import config
 
 
 class DownloadsManagerThread(Thread):
-    def __init__(self, event):
+    def __init__(self, event, dict_event_download_mark_as_finished):
         Thread.__init__(self)
         self.event = event
+        self.dict_event_download_mark_as_finished = dict_event_download_mark_as_finished
         self.download_threads_list = []
 
     def periodic_check(self):
@@ -35,7 +36,8 @@ class DownloadsManagerThread(Thread):
             for download in downloads_list:
                 log.log(__name__, sys._getframe().f_code.co_name,
                         "Create thread for download id %d" % download.id, log.LEVEL_DEBUG)
-                download_thread = DownloadThread(download, self.event)
+
+                download_thread = DownloadThread(download, self.event, self.dict_event_download_mark_as_finished)
                 download_thread.start()
                 self.download_threads_list.append(download_thread)
 

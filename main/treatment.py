@@ -25,7 +25,7 @@ class Treatment:
         self.stop_loop_file_treatment = False
 
     @staticmethod
-    def start_download(download):
+    def start_download(download, event_download_mark_as_finished):
         log.log(__name__, sys._getframe().f_code.co_name, 'download %s' % download.to_string(), log.LEVEL_DEBUG)
 
         log.init('log_download_id_%d.log', download)
@@ -42,6 +42,8 @@ class Treatment:
             if config.RESCUE_MODE is False:
                 download = ManageDownload.get_download_by_id(download.id)
 
+            log.log(__name__, sys._getframe().f_code.co_name, "Event to block file changes detection setted", log.LEVEL_INFO)
+            event_download_mark_as_finished.set()
             Treatment.mark_download_finished_in_file(download)
 
             if config.RESCUE_MODE is False:
