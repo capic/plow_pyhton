@@ -204,6 +204,8 @@ def main(argv):
                 treatment.delete_package_files(package_id)
             else:
                 print(COMMAND_USAGE)
+        elif args[0] == 'update_plowshare':
+            treatment.update_plowshare()
         elif args[0] == 'test':
             if len(args) > 1:
                 fct_to_test_name = args[1]

@@ -9,6 +9,7 @@ import os
 import shutil
 import sys
 import time
+import subprocess
 
 import config
 import log
@@ -310,3 +311,6 @@ class Treatment:
                 download.status = Download.STATUS_FILE_DELETE_ERROR
                 ManageDownload.update_download(download, True, force_update_log=True)
 
+    @staticmethod
+    def update_plowshare():
+        subprocess.call([os.path.abspath(os.path.dirname(sys.argv[0])) + '/scripts/update_plowshare.sh'])

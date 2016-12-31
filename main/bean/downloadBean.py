@@ -20,7 +20,7 @@ class Download:
     STATUS_FILE_DELETED = 16
     STATUS_FILE_DELETE_ERROR = 17
 
-    PRIORITY_NORMAL = 1
+    PRIORITY_NORMAL = 2
 
     def __init__(self):
         self.id = -1

@@ -452,7 +452,7 @@ class ManageDownload:
             # si on est pas en rescue mode
             if config.RESCUE_MODE is False:
                 try:
-                    ManageDownload.update_download(download)
+                    ManageDownload.update_download(download, to_update_in_database)
                 except Exception:
                     if download.status == Download.STATUS_FINISHED:
                         config.RESCUE_MODE = True
