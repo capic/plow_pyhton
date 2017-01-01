@@ -40,7 +40,8 @@ def main(argv):
         config_object = {}
 
         if os.path.isfile(config.CONFIG_FILE):
-            exec (open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
+            print("config file found " + config.CONFIG_FILE)
+            exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
 
             log.init('application.log')
             # log.init_log_file('application.log', config.application_configuration.python_log_format)
