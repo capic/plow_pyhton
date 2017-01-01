@@ -40,6 +40,8 @@ def main(argv):
         config_object = {}
 
         if os.path.isfile(config.CONFIG_FILE):
+            exec (open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
+
             log.init('application.log')
             # log.init_log_file('application.log', config.application_configuration.python_log_format)
             # on initialise le log console par defaut
@@ -47,7 +49,6 @@ def main(argv):
 
             log.log(__name__, sys._getframe().f_code.co_name, "Config file found => %s" % config.CONFIG_FILE, log.LEVEL_INFO)
 
-            exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
             config.application_configuration.rest_address = config_object['REST_ADRESS']
         else:
             log.log(__name__, sys._getframe().f_code.co_name, "No config file found, use default parameters", log.LEVEL_ALERT)
