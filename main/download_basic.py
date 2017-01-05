@@ -38,7 +38,7 @@ def main(argv):
     else:
         config.init()
         config_object = {}
-
+        print("lookup for file config: " + config.CONFIG_FILE)
         if os.path.isfile(config.CONFIG_FILE):
             print("config file found " + config.CONFIG_FILE)
             exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)

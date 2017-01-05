@@ -6,7 +6,7 @@ LOG_FORMAT = '[%(levelname)8s]  %(asctime)s <%(to_ihm)4s>     (%(file_name)s) {%
 DATE_FORMAT = '%d/%m/%Y %H:%M:%S'
 
 # CONFIG_FILE = '/var/www/plow_solution/plow_python/config_python.cfg'
-CONFIG_FILE = '/var/www/plow_solution_dev/plow_python/config_python.cfg'
+CONFIG_FILE = '../config_python.cfg'
 
 RESCUE_MODE = False
 
