@@ -43,6 +43,7 @@ def main(argv):
             print("config file found " + config.CONFIG_FILE)
             exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
             print(config_object['PYTHON_LOG_DIRECTORY'])
+            config.application_configuration.id_application = config_object['PYTHON_APPLICATION_ID']
             config.application_configuration.python_log_directory.path = config_object['PYTHON_LOG_DIRECTORY']
 
             log.init('application.log')
