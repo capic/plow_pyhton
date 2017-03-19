@@ -3,7 +3,6 @@ import config
 import log
 
 from threading import Event
-from objects.downloads_list import DownloadsList
 from file_treatments_manager_thread import FileTreatmentsManagerThread
 from downloads_manager_thread import DownloadsManagerThread
 

@@ -38,8 +38,14 @@ def main(argv):
     else:
         config.init()
         config_object = {}
-
+        print("lookup for file config: " + config.CONFIG_FILE)
         if os.path.isfile(config.CONFIG_FILE):
+            print("config file found " + config.CONFIG_FILE)
+            exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
+            print(config_object['PYTHON_LOG_DIRECTORY'])
+            config.application_configuration.id_application = config_object['PYTHON_APPLICATION_ID']
+            config.application_configuration.python_log_directory.path = config_object['PYTHON_LOG_DIRECTORY']
+
             log.init('application.log')
             # log.init_log_file('application.log', config.application_configuration.python_log_format)
             # on initialise le log console par defaut
@@ -47,7 +53,6 @@ def main(argv):
 
             log.log(__name__, sys._getframe().f_code.co_name, "Config file found => %s" % config.CONFIG_FILE, log.LEVEL_INFO)
 
-            exec(open(config.CONFIG_FILE, encoding='utf-8').read(), config_object)
             config.application_configuration.rest_address = config_object['REST_ADRESS']
         else:
             log.log(__name__, sys._getframe().f_code.co_name, "No config file found, use default parameters", log.LEVEL_ALERT)
@@ -60,12 +65,6 @@ def main(argv):
             if config.application_configuration is None:
                 log.log(__name__, sys._getframe().f_code.co_name, "No configuration found in database, use locale config file", log.LEVEL_ERROR)
                 utils.config_from_file(config_object)
-            else:
-                log.init('application.log')
-                # on utilise la nouvelle configuration pour le log console
-                # log.init_log_console(config.application_configuration.python_log_format)
-                # on initialise le log qui sera utilise pour envoyer directement a l'ihm
-                # log.init_log_stream(config.application_configuration.python_log_format)
         except:
             import traceback
 
@@ -204,6 +203,8 @@ def main(argv):
                 treatment.delete_package_files(package_id)
             else:
                 print(COMMAND_USAGE)
+        elif args[0] == 'update_plowshare':
+            treatment.update_plowshare()
         elif args[0] == 'test':
             if len(args) > 1:
                 fct_to_test_name = args[1]
