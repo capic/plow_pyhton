@@ -1,4 +1,5 @@
 __author__ = 'Vincent'
+import os
 from bean.applicationConfigurationBean import ApplicationConfiguration
 from bean.downloadDirectoryBean import DownloadDirectory
 
